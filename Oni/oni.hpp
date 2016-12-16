@@ -1,6 +1,6 @@
 //  oni.hpp
 //  oni
-//  Copyright © 2016 Georg Wolffgang. All rights reserved.
+//  Copyright © 2016/2017 Benjamin Brinkmann, Alexandar Tomic, Georg Wolffgang. All rights reserved.
 
 #ifndef oni_hpp
 #define oni_hpp
