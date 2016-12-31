@@ -69,15 +69,15 @@
 		237D318C1E03F113005E42E9 /* Oni */ = {
 			isa = PBXGroup;
 			children = (
+				237D318D1E03F113005E42E9 /* main.cpp */,
+				237D31981E03F184005E42E9 /* oni.cpp */,
+				237D31991E03F184005E42E9 /* oni.hpp */,
 				237D31941E03F184005E42E9 /* board.cpp */,
 				237D31951E03F184005E42E9 /* board.hpp */,
 				237D31961E03F184005E42E9 /* card.cpp */,
 				237D31971E03F184005E42E9 /* card.hpp */,
-				237D31981E03F184005E42E9 /* oni.cpp */,
-				237D31991E03F184005E42E9 /* oni.hpp */,
 				237D319A1E03F184005E42E9 /* rulebook.cpp */,
 				237D319B1E03F184005E42E9 /* rulebook.hpp */,
-				237D318D1E03F113005E42E9 /* main.cpp */,
 			);
 			path = Oni;
 			sourceTree = "<group>";
@@ -270,6 +270,7 @@
 				237D31931E03F113005E42E9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
