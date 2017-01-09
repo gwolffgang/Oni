@@ -1,6 +1,6 @@
 //  board.cpp
 //  Oni
-//  Copyright © 2016/2017 Benjamin Brinkmann, Alexandar Tomic, Georg Wolffgang. All rights reserved.
+//  Copyright © 2016/2017 Benjamin Brinkmann, Alexandar Tomic, Georg Wolffgang. All rights reserved. waere scheisse, wenn's nicht klappt
 
 #include "board.hpp"
 
