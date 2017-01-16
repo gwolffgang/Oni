@@ -95,3 +95,12 @@ void oni::show_cards() {
     cout << "Cards player 2: " << card[1][0] << " + " << card[1][1] << endl;
     cout << "  Neutral Card: " << card_neutral << endl;
 }
+
+void oni::menu () {
+    int from[2] = {2,0}, to[2] = {2,2};
+    int exit_code = 0;
+    exit_code = make_turn(from, false, to);
+    cout << "Turn ended with exit code: " << exit_code << endl;
+    show_board();
+    show_cards();
+}

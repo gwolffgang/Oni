@@ -24,15 +24,16 @@ private:
     bool move_first_player = true;  // move_first_player: true = turn of player 1, false = turn of player 2
     
     void capture_piece(const char target);
-    
-public:
-    oni();
-    
     void load_game();
     int make_turn(int from[2], bool first_card, int to[2]);
     void save_game();
     void show_board();
     void show_cards();
+    
+public:
+    oni();
+    
+    void menu();
 };
 
 #endif /* oni_hpp */
