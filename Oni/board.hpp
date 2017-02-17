@@ -18,10 +18,10 @@ public:
     inline char get_Field(int x, int y) { return board[x][y]; }
     inline char get_Field(int field[2]) { return board[field[0]][field[1]]; }
     
-    inline void set_Field(int x, int y, const char new_char) { board[4-y][x] = new_char; }
-    inline void set_Field(int field[2], const char new_char) { board[4-field[1]][field[0]] = new_char; }
+    inline void set_Field(int x, int y, const char new_char) { board[x][y] = new_char; }
+    inline void set_Field(int field[2], const char new_char) { board[field[0]][field[1]] = new_char; }
     
-    friend ostream& operator<<(ostream& output, const oni_board& board) ;
+    friend ostream& operator<<(ostream& output, const oni_board& board);
 
 };
 

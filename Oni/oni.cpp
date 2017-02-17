@@ -27,7 +27,8 @@ int myrandom(int i) { return std::rand()%i; }
 oni::oni() {
     int int_array[16] = {1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10 , 11 , 12 , 13 , 14 , 15 , 16};
     srand(unsigned(time(NULL)));
-    random_shuffle(&int_array[0], &int_array[15], myrandom);
+    random_shuffle(&int_array[0], &int_array[16], myrandom);
+    for (int i = 0; i<16; i++) cout << ' ' << int_array[i];
     card_neutral = int_array[0];
     card[0][0] = int_array[1];
     card[0][1] = int_array[2];
@@ -98,8 +99,10 @@ void oni::show_cards() {
 
 void oni::menu () {
     int from[2] = {2,0}, to[2] = {2,2};
-    int exit_code = 0;
+    int exit_code;
     exit_code = make_turn(from, false, to);
+    cout << "Turn ended with exit code: " << exit_code << endl;
+    exit_code = make_turn(from, true, to);
     cout << "Turn ended with exit code: " << exit_code << endl;
     show_board();
     show_cards();

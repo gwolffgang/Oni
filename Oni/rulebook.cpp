@@ -7,8 +7,8 @@
 bool check_Card(int from[2], oni_card used_card, int to[2], bool move_first_player) {
     int flip_card = (2 * move_first_player) -1;
     for (int i=0; i<4; i++) {
-        if (to[0] == from[0] + (4 - used_card.get_y_from_choice(i)) * flip_card &&
-            to[1] == from[1] + used_card.get_x_from_choice(i) * flip_card)
+        if (to[0] == from[0] + used_card.get_x_from_choice(i) * flip_card &&
+            to[1] == from[1] + used_card.get_y_from_choice(i) * flip_card)
             return true;
     }
     return false;
