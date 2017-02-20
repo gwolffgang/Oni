@@ -28,7 +28,6 @@ oni::oni() {
     int int_array[16] = {1 , 2 , 3 , 4 , 5 , 6 , 7 , 8 , 9 , 10 , 11 , 12 , 13 , 14 , 15 , 16};
     srand(unsigned(time(NULL)));
     random_shuffle(&int_array[0], &int_array[16], myrandom);
-    for (int i = 0; i<16; i++) cout << ' ' << int_array[i];
     card_neutral = int_array[0];
     card[0][0] = int_array[1];
     card[0][1] = int_array[2];

@@ -1,6 +1,5 @@
 //  card.hpp
 //  Oni
-//  Copyright © 2016/2017 Benjamin Brinkmann, Alexandar Tomic, Georg Wolffgang. All rights reserved.
 
 #ifndef card_hpp
 #define card_hpp
