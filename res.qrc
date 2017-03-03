@@ -1,0 +1,25 @@
+<RCC>
+    <qresource prefix="/">
+        <file>pics/cards/BOAR.png</file>
+        <file>pics/cards/COBRA.png</file>
+        <file>pics/cards/CRAB.png</file>
+        <file>pics/cards/CRANE.png</file>
+        <file>pics/cards/DRAGON.png</file>
+        <file>pics/cards/EEL.png</file>
+        <file>pics/cards/ELEPHANT.png</file>
+        <file>pics/cards/FROG.png</file>
+        <file>pics/cards/GOOSE.png</file>
+        <file>pics/cards/HORSE.png</file>
+        <file>pics/cards/MANTIS.png</file>
+        <file>pics/cards/MONKEY.png</file>
+        <file>pics/cards/OX.png</file>
+        <file>pics/cards/RABBIT.png</file>
+        <file>pics/cards/ROOSTER.png</file>
+        <file>pics/cards/TIGER.png</file>
+        <file>pics/pieces/master_black.svg</file>
+        <file>pics/pieces/master_white.svg</file>
+        <file>pics/pieces/scolar_black.svg</file>
+        <file>pics/pieces/scolar_white.svg</file>
+        <file>pics/wood.svg</file>
+    </qresource>
+</RCC>
