@@ -29,8 +29,8 @@ public:
     inline int getYFromChoice(const int number) { return choice[number][1]; }
 
     // setters
-    inline void setName(int newName) { name = newName; }
-    inline void setOwner(int newOwner) { owner = newOwner; }
+    inline void setName(QString newName) { if (name != "") name = newName; }
+    inline void setOwner(int newOwner) { if (newOwner < 3 && newOwner > -1) owner = newOwner; }
 
     //functions
     void setCardValues(int cardID, double slotWidth, double slotHeight, double border_x, double border_y);
