@@ -2,7 +2,7 @@
 #include "oni.h"
 #include <QGraphicsRectItem>
 
-extern oni *game;
+extern Oni *game;
 
 CardSlot::CardSlot(double size, QGraphicsItem *parent) {
     // scaling the card to DIN A8
@@ -22,9 +22,9 @@ CardSlot::CardSlot(double size, QGraphicsItem *parent) {
     setAcceptHoverEvents(true);
 }
 
-void CardSlot::addCard(int id, double slotWidth, double slotHeight, double border_x, double border_y) {
+void CardSlot::addCard(int id, double slotWidth, double slotHeight) {
     Card *card = new Card(this);
-    card->setCardValues(id, slotWidth, slotHeight, border_x, border_y);
+    card->setCardValues(id, slotWidth, slotHeight);
 }
 
 void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -32,11 +32,13 @@ void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::darkGreen);
-    setBrush(brush);
-    setCursor(Qt::OpenHandCursor);
+    if ((game->move_first_player && this->getOwner() == 1) || (!game->move_first_player && this->getOwner() == 2)) {
+        QBrush brush;
+        brush.setStyle(Qt::SolidPattern);
+        brush.setColor(Qt::darkGreen);
+        setBrush(brush);
+        setCursor(Qt::PointingHandCursor);
+    }
 }
 
 void CardSlot::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {

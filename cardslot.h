@@ -7,6 +7,7 @@
 
 class CardSlot : public QGraphicsRectItem {
 private:
+    int owner = 0;          // 0 = neutral, 1 = player white, 2 = player black
 
 public:
     //variables
@@ -15,8 +16,14 @@ public:
     //constructors
     CardSlot(double size, QGraphicsItem *parent = NULL);
 
+    // getter
+    inline int getOwner() { return owner; }
+
+    // setter
+    inline void setOwner(int newOwner) { if (newOwner < 3 && newOwner > -1) owner = newOwner; }
+
     //functions
-    void addCard(int id, double slotWidth, double slotHeight, double border_x, double border_y);
+    void addCard(int id, double slotWidth, double slotHeight);
 
     //events
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

@@ -28,14 +28,16 @@ SOURCES += main.cpp \
     field.cpp \
     card.cpp \
     table.cpp \
-    cardslot.cpp
+    cardslot.cpp \
+    piece.cpp
 
 HEADERS  += \
     card.h \
     cardslot.h \
     field.h \
     table.h \
-    oni.h
+    oni.h \
+    piece.h
 
 FORMS    +=
 

@@ -1,7 +1,7 @@
 #include "card.h"
 #include "oni.h"
 
-extern oni *game;
+extern Oni *game;
 
 int randomizer(const int max) {
     static bool seeded = false;
@@ -14,7 +14,7 @@ int randomizer(const int max) {
 
 Card::Card(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {}
 
-void Card::setCardValues(int cardID, double slotWidth, double slotHeight, double border_x, double border_y) {
+void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
     // determinate card
     id = cardID;
     if (id == 0) id = randomizer(16);
@@ -121,7 +121,7 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight, double
     }
     // drawing the card
     QPixmap img(":/pics/cards/" + name + ".png");
-    setPos(border_x, border_y);
-    img = img.scaled(slotWidth - 2*border_x, slotHeight - 2*border_y);
+    setPos(game->border_x, game->border_y);
+    img = img.scaled(slotWidth - 2*game->border_x, slotHeight - 2*game->border_y);
     setPixmap(img);
 }

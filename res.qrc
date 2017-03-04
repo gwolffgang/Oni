@@ -16,10 +16,10 @@
         <file>pics/cards/RABBIT.png</file>
         <file>pics/cards/ROOSTER.png</file>
         <file>pics/cards/TIGER.png</file>
+        <file>pics/wood.svg</file>
         <file>pics/pieces/master_black.svg</file>
         <file>pics/pieces/master_white.svg</file>
         <file>pics/pieces/scolar_black.svg</file>
         <file>pics/pieces/scolar_white.svg</file>
-        <file>pics/wood.svg</file>
     </qresource>
 </RCC>

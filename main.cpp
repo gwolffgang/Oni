@@ -1,13 +1,13 @@
 #include <QApplication>
 #include "oni.h"
 
-oni *game;
+Oni *game;
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    game = new oni;
+    game = new Oni;
     game->show();
-    game->start();
+    game->new_game();
     return app.exec();
 }

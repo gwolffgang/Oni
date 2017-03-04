@@ -5,20 +5,19 @@
 #include "field.h"
 #include "cardslot.h"
 
-
 class Table {
 private:
     //variables
-    QList<Field*> board;
-    QList<CardSlot*> cardGrid;
+    QList<QList<Field*>> *board;
 
 public:
     //constructors
     Table() {}
 
     //functions
-    void drawBoard(double border_x = 10, double border_y = 10, int numOfCols = 5, int numOfRows = 5);
+    void drawBoard(double border_x = 10 , double border_y = 10, int numOfCols = 5, int numOfRows = 5);
     void drawCardSlots(double border_x = 10, double border_y = 10);
+    void setUpPieces();
 };
 
 #endif // TABLE_H
