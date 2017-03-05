@@ -6,7 +6,7 @@
 class Piece : public QGraphicsPixmapItem {
 private:
     // variables
-    int row = -1, col = -1;
+    int row, col;
     char type = ' ';
 
 public:

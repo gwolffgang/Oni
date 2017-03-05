@@ -7,20 +7,21 @@
 
 class CardSlot : public QGraphicsRectItem {
 private:
-    int owner = 0;          // 0 = neutral, 1 = player white, 2 = player black
-
-public:
     //variables
     Card *card_p1_c1, *card_p1_c2, *card_p2_c1, *card_p2_c2, *card_neutral;
+    int owner;          // 0 = neutral, 1 = player white, 2 = player black
 
+public:
     //constructors
     CardSlot(double size, QGraphicsItem *parent = NULL);
 
     // getter
+    Card *getCard(int player, int number = 1);
     inline int getOwner() { return owner; }
 
     // setter
-    inline void setOwner(int newOwner) { if (newOwner < 3 && newOwner > -1) owner = newOwner; }
+    void setCard(Card *newCard, int player, int number = 1);
+    void setOwner(int newOwner);
 
     //functions
     void addCard(int id, double slotWidth, double slotHeight);

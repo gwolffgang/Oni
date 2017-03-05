@@ -11,13 +11,10 @@ class Card : public QObject, public QGraphicsPixmapItem {
 
 private:
     // variables
-    QString name = "";
-    int choice[4][2] = {};
+    QString name;
+    int choice[4][2], id;
 
 public:
-    // variables
-    int id;
-
     // constructors
     Card(QGraphicsItem *parent = NULL);
 

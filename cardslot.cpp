@@ -5,6 +5,9 @@
 extern Oni *game;
 
 CardSlot::CardSlot(double size, QGraphicsItem *parent) {
+    // presettings
+    owner = 0;
+
     // scaling the card to DIN A8
     double scale_y = size, scale_x = scale_y/74*52;
 
@@ -22,6 +25,28 @@ CardSlot::CardSlot(double size, QGraphicsItem *parent) {
     setAcceptHoverEvents(true);
 }
 
+Card *CardSlot::getCard(int player, int number) {
+    if (player == 0) return card_neutral;
+    else if (player == 1 && number == 1) return card_p1_c1;
+    else if (player == 1 && number == 2) return card_p1_c2;
+    else if (player == 2 && number == 1) return card_p2_c1;
+    else if (player == 2 && number == 2) return card_p2_c2;
+    return NULL;
+}
+
+void CardSlot::setCard(Card *newCard, int player, int number) {
+    if (player == 0) card_neutral = newCard;
+    else if (player == 1 && number == 1) card_p1_c1 = newCard;
+    else if (player == 1 && number == 2) card_p1_c2 = newCard;
+    else if (player == 2 && number == 1) card_p2_c1 = newCard;
+    else if (player == 2 && number == 2) card_p2_c2 = newCard;
+}
+
+void CardSlot::setOwner(int newOwner) {
+    if (newOwner < 3 && newOwner > -1)
+        owner = newOwner;
+}
+
 void CardSlot::addCard(int id, double slotWidth, double slotHeight) {
     Card *card = new Card(this);
     card->setCardValues(id, slotWidth, slotHeight);
@@ -32,7 +57,7 @@ void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    if ((game->move_first_player && this->getOwner() == 1) || (!game->move_first_player && this->getOwner() == 2)) {
+    if ((game->getFirstPlayersTurn() && this->getOwner() == 1) || (!game->getFirstPlayersTurn() && this->getOwner() == 2)) {
         QBrush brush;
         brush.setStyle(Qt::SolidPattern);
         brush.setColor(Qt::darkGreen);

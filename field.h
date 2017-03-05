@@ -8,8 +8,9 @@
 class Field : public QGraphicsRectItem {
 private:
     // variables
-    int col = -1, row = -1;
-    char piece = ' ';
+    int col, row;
+    char piecetype;
+    Piece *piece;
 
 public:
     // constructors
@@ -22,16 +23,19 @@ public:
 
     // getters
     int getCol() { return col; }
-    char getPiece() { return piece; }
+    Piece* getPiece() { return piece; }
+    char getPiecetype() { return piecetype; }
     int getRow() { return row; }
 
     // setters
     void setCol(int newCol) { if (newCol > -1) col = newCol; }
-    void setPiece(char newPiece) { piece = newPiece; }
+    void setPiece(Piece *newPiece) { piece = newPiece; }
+    void setPiecetype(char newPiecetype) { piecetype = newPiecetype; }
     void setRow(int newRow) { if (newRow > -1) row = newRow; }
 
     // functions
-    void addPiece(char pieceType, double fieldSize);
+    void addPiece(char type, double fieldSize);
+    int identifiedPiece();
 
 signals:
     void clicked() {}

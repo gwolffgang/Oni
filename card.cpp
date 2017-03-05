@@ -121,7 +121,7 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
     }
     // drawing the card
     QPixmap img(":/pics/cards/" + name + ".png");
-    setPos(game->border_x, game->border_y);
-    img = img.scaled(slotWidth - 2*game->border_x, slotHeight - 2*game->border_y);
+    setPos(game->getBorderX(), game->getBorderY());
+    img = img.scaled(slotWidth - 2*game->getBorderX(), slotHeight - 2*game->getBorderY());
     setPixmap(img);
 }

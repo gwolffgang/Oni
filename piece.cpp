@@ -3,7 +3,10 @@
 
 extern Oni *game;
 
-Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {}
+Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
+    // presettings
+    row = col = -1;
+}
 
 void Piece::setPieceValues(char pieceType, double fieldSize) {
     // determinate card
@@ -28,9 +31,8 @@ void Piece::setPieceValues(char pieceType, double fieldSize) {
     }
     if (type != ' ') {
         QPixmap img(":/pics/pieces/" + piece + "_" + color + ".svg");
-        setPos(game->border_x, game->border_y);
-        img = img.scaled(fieldSize - 2*game->border_x, fieldSize - 2*game->border_y);
+        setPos(game->getBorderX(), game->getBorderY());
+        img = img.scaled(fieldSize - 2*game->getBorderX(), fieldSize - 2*game->getBorderY());
         setPixmap(img);
     }
-
 }

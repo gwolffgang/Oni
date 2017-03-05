@@ -4,6 +4,12 @@
 #include <QImage>
 
 Oni::Oni(QWidget *parent) {
+    // presettings
+    rows = cols = 5;
+    borderX = borderY = 10;
+    gameResult = 0;
+    studentsLeft[0] = studentsLeft[1] = 4;
+    firstPlayersTurn = true;
     int height = 700, width = 1200;
 
     // set up the screen
@@ -18,12 +24,25 @@ Oni::Oni(QWidget *parent) {
     setScene(scene);
 }
 
+void Oni::mouseMoveEvent(QMouseEvent *event) {
+    // picked up piece follows the mousecursor
+    if (pickedUpPiece)
+        pickedUpPiece->setPos(event->pos()-QPointF(pickedUpPiece->pixmap().height()/2, pickedUpPiece->pixmap().height()/2));
+
+    QGraphicsView::mouseMoveEvent(event);
+}
+
+int Oni::getStudentsLeft(int player) {
+    if (player == 1) return studentsLeft[0];
+    if (player == 2) return studentsLeft[1];
+    return -1;
+}
+
 void Oni::start() {
     // set up table
     table = new Table;
-    table->drawBoard(border_x, border_y, cols, rows);
-    table->drawCardSlots(border_x, border_y);
-    table->setUpPieces();
+    table->drawBoard(borderX, borderY, cols, rows);
+    table->drawCardSlots(borderX, borderY);
 }
 
 void Oni::load_game() {
