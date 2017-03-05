@@ -5,7 +5,8 @@
 
 Oni::Oni(QWidget *parent) {
     // presettings
-    rows = cols = 5;
+    rows = 5;
+    cols = 5;
     borderX = borderY = 10;
     gameResult = 0;
     studentsLeft[0] = studentsLeft[1] = 4;
@@ -41,7 +42,7 @@ int Oni::getStudentsLeft(int player) {
 void Oni::start() {
     // set up table
     table = new Table;
-    table->drawBoard(borderX, borderY, cols, rows);
+    table->drawBoard();
     table->drawCardSlots(borderX, borderY);
 }
 

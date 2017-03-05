@@ -32,10 +32,12 @@ public:
     // getters
     inline int getBorderX() { return borderX; }
     inline int getBorderY() { return borderY; }
+    inline int getCols() { return cols; }
     inline bool getFirstPlayersTurn() { return firstPlayersTurn; }
     inline int getGameResult () { return gameResult; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
     inline QList<Piece*> *getPieces() { return pieces; }
+    inline int getRows() { return rows; }
     inline QGraphicsScene *getScene() { return scene; }
     int getStudentsLeft(int player);
 
@@ -43,8 +45,10 @@ public:
     inline void changePlayersTurn() { firstPlayersTurn = !firstPlayersTurn; }
     inline void setBorderX(int newX) { borderX = newX; }
     inline void setBorderY(int newY) { borderY = newY; }
+    inline void setCols(int newCols) { cols = newCols; }
     inline void setGameResult (int winner) { gameResult = winner; }
     inline void setPickedUpPiece(Piece *newPiece) { pickedUpPiece = newPiece; }
+    inline void setRows(int newRows) { rows = newRows; }
 
     //functions
     void start();

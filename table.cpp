@@ -5,31 +5,31 @@ extern Oni *game;
 
 int myrandom(int i) { return std::rand()%i; }
 
-void Table::drawBoard(double border_x, double border_y, int numOfCols, int numOfRows) {
+void Table::drawBoard() {
     // scaling the board to windowsize
-    double size = (game->getScene()->height()-2*border_y) / numOfRows;
+    double size = (game->getScene()->height() - 2*game->getBorderY()) / game->getRows();
 
     // drawing the board
     board = new QList<QList<Field*>>;
-    QList<Field*> row;
-    for (int i = 0; i < numOfRows; i++) {
-        row.empty();
-        for (int j = 0; j < numOfCols; j++) {
+    QList<Field*> fieldsRow;
+    for (int row = 0; row < game->getRows(); row++) {
+        fieldsRow.empty();
+        for (int col = 0; col < game->getCols(); col++) {
             Field *field = new Field(size);
-            field->setCol(i);
-            field->setRow(j);
-            field->setPos(border_x + size * j, border_y + size * (4-i));
+            field->setRow(row);
+            field->setCol(col);
+            field->setPos(game->getBorderX() + size * col, game->getBorderY() + size * (4-row));
             if (game->getPieces())
-                for (int k = 0; k < game->getPieces()->size(); k++)
-                    if (game->getPieces()->at(k)->getRow() == i && game->getPieces()->at(k)->getCol() == j) {
-                        field->addPiece(game->getPieces()->at(k)->getType(), size);
-                        field->setPiecetype(game->getPieces()->at(k)->getType());
-                        field->setPiece(game->getPieces()->at(k));
+                for (int i = 0; i < game->getPieces()->size(); i++)
+                    if (game->getPieces()->at(i)->getRow() == row && game->getPieces()->at(i)->getCol() == col) {
+                        field->addPiece(game->getPieces()->at(i)->getType(), size);
+                        field->setPiecetype(game->getPieces()->at(i)->getType());
+                        field->setPiece(game->getPieces()->at(i));
                     }
             game->getScene()->addItem(field);
-            row.append(field);
+            fieldsRow.append(field);
         }
-        board->append(row);
+        board->append(fieldsRow);
     }
 }
 
