@@ -16,7 +16,7 @@ Oni::Oni(QWidget *parent) {
     firstPlayersTurn = true;
     pickedUpPiece = NULL;
     pieceToReposition = NULL;
-    int height = 700, width = 1200;
+    int height = 800, width = 3*borderX+height+2*((height-4*borderY)/3);
 
     // initiate pieces lists
     pieces = new QList<Piece*>;
@@ -46,11 +46,6 @@ void Oni::mouseMoveEvent(QMouseEvent *event) {
     QGraphicsView::mouseMoveEvent(event);
 }
 
-int Oni::getStudentsLeft(int player) {
-    if (player == 1) return studentsLeft[0];
-    if (player == 2) return studentsLeft[1];
-    return -1;
-}
 
 void Oni::setPickedUpPiece(Piece *newPiece) {
     if (newPiece == NULL)
