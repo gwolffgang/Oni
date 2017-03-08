@@ -1,6 +1,5 @@
 #include "piece.h"
 #include "oni.h"
-#include <QDrag>
 
 extern Oni *game;
 

@@ -2,7 +2,6 @@
 #include "oni.h"
 #include <QGraphicsRectItem>
 #include <QPointF>
-#include <QDrag>
 
 extern Oni *game;
 

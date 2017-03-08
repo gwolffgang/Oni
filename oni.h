@@ -22,7 +22,6 @@ private:
     double borderX, borderY, fieldHeight;
 
     int gameResult;        // game_result: 0 = ongoing game; 1 = player 1 has won; -1 = player 2 has won
-    int studentsLeft[2];   // students_left: [0] = first player, [1] = second player
     bool firstPlayersTurn;  // firstPlayersTurn: true = turn of player 1, false = turn of player 2
 
 public:
@@ -48,7 +47,6 @@ public:
     inline Piece *getPieceToReposition() { return pieceToReposition; }
     inline int getRows() { return rows; }
     inline QGraphicsScene *getScene() { return scene; }
-    int getStudentsLeft(int player);
     inline Table *getTable() { return table; }
 
     // setters
