@@ -1,6 +1,8 @@
 #include "field.h"
 #include "oni.h"
 #include <QGraphicsRectItem>
+#include <QPointF>
+#include <QDrag>
 
 extern Oni *game;
 
@@ -8,46 +10,43 @@ Field::Field(double size, QGraphicsItem *parent) : QGraphicsRectItem(parent) {
     // presettings
     row = -1;
     col = -1;
-    piecetype = ' ';
+    pieceType = ' ';
 
     //create a field to put to the scene
     QGraphicsRectItem *rect = new QGraphicsRectItem;
     setRect(0, 0, size, size);
 
-    //colorize field
-    QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::lightGray);
-    setBrush(brush);
-
-    //allow responding to hover events
+    //allow responding to hover and dropping events
     setAcceptHoverEvents(true);
 }
 
 void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (!game->getPickedUpPiece()) {
-        // identify piece from pieces list
-        int piece_number = identifiedPiece();
-        if (piece_number != -1)
-            if ((game->getFirstPlayersTurn() && (game->getPieces()->at(piece_number)->getType() == 'M' ||
-                                                game->getPieces()->at(piece_number)->getType() == 'S')) ||
-                (!game->getFirstPlayersTurn() &&(game->getPieces()->at(piece_number)->getType() == 'm' ||
-                                                game->getPieces()->at(piece_number)->getType() == 's'))) {
-                game->setPickedUpPiece(game->getPieces()->at(piece_number));
-                game->getPickedUpPiece()->setPieceValues(game->getPieces()->at(piece_number)->getType(), this->rect().height());
-                game->getPickedUpPiece()->setPos(this->pos());
-                game->getScene()->removeItem(game->getPieces()->at(piece_number));
-                game->getPieces()->removeAll(game->getPieces()->at(piece_number));
-                game->getScene()->addItem(game->getPickedUpPiece());
-            }
+    // identify possible piece from pieces list
+    int pieceNumber = identifyPiece();
+    if (game->getPickedUpPiece() == NULL && pieceNumber != -1) {
+        // try to pick piece up
+        game->setPieceToReposition(game->getPieces()->at(pieceNumber));
+        pickUpPiece(this);
+    }
+}
+
+void Field::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+    if (game->getPickedUpPiece() != NULL) {
+        int pieceNumber = identifyPiece();
+        if (pieceNumber == -1)
+            // try to drop piece
+            dropPiece();
+        else
+            // try to capture piece
+            capturePiece(game->getPieces()->at(pieceNumber));
     }
 }
 
 void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    if ((game->getFirstPlayersTurn() && (this->getPiecetype() == 'M' || this->getPiecetype() == 'S')) ||
-        (!game->getFirstPlayersTurn() && (this->getPiecetype() == 'm' || this->getPiecetype() == 's'))) {
+    if ((game->getFirstPlayersTurn() && (this->getPieceType() == 'M' || this->getPieceType() == 'S')) ||
+        (!game->getFirstPlayersTurn() && (this->getPieceType() == 'm' || this->getPieceType() == 's'))) {
         QBrush brush;
-        brush.setStyle(Qt::SolidPattern);
+        brush.setStyle(Qt::Dense4Pattern);
         brush.setColor(Qt::gray);
         setBrush(brush);
         setCursor(Qt::PointingHandCursor);
@@ -56,21 +55,61 @@ void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 
 void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::lightGray);
+    brush.setStyle(Qt::NoBrush);
     setBrush(brush);
     setCursor(Qt::ArrowCursor);
 }
 
-void Field::addPiece(char type, double fieldSize) {
-    Piece *piece = new Piece(this);
-    piece->setPieceValues(type, fieldSize);
-    this->setPiecetype(piece->getType());
+void Field::capturePiece(Piece *target) {
+    // remove captured piece
+    //game->getCapturedPieces()->append(target);
+    //game->getPieces()->removeAll(target);
+
+    // drop piece
+    //dropPiece();
 }
 
-int Field::identifiedPiece() {
+void Field::dropPiece() {
+    this->linkPiece(game->getPieceToReposition());
+
+    // cleaning up
+    game->setPieceToReposition(NULL);
+    game->getScene()->removeItem(game->getPickedUpPiece());
+    game->setPickedUpPiece(NULL);
+}
+
+int Field::identifyPiece() {
     for (int i = 0; i < game->getPieces()->size(); i++)
         if (game->getPieces()->at(i)->getRow() == this->getRow() && game->getPieces()->at(i)->getCol() == this->getCol())
             return i;
     return -1;
+}
+
+void Field::linkPiece(Piece *linkedPiece) {
+    // link field to piece
+    this->piece = linkedPiece;
+    this->setPieceType(piece->getType());
+
+    // link piece to field
+    piece->setParentItem(this);
+    piece->setCol(this->getCol());
+    piece->setRow(this->getRow());
+}
+
+void Field::pickUpPiece(Field *field) {
+    if ((game->getFirstPlayersTurn() && (game->getPieceToReposition()->getType() == 'M' ||
+                                         game->getPieceToReposition()->getType() == 'S')) ||
+        (!game->getFirstPlayersTurn() && (game->getPieceToReposition()->getType() == 'm' ||
+                                         game->getPieceToReposition()->getType() == 's'))) {
+        // pick the piece up
+        game->setPickedUpPiece(game->getPieceToReposition());
+
+        // save origin of piece
+        game->setPieceToReposition(game->getPieceToReposition());
+
+        // remove old piece
+        field->setPieceType(' ');
+        game->getScene()->removeItem(game->getPieceToReposition());
+    }
+
 }

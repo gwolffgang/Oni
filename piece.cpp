@@ -1,5 +1,6 @@
 #include "piece.h"
 #include "oni.h"
+#include <QDrag>
 
 extern Oni *game;
 
@@ -8,9 +9,8 @@ Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
     row = col = -1;
 }
 
-void Piece::setPieceValues(char pieceType, double fieldSize) {
-    // determinate card
-    type = pieceType;
+void Piece::drawPiece() {
+    // draw piece
     QString piece, color;
     switch (type) {
     case 'M':
@@ -32,7 +32,7 @@ void Piece::setPieceValues(char pieceType, double fieldSize) {
     if (type != ' ') {
         QPixmap img(":/pics/pieces/" + piece + "_" + color + ".svg");
         setPos(game->getBorderX(), game->getBorderY());
-        img = img.scaled(fieldSize - 2*game->getBorderX(), fieldSize - 2*game->getBorderY());
+        img = img.scaled(game->getFieldHeight() - 2*game->getBorderX(), game->getFieldHeight() - 2*game->getBorderY());
         setPixmap(img);
     }
 }

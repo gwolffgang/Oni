@@ -5,13 +5,23 @@
 
 Oni::Oni(QWidget *parent) {
     // presettings
+    setWindowTitle(tr("Oni"));
+    borderX = 10;
+    borderY = 10;
     rows = 5;
     cols = 5;
-    borderX = borderY = 10;
+    cardsPerPlayer = 2;
+    neutralCardsPerPlayer = 1;
     gameResult = 0;
     studentsLeft[0] = studentsLeft[1] = 4;
     firstPlayersTurn = true;
+    pickedUpPiece = NULL;
+    pieceToReposition = NULL;
     int height = 700, width = 1200;
+
+    // initiate pieces lists
+    pieces = new QList<Piece*>;
+    capturedPieces = new QList<Piece*>;
 
     // set up the screen
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -23,12 +33,16 @@ Oni::Oni(QWidget *parent) {
     scene->setSceneRect(0, 0, width, height);
     scene->setBackgroundBrush(QBrush(QImage(":/pics/wood.svg")));
     setScene(scene);
+
+    // scaling the board to windowsize
+    fieldHeight = (scene->height() - 2*borderY) / rows;
+
 }
 
 void Oni::mouseMoveEvent(QMouseEvent *event) {
     // picked up piece follows the mousecursor
-    if (pickedUpPiece)
-        pickedUpPiece->setPos(event->pos()-QPointF(pickedUpPiece->pixmap().height()/2, pickedUpPiece->pixmap().height()/2));
+    if (pickedUpPiece != NULL)
+        pickedUpPiece->setPos(event->pos() - QPointF(pickedUpPiece->pixmap().height()/2, pickedUpPiece->pixmap().height()/2));
 
     QGraphicsView::mouseMoveEvent(event);
 }
@@ -39,11 +53,26 @@ int Oni::getStudentsLeft(int player) {
     return -1;
 }
 
+void Oni::setPickedUpPiece(Piece *newPiece) {
+    if (newPiece == NULL)
+        pickedUpPiece = NULL;
+    else {
+        pickedUpPiece = new Piece;
+        pickedUpPiece->setCol(newPiece->getCol());
+        pickedUpPiece->setRow(newPiece->getRow());
+        pickedUpPiece->setType(newPiece->getType());
+        pickedUpPiece->drawPiece();
+        QPointF piecePos = table->getBoard()->at(newPiece->getRow()).at(newPiece->getCol())->pos() ;
+        pickedUpPiece->setPos(piecePos + QPointF(borderX, borderY));
+        scene->addItem(pickedUpPiece);
+    }
+}
+
 void Oni::start() {
     // set up table
     table = new Table;
     table->drawBoard();
-    table->drawCardSlots(borderX, borderY);
+    table->drawCardSlots();
 }
 
 void Oni::load_game() {
@@ -53,9 +82,6 @@ void Oni::load_game() {
 void Oni::new_game() {
     // name pieces string
     QString setUpString = "Sa1 Sb1 Mc1 Sd1 Se1 sa5 sb5 mc5 sd5 se5";
-
-    // initiate pieces list
-    pieces = new QList<Piece*>;
 
     // seperate and analyse pieces string
     QStringList elem = setUpString.split(" ");
@@ -83,9 +109,7 @@ void Oni::new_game() {
 
         // add piece to pieces list
         pieces->append(piece);
-
     }
-
     // start the game
     start();
 }

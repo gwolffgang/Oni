@@ -10,6 +10,7 @@ class Table {
 private:
     // variables
     QList<QList<Field*>> *board;
+    QList<QList<CardSlot*>> *slotsGrid;
 
 public:
     // constructors
@@ -17,10 +18,11 @@ public:
 
     // getters
     inline QList<QList<Field*>> *getBoard() { return board; }
+    inline QList<QList<CardSlot*>> *getSlotsGrid() { return slotsGrid; }
 
     // functions
     void drawBoard();
-    void drawCardSlots(double border_x = 10, double border_y = 10);
+    void drawCardSlots();
 };
 
 #endif // TABLE_H

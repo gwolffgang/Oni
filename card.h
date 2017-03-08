@@ -2,12 +2,14 @@
 #define CARD_H
 
 #include <QGraphicsPixmapItem>
+#include <QObject>
 #include <iostream>
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
 
 class Card : public QObject, public QGraphicsPixmapItem {
+    Q_OBJECT
 
 private:
     // variables

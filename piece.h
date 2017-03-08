@@ -24,7 +24,7 @@ public:
     void setType(char newType) { type = newType; }
 
     //functions
-    void setPieceValues(char pieceType, double fieldSize);
+    void drawPiece();
 };
 
 #endif // PIECE_H
