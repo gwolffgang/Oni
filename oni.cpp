@@ -14,9 +14,10 @@ Oni::Oni(QWidget *parent) {
     neutralCardsPerPlayer = 1;
     gameResult = 0;
     firstPlayersTurn = true;
+    flipBoard = false;
     pickedUpPiece = NULL;
     pieceToReposition = NULL;
-    int height = 700, width = 1200;
+    int height = 750, width = 1200;
 
     // initiate pieces lists
     pieces = new QList<Piece*>;
@@ -35,7 +36,6 @@ Oni::Oni(QWidget *parent) {
 
     // scaling the board to windowsize
     fieldHeight = (scene->height() - 2*borderY) / rows;
-
 }
 
 void Oni::mouseMoveEvent(QMouseEvent *event) {
@@ -44,12 +44,6 @@ void Oni::mouseMoveEvent(QMouseEvent *event) {
         pickedUpPiece->setPos(event->pos() - QPointF(pickedUpPiece->pixmap().height()/2, pickedUpPiece->pixmap().height()/2));
 
     QGraphicsView::mouseMoveEvent(event);
-}
-
-int Oni::getStudentsLeft(int player) {
-    if (player == 1) return studentsLeft[0];
-    if (player == 2) return studentsLeft[1];
-    return -1;
 }
 
 void Oni::setPickedUpPiece(Piece *newPiece) {

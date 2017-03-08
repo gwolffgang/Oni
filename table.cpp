@@ -58,7 +58,7 @@ void Table::drawCardSlots() {
             double posX = game->getScene()->height() + number * sizeX + (number + 1) * game->getBorderX();
             double posY = ((-1.5 * player + 2.5) * player + 1) * sizeY + ((-1.5 * player + 2.5) * player + 2) * game->getBorderY();
             slot->setPos(posX, posY);
-            slot->addCard(intArray[elem++], slot->rect().width(), slot->rect().height());
+            slot->addCard(intArray[elem++], slot->rect().width(), slot->rect().height(), player);
             game->getScene()->addItem(slot);
             slotsRow.append(slot);
         }

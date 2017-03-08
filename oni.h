@@ -23,6 +23,7 @@ private:
 
     int gameResult;        // game_result: 0 = ongoing game; 1 = player 1 has won; -1 = player 2 has won
     bool firstPlayersTurn;  // firstPlayersTurn: true = turn of player 1, false = turn of player 2
+    bool flipBoard;
 
 public:
     //constructors
@@ -40,6 +41,7 @@ public:
     inline int getCols() { return cols; }
     inline int getFieldHeight() { return fieldHeight; }
     inline bool getFirstPlayersTurn() { return firstPlayersTurn; }
+    inline bool getFlipBoard() { return flipBoard; }
     inline int getGameResult() { return gameResult; }
     inline int getNeutralCardsPerPlayer() { return neutralCardsPerPlayer; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
@@ -51,9 +53,11 @@ public:
 
     // setters
     inline void changePlayersTurn() { firstPlayersTurn = !firstPlayersTurn; }
+    inline void FlipBoard() { flipBoard = !flipBoard; }
     inline void setBorderX(int newX) { borderX = newX; }
     inline void setBorderY(int newY) { borderY = newY; }
     inline void setCols(int newCols) { cols = newCols; }
+
     inline void setGameResult (int winner) { gameResult = winner; }
     void setPickedUpPiece(Piece *newPiece);
     inline void setPieceToReposition(Piece *origin) { pieceToReposition = origin; }

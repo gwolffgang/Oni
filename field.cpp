@@ -2,6 +2,7 @@
 #include "oni.h"
 #include <QGraphicsRectItem>
 #include <QPointF>
+#include <QApplication>
 
 extern Oni *game;
 
@@ -75,6 +76,7 @@ void Field::dropPiece() {
     game->setPieceToReposition(NULL);
     game->getScene()->removeItem(game->getPickedUpPiece());
     game->setPickedUpPiece(NULL);
+    game->changePlayersTurn();
 }
 
 int Field::identifyPiece() {

@@ -25,7 +25,7 @@ public:
     void setOwner(int newOwner);
 
     //functions
-    void addCard(int id, double slotWidth, double slotHeight);
+    void addCard(int id, double slotWidth, double slotHeight, int player);
 
     //events
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
