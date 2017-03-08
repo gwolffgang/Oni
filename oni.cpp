@@ -13,7 +13,6 @@ Oni::Oni(QWidget *parent) {
     cardsPerPlayer = 2;
     neutralCardsPerPlayer = 1;
     gameResult = 0;
-    studentsLeft[0] = studentsLeft[1] = 4;
     firstPlayersTurn = true;
     pickedUpPiece = NULL;
     pieceToReposition = NULL;
