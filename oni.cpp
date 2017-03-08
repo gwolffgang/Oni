@@ -17,7 +17,8 @@ Oni::Oni(QWidget *parent) {
     flipBoard = false;
     pickedUpPiece = NULL;
     pieceToReposition = NULL;
-    int height = 750, width = 1200;
+    int height = 800;
+    int width = 3*borderX + height + 2*((height - 4*borderY) / 3);
 
     // initiate pieces lists
     pieces = new QList<Piece*>;
