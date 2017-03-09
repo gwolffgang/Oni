@@ -74,7 +74,7 @@ void Field::dropPiece() {
 
     // cleaning up
     game->setPieceToReposition(NULL);
-    game->getScene()->removeItem(game->getPickedUpPiece());
+    game->getWindow()->getScene()->removeItem(game->getPickedUpPiece());
     game->setPickedUpPiece(NULL);
     game->changePlayersTurn();
 }
@@ -110,7 +110,7 @@ void Field::pickUpPiece(Field *field) {
 
         // remove old piece
         field->setPieceType(' ');
-        game->getScene()->removeItem(game->getPieceToReposition());
+        game->getWindow()->getScene()->removeItem(game->getPieceToReposition());
     }
 
 }

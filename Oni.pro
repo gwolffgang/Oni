@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2017-03-01T13:05:23
+# Project created by QtCreator 2017-03-09T16:20:21
 #
 #-------------------------------------------------
 
@@ -23,23 +23,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 
-SOURCES += main.cpp \
+SOURCES += main.cpp\
+        mainwindow.cpp \
     oni.cpp \
     field.cpp \
     card.cpp \
-    table.cpp \
     cardslot.cpp \
     piece.cpp
 
-HEADERS  += \
+HEADERS  += mainwindow.h \
+    oni.h \
+    field.h \
     card.h \
     cardslot.h \
-    field.h \
-    table.h \
-    oni.h \
     piece.h
 
-FORMS    +=
+FORMS    += mainwindow.ui
 
 RESOURCES += \
     res.qrc

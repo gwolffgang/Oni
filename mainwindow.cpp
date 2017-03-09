@@ -1,13 +1,34 @@
-#include "table.h"
+#include "mainwindow.h"
 #include "oni.h"
+#include "ui_mainwindow.h"
 
 extern Oni *game;
 
 int myrandom(int i) { return std::rand()%i; }
 
-void Table::drawBoard() {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+    ui->setupUi(this);
+    // QMainWindow::showFullScreen();       // FullScreen
+
+    // scene setup
+    scene = new QGraphicsScene(this);
+    ui->view->setScene(scene);
+    ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+}
+
+MainWindow::~MainWindow() {
+    delete ui;
+}
+
+void MainWindow::setViewSize(double width, double height)
+{
+    ui->view->setFixedSize(width, height);
+}
+
+void MainWindow::drawBoard() {
     // drawing the board
-    board = new QList<QList<Field*>>;
     QList<Field*> fieldsRow;
     for (int row = 0; row < game->getRows(); row++) {
         fieldsRow.clear();
@@ -26,17 +47,17 @@ void Table::drawBoard() {
                 }
             }
             // add field to scene
-            game->getScene()->addItem(field);
+            scene->addItem(field);
             // add field to board
             fieldsRow.append(field);
         }
-        board->append(fieldsRow);
+        game->getBoard()->append(fieldsRow);
     }
 }
 
-void Table::drawCardSlots() {
+void MainWindow::drawCardSlots() {
     // scaling the cardslots to windowsize
-    double sizeY = (game->getScene()->height() - 4*game->getBorderY()) / 3;
+    double sizeY = (scene->height() - 4*game->getBorderY()) / 3;
     double sizeX = sizeY;
 
     // determine the cards
@@ -45,7 +66,6 @@ void Table::drawCardSlots() {
     std::random_shuffle(&intArray[0], &intArray[16], myrandom);
 
     // drawing the slotsGrid
-    slotsGrid = new QList<QList<CardSlot*>>;
     QList<CardSlot*> slotsRow;
     int elem = 0;
     for (int player = 0; player < 3; player++) {
@@ -55,13 +75,13 @@ void Table::drawCardSlots() {
         for (int number = 0; number < maxSlots; number++) {
             CardSlot *slot = new CardSlot(sizeY);
             slot->setOwner(player);
-            double posX = game->getScene()->height() + number * sizeX + (number + 1) * game->getBorderX();
+            double posX = scene->height() + number * sizeX + (number + 1) * game->getBorderX();
             double posY = ((-1.5 * player + 2.5) * player + 1) * sizeY + ((-1.5 * player + 2.5) * player + 2) * game->getBorderY();
             slot->setPos(posX, posY);
             slot->addCard(intArray[elem++], slot->rect().width(), slot->rect().height(), player);
-            game->getScene()->addItem(slot);
+            scene->addItem(slot);
             slotsRow.append(slot);
         }
-        slotsGrid->append(slotsRow);
+        game->getSlotsGrid()->append(slotsRow);
     }
 }

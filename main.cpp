@@ -7,7 +7,6 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     game = new Oni;
-    game->show();
-    game->new_game();
+    game->newGame();
     return app.exec();
 }

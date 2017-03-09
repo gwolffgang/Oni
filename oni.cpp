@@ -1,42 +1,44 @@
 #include "oni.h"
-#include "table.h"
-#include <QBrush>
-#include <QImage>
+//#include "table.h"
 
-Oni::Oni(QWidget *parent) {
-    // presettings
-    setWindowTitle(tr("Oni"));
+extern Oni *game;
+
+Oni::Oni() {
+    // window settings
     borderX = 10;
     borderY = 10;
+    windowHeight = 700;
+    windowWidth = 3*borderX + windowHeight + 2*((windowHeight - 4*borderY) / 3);
+    window = new MainWindow;
+    window->show();
+    window->setWindowTitle("Oni");
+    window->setFixedSize(windowWidth+5, windowHeight+5);
+    window->getScene()->setSceneRect(0, 0, windowWidth, windowHeight);
+    window->getScene()->setBackgroundBrush(QBrush(QImage(":/pics/wood.svg")));
+    window->setViewSize(windowWidth+5, windowHeight+5);
+
+    // board settings
+    board = new QList<QList<Field*>>;
     rows = 5;
     cols = 5;
+    flipBoard = false;
+    // scaling the board to windowsize
+    fieldHeight = ((window->getScene()->sceneRect().height() - 2*borderY) / rows);
+
+    // card settings
+    slotsGrid = new QList<QList<CardSlot*>>;
     cardsPerPlayer = 2;
     neutralCardsPerPlayer = 1;
+
+    // game settings
     gameResult = 0;
     firstPlayersTurn = true;
-    flipBoard = false;
     pickedUpPiece = NULL;
     pieceToReposition = NULL;
-    int height = 800;
-    int width = 3*borderX + height + 2*((height - 4*borderY) / 3);
 
     // initiate pieces lists
     pieces = new QList<Piece*>;
     capturedPieces = new QList<Piece*>;
-
-    // set up the screen
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setFixedSize(width,height);
-
-    // set up the scene
-    scene = new QGraphicsScene;
-    scene->setSceneRect(0, 0, width, height);
-    scene->setBackgroundBrush(QBrush(QImage(":/pics/wood.svg")));
-    setScene(scene);
-
-    // scaling the board to windowsize
-    fieldHeight = (scene->height() - 2*borderY) / rows;
 }
 
 void Oni::mouseMoveEvent(QMouseEvent *event) {
@@ -44,7 +46,7 @@ void Oni::mouseMoveEvent(QMouseEvent *event) {
     if (pickedUpPiece != NULL)
         pickedUpPiece->setPos(event->pos() - QPointF(pickedUpPiece->pixmap().height()/2, pickedUpPiece->pixmap().height()/2));
 
-    QGraphicsView::mouseMoveEvent(event);
+    //QGraphicsView::mouseMoveEvent(event);
 }
 
 void Oni::setPickedUpPiece(Piece *newPiece) {
@@ -56,24 +58,22 @@ void Oni::setPickedUpPiece(Piece *newPiece) {
         pickedUpPiece->setRow(newPiece->getRow());
         pickedUpPiece->setType(newPiece->getType());
         pickedUpPiece->drawPiece();
-        QPointF piecePos = table->getBoard()->at(newPiece->getRow()).at(newPiece->getCol())->pos() ;
+        QPointF piecePos = game->getBoard()->at(newPiece->getRow()).at(newPiece->getCol())->pos() ;
         pickedUpPiece->setPos(piecePos + QPointF(borderX, borderY));
-        scene->addItem(pickedUpPiece);
+        window->getScene()->addItem(pickedUpPiece);
     }
 }
 
 void Oni::start() {
-    // set up table
-    table = new Table;
-    table->drawBoard();
-    table->drawCardSlots();
+    window->drawBoard();
+    window->drawCardSlots();
 }
 
-void Oni::load_game() {
+void Oni::loadGame() {
 
 }
 
-void Oni::new_game() {
+void Oni::newGame() {
     // name pieces string
     QString setUpString = "Sa1 Sb1 Mc1 Sd1 Se1 sa5 sb5 mc5 sd5 se5";
 
@@ -108,6 +108,10 @@ void Oni::new_game() {
     start();
 }
 
-void Oni::save_game() {
+void Oni::saveGame() {
+
+}
+
+void Oni::saveGameAs() {
 
 }
