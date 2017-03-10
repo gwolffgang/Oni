@@ -31,6 +31,7 @@ void CardSlot::setOwner(int newOwner) {
 
 void CardSlot::addCard(int id, double slotWidth, double slotHeight, int player) {
     Card *card = new Card(this);
+    card->setOwner(player);
     card->setCardValues(id, slotWidth, slotHeight);
     if (!game->getFlipBoard()) {
         if (game->getFirstPlayersTurn() && player == 2) {

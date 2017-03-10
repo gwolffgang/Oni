@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>748</width>
-    <height>508</height>
+    <width>984</width>
+    <height>522</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,10 +19,35 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>751</width>
-      <height>491</height>
+      <width>221</width>
+      <height>121</height>
      </rect>
     </property>
+   </widget>
+   <widget class="QListWidget" name="listWidget">
+    <property name="geometry">
+     <rect>
+      <x>950</x>
+      <y>300</y>
+      <width>421</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>1. Sa2-a4 (TIGER) / md5-e5 (ELEPHANT)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>2.          ...               / sb3xb4 (CRAB)</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Sa1 Sb2 Md4 se2 sa5 me2 S-1 S-1 s-1 s-1 ROOSTER TIGER DRAGON CRAB ELEPHANT</string>
+     </property>
+    </item>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -30,7 +55,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>748</width>
+     <width>984</width>
      <height>22</height>
     </rect>
    </property>
@@ -49,61 +74,110 @@
     <property name="title">
      <string>Layout</string>
     </property>
-    <addaction name="actionSmall"/>
-    <addaction name="actionNormal"/>
-    <addaction name="actionBig"/>
+    <addaction name="actionTinyLayout"/>
+    <addaction name="actionSmallLayout"/>
+    <addaction name="actionNormalLayout"/>
+    <addaction name="actionLargeLayout"/>
+    <addaction name="separator"/>
     <addaction name="actionFullScreen"/>
    </widget>
    <addaction name="menuGame"/>
    <addaction name="menuLayout"/>
   </widget>
-  <action name="actionjjj">
-   <property name="text">
-    <string>jjj</string>
-   </property>
-  </action>
   <action name="actionNew">
    <property name="text">
-    <string>New</string>
+    <string>&amp;New</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>Save</string>
+    <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionLoad">
    <property name="text">
-    <string>Load</string>
+    <string>&amp;Load</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
    </property>
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>E&amp;xit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionSmall">
+  <action name="actionSmallLayout">
    <property name="text">
-    <string>Small</string>
+    <string>&amp;Small</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+S</string>
    </property>
   </action>
-  <action name="actionNormal">
+  <action name="actionNormalLayout">
    <property name="text">
-    <string>Normal</string>
+    <string>&amp;Normal</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+N</string>
    </property>
   </action>
-  <action name="actionBig">
+  <action name="actionLargeLayout">
    <property name="text">
-    <string>Big</string>
+    <string>&amp;Large</string>
+   </property>
+   <property name="toolTip">
+    <string>Large</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+L</string>
    </property>
   </action>
   <action name="actionFullScreen">
    <property name="text">
-    <string>FullScreen</string>
+    <string>&amp;FullScreen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+F</string>
+   </property>
+  </action>
+  <action name="actionTinyLayout">
+   <property name="text">
+    <string>&amp;Tiny</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+T</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionFullScreen</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>showFullScreen()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>373</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

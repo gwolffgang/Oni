@@ -77,6 +77,8 @@ void Field::dropPiece() {
     game->getWindow()->getScene()->removeItem(game->getPickedUpPiece());
     game->setPickedUpPiece(NULL);
     game->changePlayersTurn();
+    //game->exchangeCards(usedCard, game->getCards()[game->identifyCards(0).at(0)]);
+    game->getWindow()->redrawWindow();
 }
 
 int Field::identifyPiece() {
