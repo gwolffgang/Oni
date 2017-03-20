@@ -1,8 +1,8 @@
 #include "field.h"
 #include "oni.h"
-#include <QGraphicsRectItem>
-#include <QPointF>
-#include <QApplication>
+// unnötig, da in field.h drin: #include <QGraphicsRectItem>
+#include "qpoint.h" // #include <QPointF>
+// unnötig, da in oni.h drin: #include <QApplication>
 
 extern Oni *game;
 

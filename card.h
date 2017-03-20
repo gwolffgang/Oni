@@ -1,8 +1,8 @@
 #ifndef CARD_H
 #define CARD_H
 
-#include <QGraphicsPixmapItem>
-#include <QObject>
+#include "qgraphicsitem.h" // #include <QGraphicsPixmapItem>
+#include "qobject.h" // #include <QObject>
 #include <iostream>
 #include <string.h>
 #include <time.h>

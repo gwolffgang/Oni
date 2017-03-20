@@ -1,10 +1,10 @@
 #ifndef FIELD_H
 #define FIELD_H
 
-#include <QObject>
-#include <QGraphicsRectItem>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSceneDragDropEvent>
+#include "qobject.h" // #include <QObject>
+#include "qgraphicsitem.h" // #include <QGraphicsRectItem>
+#include "qgraphicssceneevent.h" // #include <QGraphicsSceneMouseEvent>
+// #include <QGraphicsSceneDragDropEvent> ist bereits in Z.6 drin
 #include "piece.h"
 
 class Field : public QObject, public QGraphicsRectItem {

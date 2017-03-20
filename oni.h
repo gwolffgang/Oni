@@ -3,11 +3,11 @@
 
 #include <QtGui>
 #include <QtCore>
-#include <QApplication>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QMouseEvent>
-#include <QObject>
+#include "qapplication.h" // #include <QApplication>
+#include "qgraphicsscene.h" // #include <QGraphicsScene>
+#include "qgraphicsview.h" // #include <QGraphicsView>
+#include "qevent.h" // #include <QMouseEvent>
+#include "qobject.h" // #include <QObject>
 #include "card.h"
 #include "cardslot.h"
 #include "field.h"

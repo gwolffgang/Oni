@@ -1,0 +1,33 @@
+﻿Der Buildvorgang wurde am 19.03.2017 18:15:58 gestartet.
+     1>Projekt "C:\Users\Alex\Desktop\ONITAMA\Oni\OniForVS13.vcxproj" auf Knoten "2", Build Ziel(e).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt card.cpp cardslot.cpp debug\moc_card.cpp debug\moc_cardslot.cpp debug\moc_field.cpp debug\moc_mainwindow.cpp field.cpp generatedfiles\qrc_res.cpp main.cpp mainwindow.cpp oni.cpp piece.cpp
+         piece.cpp
+     1>c:\users\alex\desktop\onitama\oni\piece.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QGraphicsPixmapItem": No such file or directory
+         oni.cpp
+     1>c:\users\alex\desktop\onitama\oni\oni.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QtGui": No such file or directory
+         mainwindow.cpp
+     1>c:\users\alex\desktop\onitama\oni\mainwindow.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QMainWindow": No such file or directory
+         main.cpp
+     1>main.cpp(1): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QApplication": No such file or directory
+         qrc_res.cpp
+         field.cpp
+     1>c:\users\alex\desktop\onitama\oni\field.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QObject": No such file or directory
+         moc_mainwindow.cpp
+     1>c:\users\alex\desktop\onitama\oni\debug\../mainwindow.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QMainWindow": No such file or directory
+         moc_field.cpp
+     1>c:\users\alex\desktop\onitama\oni\debug\../field.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QObject": No such file or directory
+         moc_cardslot.cpp
+     1>c:\users\alex\desktop\onitama\oni\debug\../cardslot.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QObject": No such file or directory
+         moc_card.cpp
+     1>c:\users\alex\desktop\onitama\oni\debug\../card.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QGraphicsPixmapItem": No such file or directory
+         cardslot.cpp
+     1>c:\users\alex\desktop\onitama\oni\cardslot.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QObject": No such file or directory
+         card.cpp
+     1>c:\users\alex\desktop\onitama\oni\card.h(4): fatal error C1083: Datei (Include) kann nicht geöffnet werden: "QGraphicsPixmapItem": No such file or directory
+         Code wird generiert...
+     1>Die Erstellung des Projekts "C:\Users\Alex\Desktop\ONITAMA\Oni\OniForVS13.vcxproj" ist abgeschlossen, Build Ziel(e) -- FEHLER.
+
+Fehler beim Buildvorgang.
+
+Verstrichene Zeit 00:00:01.68

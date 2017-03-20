@@ -1,4 +1,4 @@
-#include <QApplication>
+// unnötig, da in oni.h drin: #include <QApplication>
 #include "oni.h"
 
 Oni *game;

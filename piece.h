@@ -1,7 +1,7 @@
 #ifndef PIECE_H
 #define PIECE_H
 
-#include <QGraphicsPixmapItem>
+#include "qgraphicsitem.h" // #include <QGraphicsPixmapItem>
 
 class Piece : public QGraphicsPixmapItem {
 private:

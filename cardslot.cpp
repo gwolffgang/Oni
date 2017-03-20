@@ -1,6 +1,6 @@
 #include "cardslot.h"
 #include "oni.h"
-#include <QGraphicsRectItem>
+// unnötig, da in cardslot.h drin: #include <QGraphicsRectItem>
 
 extern Oni *game;
 
