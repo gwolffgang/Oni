@@ -8,16 +8,12 @@ CardSlot::CardSlot(double size, QGraphicsItem *parent) {
     // presettings
     owner = 0;
 
-    double scale_y = size, scale_x = size;
-
     //create a slot to put to the scene
     QGraphicsRectItem *rect = new QGraphicsRectItem;
-    setRect(0, 0, scale_x, scale_y);
+    setRect(0, 0, size, size);
 
     //colorize field
-    QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::gray);
+    QBrush brush(Qt::gray, Qt::SolidPattern);
     setBrush(brush);
 
     //allow responding to hover events
@@ -31,6 +27,7 @@ void CardSlot::setOwner(int newOwner) {
 
 void CardSlot::addCard(int id, double slotWidth, double slotHeight, int player) {
     Card *card = new Card(this);
+    card->setOwner(player);
     card->setCardValues(id, slotWidth, slotHeight);
     if (!game->getFlipBoard()) {
         if (game->getFirstPlayersTurn() && player == 2) {
@@ -59,18 +56,14 @@ void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if ((game->getFirstPlayersTurn() && this->getOwner() == 1) || (!game->getFirstPlayersTurn() && this->getOwner() == 2)) {
-        QBrush brush;
-        brush.setStyle(Qt::SolidPattern);
-        brush.setColor(Qt::darkGray);
+        QBrush brush(Qt::darkGray, Qt::SolidPattern);
         setBrush(brush);
         setCursor(Qt::PointingHandCursor);
     }
 }
 
 void CardSlot::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    QBrush brush;
-    brush.setStyle(Qt::SolidPattern);
-    brush.setColor(Qt::gray);
+    QBrush brush(Qt::gray, Qt::SolidPattern);
     setBrush(brush);
     setCursor(Qt::ArrowCursor);
 }

@@ -6,13 +6,14 @@
 
 extern Oni *game;
 
-Field::Field(double size, QGraphicsItem *parent) : QGraphicsRectItem(parent) {
+Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
     // presettings
     row = -1;
     col = -1;
     pieceType = ' ';
 
     //create a field to put to the scene
+    float size = game->getWindow()->getFieldHeight();
     QGraphicsRectItem *rect = new QGraphicsRectItem;
     setRect(0, 0, size, size);
 
@@ -20,63 +21,70 @@ Field::Field(double size, QGraphicsItem *parent) : QGraphicsRectItem(parent) {
     setAcceptHoverEvents(true);
 }
 
-void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    // identify possible piece from pieces list
-    int pieceNumber = identifyPiece();
-    if (game->getPickedUpPiece() == NULL && pieceNumber != -1) {
-        // try to pick piece up
-        game->setPieceToReposition(game->getPieces()->at(pieceNumber));
-        pickUpPiece(this);
-    }
-}
-
-void Field::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    if (game->getPickedUpPiece() != NULL) {
-        int pieceNumber = identifyPiece();
-        if (pieceNumber == -1)
-            // try to drop piece
-            dropPiece();
-        else
-            // try to capture piece
-            capturePiece(game->getPieces()->at(pieceNumber));
-    }
-}
-
 void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if ((game->getFirstPlayersTurn() && (this->getPieceType() == 'M' || this->getPieceType() == 'S')) ||
         (!game->getFirstPlayersTurn() && (this->getPieceType() == 'm' || this->getPieceType() == 's'))) {
-        QBrush brush;
-        brush.setStyle(Qt::Dense4Pattern);
-        brush.setColor(Qt::gray);
-        setBrush(brush);
+        QBrush brushGray(Qt::gray, Qt::Dense4Pattern);
+        setBrush(brushGray);
         setCursor(Qt::PointingHandCursor);
     }
 }
 
 void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    QBrush brush;
-    brush.setStyle(Qt::NoBrush);
+    QBrush brush(Qt::NoBrush);
+    if (game->getFieldOfOrigin() != NULL && (game->getFieldOfOrigin()->getCol() == this->getCol() &&
+          game->getFieldOfOrigin()->getRow() == this->getRow())) {
+        brush.setStyle(Qt::Dense4Pattern);
+        brush.setColor(Qt::green);
+    }
     setBrush(brush);
     setCursor(Qt::ArrowCursor);
 }
 
-void Field::capturePiece(Piece *target) {
-    // remove captured piece
-    //game->getCapturedPieces()->append(target);
-    //game->getPieces()->removeAll(target);
+void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    // identify possible piece from pieces list
+    int pieceNumber = identifyPiece();
+    if (pieceNumber == -1) {
+        // no piece on that field
+        if (game->getPickedUpPiece() != NULL)
+            // try to drop piece
+            dropPiece();
+    } else {
+        // existing piece on that field
+        if (game->getPickedUpPiece() != NULL)
+            // capture piece
+            captureOrChangePiece(game->getPieces()->at(pieceNumber));
+        else
+            // pick up piece
+            pickUpPiece(game->getPieces()->at(pieceNumber));
+    }
+}
 
-    // drop piece
-    //dropPiece();
+void Field::captureOrChangePiece(Piece *target) {
+    if ((!game->getFirstPlayersTurn() && (target->getType() == 'M' || target->getType() == 'S')) ||
+        (game->getFirstPlayersTurn() && (target->getType() == 'm' || target->getType() == 's'))) {
+        // remove captured piece
+        game->getWindow()->getScene()->removeItem(target);
+        game->getCapturedPieces()->append(target);
+        game->getPieces()->removeAll(target);
+
+        // drop piece
+        dropPiece();
+    } else {
+        putBackPiece(game->getFieldOfOrigin());
+        pickUpPiece(target);
+    }
 }
 
 void Field::dropPiece() {
-    this->linkPiece(game->getPieceToReposition());
+    this->linkPiece(game->getFieldOfOrigin()->getPiece());
 
     // cleaning up
-    game->setPieceToReposition(NULL);
+    game->setFieldOfOrigin(NULL);
     game->getWindow()->getScene()->removeItem(game->getPickedUpPiece());
     game->setPickedUpPiece(NULL);
     game->changePlayersTurn();
+    //game->exchangeCards(usedCard, game->getCards()[game->identifyCards(0).at(0)]);
 }
 
 int Field::identifyPiece() {
@@ -88,8 +96,8 @@ int Field::identifyPiece() {
 
 void Field::linkPiece(Piece *linkedPiece) {
     // link field to piece
-    this->piece = linkedPiece;
-    this->setPieceType(piece->getType());
+    piece = linkedPiece;
+    setPieceType(piece->getType());
 
     // link piece to field
     piece->setParentItem(this);
@@ -97,20 +105,25 @@ void Field::linkPiece(Piece *linkedPiece) {
     piece->setRow(this->getRow());
 }
 
-void Field::pickUpPiece(Field *field) {
-    if ((game->getFirstPlayersTurn() && (game->getPieceToReposition()->getType() == 'M' ||
-                                         game->getPieceToReposition()->getType() == 'S')) ||
-        (!game->getFirstPlayersTurn() && (game->getPieceToReposition()->getType() == 'm' ||
-                                         game->getPieceToReposition()->getType() == 's'))) {
-        // pick the piece up
-        game->setPickedUpPiece(game->getPieceToReposition());
-
+void Field::pickUpPiece(Piece *piece) {
+    if ((game->getFirstPlayersTurn() && (piece->getType() == 'M' || piece->getType() == 'S')) ||
+        (!game->getFirstPlayersTurn() && (piece->getType() == 'm' || piece->getType() == 's'))) {
         // save origin of piece
-        game->setPieceToReposition(game->getPieceToReposition());
+        game->setFieldOfOrigin(this);
+
+        // pick the piece up
+        game->setPickedUpPiece(piece);
 
         // remove old piece
-        field->setPieceType(' ');
-        game->getWindow()->getScene()->removeItem(game->getPieceToReposition());
+        this->setPieceType(' ');
+        game->getWindow()->getScene()->removeItem(piece);
+        QBrush brush(Qt::green, Qt::Dense4Pattern);
+        this->setBrush(brush);
+        this->setCursor(Qt::PointingHandCursor);
     }
+}
 
+void Field::putBackPiece(Field *origin) {
+    origin->setPieceType(game->getPickedUpPiece()->getType());
+    origin->linkPiece(origin->getPiece());
 }

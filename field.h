@@ -2,9 +2,7 @@
 #define FIELD_H
 
 #include <QObject>
-#include <QGraphicsRectItem>
-#include <QGraphicsSceneMouseEvent>
-#include <QGraphicsSceneDragDropEvent>
+#include <QMouseEvent>
 #include "piece.h"
 
 class Field : public QObject, public QGraphicsRectItem {
@@ -18,14 +16,13 @@ private:
 
 protected:
     // events
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 
 public:
     // constructors
-    Field(double size, QGraphicsItem *parent = NULL);
+    Field(QGraphicsItem *parent = NULL);
 
     // getters
     inline int getCol() { return col; }
@@ -40,11 +37,12 @@ public:
     inline void setRow(int newRow) { if (newRow > -1) row = newRow; }
 
     // functions
-    void capturePiece(Piece *target);
+    void captureOrChangePiece(Piece *target);
     void dropPiece();
     int identifyPiece();
     void linkPiece(Piece *linkedPiece);
-    void pickUpPiece(Field *field);
+    void pickUpPiece(Piece *piece);
+    void putBackPiece(Field *origin);
 };
 
 #endif // FIELD_H

@@ -30,8 +30,8 @@ void Piece::drawPiece() {
     }
     if (type != ' ') {
         QPixmap img(":/pics/pieces/" + piece + "_" + color + ".svg");
-        setPos(game->getBorderX(), game->getBorderY());
-        img = img.scaled(game->getFieldHeight() - 2*game->getBorderX(), game->getFieldHeight() - 2*game->getBorderY());
+        setPos(game->getWindow()->getBorderX(), game->getWindow()->getBorderY());
+        img = img.scaled(game->getWindow()->getFieldHeight() - 2*game->getWindow()->getBorderX(), game->getWindow()->getFieldHeight() - 2*game->getWindow()->getBorderY());
         setPixmap(img);
     }
 }

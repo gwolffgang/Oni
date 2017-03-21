@@ -12,16 +12,19 @@ int randomizer(const int max) {
     return(rand() % max +1);
 }
 
-Card::Card(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {}
+Card::Card(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
+    name = "";
+    owner = 0;
+}
 
 void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
     // determinate card
     id = cardID;
     if (id == 0) id = randomizer(16);
     switch (id) {
-    case 1:
-        name = "BOAR";
-        choice[0][0] = 0;   choice[0][1] = 1;
+        case 1:
+            name = "BOAR";
+            choice[0][0] = 0;   choice[0][1] = 1;
             choice[1][0] = -1;  choice[1][1] = 0;
             choice[2][0] = 1;   choice[2][1] = 0;
             break;
@@ -121,7 +124,7 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
     }
     // drawing the card
     QPixmap img(":/pics/cards/" + name + ".png");
-    setPos(game->getBorderX(), game->getBorderY());
-    img = img.scaled(slotWidth - 2*game->getBorderX(), slotHeight - 2*game->getBorderY());
+    setPos(game->getWindow()->getBorderX(), game->getWindow()->getBorderY());
+    img = img.scaled(slotWidth - 2*game->getWindow()->getBorderX(), slotHeight - 2*game->getWindow()->getBorderY());
     setPixmap(img);
 }

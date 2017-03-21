@@ -1,9 +1,7 @@
 #ifndef CARDSLOT_H
 #define CARDSLOT_H
 
-#include <QObject>
-#include <QGraphicsRectItem>
-#include <QGraphicsSceneMouseEvent>
+#include <QMouseEvent>
 #include "card.h"
 
 class CardSlot : public QObject, public QGraphicsRectItem {
