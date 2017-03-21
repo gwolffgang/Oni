@@ -8,6 +8,7 @@ int myrandom(int i) { return std::rand()%i; }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     ui->setupUi(this);
+    scene = NULL;
 
     // presettings
     changeLayout(0.9);
@@ -22,6 +23,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setViewSize(windowWidth+5, windowHeight+5);
+
+    // About dialog
+    about = new AboutWindow(this);
 }
 
 MainWindow::~MainWindow() {
@@ -29,7 +33,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::aboutOni() {
-
+    about->show();
 }
 
 void MainWindow::analyseSetupString(QString string) {
@@ -73,7 +77,7 @@ void MainWindow::changeLayout(double factor) {
         windowWidth = 3*borderX + windowHeight + 2*((windowHeight - 4*borderY) / 3);
     }
     setFixedSize(windowWidth, windowHeight);
-    if (scene) {
+    if (scene != NULL) {
         scene->setSceneRect(0, 0, windowWidth, windowHeight);
         setViewSize(windowWidth+4, windowHeight+4);
         fieldHeight = ((scene->sceneRect().height() - 2*borderY) / 5);

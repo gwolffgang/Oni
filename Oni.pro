@@ -29,16 +29,19 @@ SOURCES += main.cpp\
     field.cpp \
     card.cpp \
     cardslot.cpp \
-    piece.cpp
+    piece.cpp \
+    aboutwindow.cpp
 
 HEADERS  += mainwindow.h \
     oni.h \
     field.h \
     card.h \
     cardslot.h \
-    piece.h
+    piece.h \
+    aboutwindow.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    aboutwindow.ui
 
 RESOURCES += \
     res.qrc

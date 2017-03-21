@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include "aboutwindow.h"
 
 namespace Ui {
 class MainWindow;
@@ -74,6 +75,7 @@ private slots:
 private:
     QScreen *screen;
     QGraphicsScene *scene;
+    AboutWindow *about;
     double windowHeight, windowWidth, borderX, borderY, fieldHeight;
 };
 
