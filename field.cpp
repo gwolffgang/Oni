@@ -85,6 +85,7 @@ void Field::dropPiece() {
     game->setPickedUpPiece(NULL);
     game->changePlayersTurn();
     //game->exchangeCards(usedCard, game->getCards()[game->identifyCards(0).at(0)]);
+    game->getWindow()->saveTurnInNotation();
 }
 
 int Field::identifyPiece() {

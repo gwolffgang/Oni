@@ -33,21 +33,6 @@
       <height>161</height>
      </rect>
     </property>
-    <item>
-     <property name="text">
-      <string>1. Sa2-a4 (TIGER) / md5-e5 (ELEPHANT)</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>2.          ...               / sb3xb4 (CRAB)</string>
-     </property>
-    </item>
-    <item>
-     <property name="text">
-      <string>Sa1 Sb2 Md4 se2 sa5 me2 S-1 S-1 s-1 s-1 ROOSTER TIGER DRAGON CRAB ELEPHANT</string>
-     </property>
-    </item>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">

@@ -14,24 +14,23 @@ void Piece::drawPiece() {
     switch (type) {
     case 'M':
         piece = "master";
-        color = "white";
+        color = "red";
         break;
     case 'S':
         piece = "scolar";
-        color = "white";
+        color = "red";
         break;
     case 'm':
         piece = "master";
-        color = "black";
+        color = "blue";
         break;
     case 's':
         piece = "scolar";
-        color = "black";
+        color = "blue";
     }
     if (type != ' ') {
-        QPixmap img(":/pics/pieces/" + piece + "_" + color + ".svg");
-        setPos(game->getWindow()->getBorderX(), game->getWindow()->getBorderY());
-        img = img.scaled(game->getWindow()->getFieldHeight() - 2*game->getWindow()->getBorderX(), game->getWindow()->getFieldHeight() - 2*game->getWindow()->getBorderY());
+        QPixmap img(":/pics/pieces/" + piece + "_" + color + ".png");
+        img = img.scaled(game->getWindow()->getFieldHeight(), game->getWindow()->getFieldHeight());
         setPixmap(img);
     }
 }

@@ -2,11 +2,13 @@
 #define ONI_H
 
 #include <QApplication>
+#include <QFileDialog>
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include <QMouseEvent>
 #include <QObject>
 #include <QScreen>
+#include <QTextStream>
 
 #include "card.h"
 #include "cardslot.h"
@@ -30,6 +32,7 @@ public:
     inline bool getFirstPlayersTurn() { return firstPlayersTurn; }
     inline bool getFlipBoard() { return flipedBoard; }
     inline int getGameResult() { return gameResult; }
+    inline QString getOpenGameFileName() { return openGameFileName; }
     inline int getNeutralCardsPerPlayer() { return neutralCardsPerPlayer; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
     inline QList<Piece*> *getPieces() { return pieces; }
@@ -42,7 +45,8 @@ public:
     inline void flipBoard() { flipedBoard = !flipedBoard; }
     inline void setCols(int newCols) { cols = newCols; }
     inline void setFieldOfOrigin(Field *origin) { fieldOfOrigin = origin; }
-    inline void setGameResult (int winner) { gameResult = winner; }
+    inline void setGameResult(int winner) { gameResult = winner; }
+    inline void setOpenGameFileName(QString newString) { openGameFileName = newString; }
     void setPickedUpPiece(Piece *newPiece);
     inline void setRows(int newRows) { rows = newRows; }
 
@@ -58,6 +62,7 @@ private:
     QList<Piece*> *pieces, *capturedPieces;
     QList<QList<CardSlot*>> *slotsGrid;
     QList<Card*> *cards;
+    QString openGameFileName;
     Piece *pickedUpPiece;
     Field *fieldOfOrigin;
     int rows, cols, cardsPerPlayer, neutralCardsPerPlayer;

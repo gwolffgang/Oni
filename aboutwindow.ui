@@ -67,7 +67,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tabAbout">
     <attribute name="title">
@@ -143,7 +143,7 @@ p, li { white-space: pre-wrap; }
    </widget>
    <widget class="QWidget" name="tabLicenses">
     <attribute name="title">
-     <string>Licences</string>
+     <string>Licenses</string>
     </attribute>
     <widget class="QWidget" name="gridLayoutWidget">
      <property name="geometry">
@@ -151,12 +151,12 @@ p, li { white-space: pre-wrap; }
        <x>10</x>
        <y>60</y>
        <width>571</width>
-       <height>258</height>
+       <height>221</height>
       </rect>
      </property>
      <layout class="QGridLayout" name="gridLicenses">
-      <item row="4" column="2">
-       <widget class="QLabel" name="link_M_4">
+      <item row="1" column="2">
+       <widget class="QLabel" name="link_M">
         <property name="maximumSize">
          <size>
           <width>250</width>
@@ -164,7 +164,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="text">
-         <string>https://openclipart.org/detail/18651/chess-tile-pawn-1</string>
+         <string>https://openclipart.org/detail/265528/samurai-men</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -175,7 +175,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="author_S">
         <property name="maximumSize">
          <size>
           <width>250</width>
@@ -183,26 +183,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="text">
-         <string>portablejim-Chess-tile-Pawn-3.svg</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QLabel" name="link_M_2">
-        <property name="maximumSize">
-         <size>
-          <width>250</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>https://openclipart.org/detail/18649/chess-tile-pawn-3</string>
+         <string>rones</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -213,7 +194,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="3" column="2">
-       <widget class="QLabel" name="link_M_3">
+       <widget class="QLabel" name="link_m">
         <property name="maximumSize">
          <size>
           <width>250</width>
@@ -221,7 +202,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="text">
-         <string>https://openclipart.org/detail/18670/chess-tile-king-1</string>
+         <string>https://openclipart.org/detail/21951/paper-texture-filter</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -231,52 +212,8 @@ p, li { white-space: pre-wrap; }
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="img_S_2">
-        <property name="maximumSize">
-         <size>
-          <width>50</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="res.qrc">:/pics/pieces/scolar_black.svg</pixmap>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="img_M_2">
-        <property name="maximumSize">
-         <size>
-          <width>50</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap resource="res.qrc">:/pics/pieces/master_black.svg</pixmap>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label">
+      <item row="2" column="2">
+       <widget class="QLabel" name="link_S">
         <property name="maximumSize">
          <size>
           <width>250</width>
@@ -284,45 +221,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="text">
-         <string>portablejim-Chess-tile-King-3.svg</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QLabel" name="link_M">
-        <property name="maximumSize">
-         <size>
-          <width>250</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>https://openclipart.org/detail/18668/chess-tile-king-3</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="label_4">
-        <property name="maximumSize">
-         <size>
-          <width>250</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>portablejim-Chess-tile-Pawn-1.svg</string>
+         <string>https://openclipart.org/detail/233706/samurai-leaf</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -333,7 +232,7 @@ p, li { white-space: pre-wrap; }
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="author_m">
         <property name="maximumSize">
          <size>
           <width>250</width>
@@ -341,13 +240,54 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="text">
-         <string>portablejim-Chess-tile-King-1.svg</string>
+         <string>kelan</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="author_M">
+        <property name="maximumSize">
+         <size>
+          <width>250</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Isidoro Ambasch</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="img_m">
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="res.qrc">:/pics/paper.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -363,10 +303,26 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="res.qrc">:/pics/pieces/scolar_white.svg</pixmap>
+         <pixmap resource="res.qrc">:/pics/pieces/scolar_red.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="textAuthor">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Author</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -385,26 +341,10 @@ p, li { white-space: pre-wrap; }
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap resource="res.qrc">:/pics/pieces/master_white.svg</pixmap>
+         <pixmap resource="res.qrc">:/pics/pieces/master_red.png</pixmap>
         </property>
         <property name="scaledContents">
          <bool>true</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="textFilename">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Filename</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -512,11 +452,6 @@ p, li { white-space: pre-wrap; }
     <zorder>gridLayoutWidget</zorder>
    </widget>
   </widget>
-  <zorder>close</zorder>
-  <zorder>aboutQt</zorder>
-  <zorder>tabWidget</zorder>
-  <zorder>text_3</zorder>
-  <zorder>text_3</zorder>
  </widget>
  <resources>
   <include location="res.qrc"/>

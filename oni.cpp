@@ -23,6 +23,7 @@ Oni::Oni() {
     firstPlayersTurn = true;
     pickedUpPiece = NULL;
     fieldOfOrigin = NULL;
+    openGameFileName = "";
 
     // initiate pieces lists
     pieces = new QList<Piece*>;
