@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QObject>
 #include <QScreen>
+
 #include "card.h"
 #include "cardslot.h"
 #include "field.h"

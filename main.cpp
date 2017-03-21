@@ -1,4 +1,3 @@
-#include <QApplication>
 #include "oni.h"
 
 Oni *game;

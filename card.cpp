@@ -27,24 +27,28 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
             choice[0][0] = 0;   choice[0][1] = 1;
             choice[1][0] = -1;  choice[1][1] = 0;
             choice[2][0] = 1;   choice[2][1] = 0;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 2:
             name = "COBRA";
             choice[0][0] = 1;   choice[0][1] = 1;
             choice[1][0] = -1;  choice[1][1] = 0;
             choice[2][0] = 1;   choice[2][1] = -1;
-            break;
+            choice[3][0] = 0;   choice[3][1] = 0;
+        break;
         case 3:
             name = "CRAB";
             choice[0][0] = 0;   choice[0][1] = 1;
             choice[1][0] = -2;  choice[1][1] = 0;
             choice[2][0] = 2;   choice[2][1] = 0;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 4:
             name = "CRANE";
             choice[0][0] = 0;   choice[0][1] = 1;
             choice[1][0] = -1;  choice[1][1] = -1;
             choice[2][0] = 1;   choice[2][1] = -1;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 5:
             name = "DRAGON";
@@ -58,6 +62,7 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
             choice[0][0] = -1;  choice[0][1] = 1;
             choice[1][0] = 1;   choice[1][1] = 0;
             choice[2][0] = -1;  choice[2][1] = -1;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 7:
             name = "ELEPHANT";
@@ -71,6 +76,7 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
             choice[0][0] = -1;  choice[0][1] = 1;
             choice[1][0] = -2;  choice[1][1] = 0;
             choice[2][0] = 1;   choice[2][1] = -1;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 9:
             name = "GOOSE";
@@ -84,12 +90,14 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
             choice[0][0] = 0;   choice[0][1] = 1;
             choice[1][0] = -1;  choice[1][1] = 0;
             choice[2][0] = 0;   choice[2][1] = -1;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 11:
             name = "MANTIS";
             choice[0][0] = -1;  choice[0][1] = 1;
             choice[1][0] = 1;   choice[1][1] = 1;
             choice[2][0] = 0;   choice[2][1] = -1;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 12:
             name = "MONKEY";
@@ -103,12 +111,14 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
             choice[0][0] = 0;   choice[0][1] = 1;
             choice[1][0] = 1;   choice[1][1] = 0;
             choice[2][0] = 0;   choice[2][1] = -1;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 14:
             name = "RABBIT";
             choice[0][0] = 1;   choice[0][1] = 1;
             choice[1][0] = 2;   choice[1][1] = 0;
             choice[2][0] = -1;  choice[2][1] = -1;
+            choice[3][0] = 0;   choice[3][1] = 0;
             break;
         case 15:
             name = "ROOSTER";
@@ -121,6 +131,8 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
             name = "TIGER";
             choice[0][0] = 0;   choice[0][1] = 2;
             choice[1][0] = 0;   choice[1][1] = -1;
+            choice[2][0] = 0;   choice[2][1] = 0;
+            choice[3][0] = 0;   choice[3][1] = 0;
     }
     // drawing the card
     QPixmap img(":/pics/cards/" + name + ".png");

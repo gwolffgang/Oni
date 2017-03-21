@@ -1,5 +1,4 @@
 #include "oni.h"
-//#include "table.h"
 
 extern Oni *game;
 

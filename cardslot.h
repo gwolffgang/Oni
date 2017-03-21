@@ -2,6 +2,9 @@
 #define CARDSLOT_H
 
 #include <QMouseEvent>
+#include <QObject>
+#include <QGraphicsRectItem>
+
 #include "card.h"
 
 class CardSlot : public QObject, public QGraphicsRectItem {

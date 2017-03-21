@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMouseEvent>
+
 #include "piece.h"
 
 class Field : public QObject, public QGraphicsRectItem {
