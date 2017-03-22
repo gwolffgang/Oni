@@ -17,7 +17,7 @@ Card::Card(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
     owner = 0;
 }
 
-void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
+void Card::setCardValues(int cardID) {
     // determinate card
     id = cardID;
     if (id == 0) id = randomizer(16);
@@ -35,7 +35,7 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
             choice[1][0] = -1;  choice[1][1] = 0;
             choice[2][0] = 1;   choice[2][1] = -1;
             choice[3][0] = 0;   choice[3][1] = 0;
-        break;
+            break;
         case 3:
             name = "CRAB";
             choice[0][0] = 0;   choice[0][1] = 1;
@@ -137,6 +137,6 @@ void Card::setCardValues(int cardID, double slotWidth, double slotHeight) {
     // drawing the card
     QPixmap img(":/pics/cards/" + name + ".png");
     setPos(game->getWindow()->getBorderX(), game->getWindow()->getBorderY());
-    img = img.scaled(slotWidth - 2*game->getWindow()->getBorderX(), slotHeight - 2*game->getWindow()->getBorderY());
+    img = img.scaled(game->getWindow()->getSlotSize() - 2*game->getWindow()->getBorderX(), game->getWindow()->getSlotSize() - 2*game->getWindow()->getBorderY());
     setPixmap(img);
 }

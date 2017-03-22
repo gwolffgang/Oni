@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QPointF>
 #include <QPainter>
+#include <QTimer>
 
 #include "field.h"
 #include "oni.h"
@@ -14,7 +15,7 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
     pieceType = ' ';
 
     //create a field to put to the scene
-    float size = game->getWindow()->getFieldHeight();
+    float size = game->getWindow()->getFieldSize();
     QGraphicsRectItem *rect = new QGraphicsRectItem;
     setRect(0, 0, size, size);
 
@@ -36,8 +37,7 @@ void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     QBrush brush = game->getWindow()->brushEmpty;
     if (game->getFieldOfOrigin() != NULL && (game->getFieldOfOrigin()->getCol() == this->getCol() &&
           game->getFieldOfOrigin()->getRow() == this->getRow())) {
-        brush.setStyle(Qt::Dense4Pattern);
-        brush.setColor(Qt::green);
+        brush = game->getWindow()->brushSelected;
     }
     setBrush(brush);
     setCursor(Qt::ArrowCursor);
@@ -76,7 +76,7 @@ void Field::captureOrChangePiece(Piece *target) {
         // put back picked up piece
         game->getFieldOfOrigin()->setPieceType(game->getPickedUpPiece()->getType());
 
-        QBrush brush(Qt::red, Qt::Dense4Pattern);
+        QBrush brush = game->getWindow()->brushEmpty;
         setBrush(brush);
 
         // pick up new piece
@@ -93,6 +93,8 @@ void Field::dropPiece() {
     // cleaning up
     game->setFieldOfOrigin(NULL);
     game->setPickedUpPiece(NULL);
+
+    QTimer::singleShot( 1, game->getWindow(), SLOT(refreshWindow()) );
 }
 
 int Field::identifyPiece() {
@@ -124,7 +126,7 @@ void Field::pickUpPiece(Piece *piece) {
 
         // mark field as pieceless but choosen
         this->setPieceType(' ');
-        QBrush brush(Qt::green, Qt::Dense4Pattern);
+        QBrush brush = game->getWindow()->brushSelected;
         setBrush(brush);
     }
 }

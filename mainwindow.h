@@ -27,8 +27,9 @@ public:
     // getter
     inline int getBorderX() { return borderX; }
     inline int getBorderY() { return borderY; }
-    inline double getFieldHeight() { return fieldHeight; }
+    inline double getFieldSize() { return fieldSize; }
     inline QGraphicsScene *getScene() { return scene; }
+    inline double getSlotSize() { return slotSize; }
     inline double getSideBarSize() { return sideBarSize; }
     inline double getWindowHeight() { return windowHeight; }
     inline double getWindowWidth() { return windowWidth; }
@@ -36,7 +37,8 @@ public:
     // setter
     inline void setBorderX(int newX) { borderX = newX; }
     inline void setBorderY(int newY) { borderY = newY; }
-    inline void setFieldHeight(double newFieldHeight) { fieldHeight = newFieldHeight; }
+    inline void setFieldSize(double newFieldSize) { fieldSize = newFieldSize; }
+    inline void setSlotSize(double newSlotSize) { slotSize = newSlotSize; }
 
     // functions
     inline void aboutOni() { about->show(); }
@@ -57,6 +59,8 @@ public:
     void setViewSize(double width, double height);
 
 private slots:
+    // Refresh
+    void refreshWindow() { prepareGame(); }
     // Game
     void on_actionNew_triggered() { newGame(); }
     void on_actionLoad_triggered() { loadGame(); }
@@ -69,11 +73,10 @@ private slots:
     void on_actionSmallLayout_triggered() { changeLayout(0.5); }
     void on_actionNormalLayout_triggered() { changeLayout(0.75); }
     void on_actionLargeLayout_triggered() { changeLayout(1.0); }
+    void on_actionFullScreen_triggered();
     // Help
     void on_actionAboutOni_triggered() { aboutOni(); }
     void on_actionAboutQt_triggered();
-
-    void on_actionFullScreen_triggered();
 
 private:
     QScreen *screen;
@@ -81,7 +84,7 @@ private:
     AboutWindow *about;
     QString windowTitle;
     Button *flipButton;
-    double windowHeight, windowWidth, borderX, borderY, fieldHeight, sideBarSize;
+    double windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize;
 };
 
 #endif // MAINWINDOW_H

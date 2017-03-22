@@ -25,28 +25,11 @@ Oni::Oni() {
     fieldOfOrigin = NULL;
     openGameFileName = "";
 
-    // initiate pieces lists
+    // initiate lists
     pieces = new QList<Piece*>;
     capturedPieces = new QList<Piece*>;
+    cards = new QList<Card*>;
 }
-
-/*void Oni::setPickedUpPiece(Piece *newPiece) {
-    if (newPiece == NULL) {
-        delete pickedUpPiece;
-        pickedUpPiece = NULL;
-    }
-    else {
-        if (pickedUpPiece) delete pickedUpPiece;
-        pickedUpPiece = new Piece;
-        pickedUpPiece->setCol(newPiece->getCol());
-        pickedUpPiece->setRow(newPiece->getRow());
-        pickedUpPiece->setType(newPiece->getType());
-        pickedUpPiece->drawPiece();
-        QPointF piecePos = game->getBoard()->at(newPiece->getRow()).at(newPiece->getCol())->pos() ;
-        pickedUpPiece->setPos(piecePos);
-        window->getScene()->addItem(pickedUpPiece);
-    }
-}*/
 
 void Oni::exchangeCards(Card *card1, Card *card2) {
     Card *temporary = new Card;

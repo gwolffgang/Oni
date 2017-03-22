@@ -29,7 +29,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene = new QGraphicsScene(this);
     scene->setBackgroundBrush(QBrush(QImage(":/pics/paper.png")));
     scene->setSceneRect(0, 0, windowWidth, windowHeight);
-    fieldHeight = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
+    fieldSize = (scene->sceneRect().height() - 2*borderY - sideBarSize) / 5;
+    slotSize = (scene->height() - 4*borderY) / 3;
     ui->view->setScene(scene);
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -44,7 +45,11 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::analyseSetupString(QString string) {
-    QStringList elem = string.split(" ");
+    // seperate pieces and cards
+    QStringList part = string.split("|");
+
+    // get pieces
+    QStringList elem = part.at(0).split(",");
     for (int i = 0; i < elem.size(); i++) {
         Piece *piece = new Piece;
         piece->setType(elem[i].at(0).unicode());
@@ -68,8 +73,34 @@ void MainWindow::analyseSetupString(QString string) {
         piece->setRow(elem[i].at(2).digitValue() - 1);
 
         // add piece to pieces list
-        game->getPieces()->append(piece);
+        if (!game->getPieces()->contains(piece)) game->getPieces()->append(piece);
     }
+    // get cards
+    elem = part.at(1).split(",");
+    for (int i = 0; i < elem.size(); i++) {
+        Card *card = new Card;
+        card->setCardValues(elem.at(i).toInt());
+        if (!game->getCards()->contains(card)) game->getCards()->append(card);
+    }
+    if (game->getCards()->size() != 5) {
+        // clear cards list
+        game->getCards()->clear();
+        // determine random, unique cards
+        int intArray[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+        srand(unsigned(time(NULL)));
+        std::random_shuffle(&intArray[0], &intArray[16], myrandom);
+        for (int i = 0; i < 5; i++) {
+            Card *card = new Card;
+            card->setCardValues(intArray[i]);
+            game->getCards()->append(card);
+        }
+    }
+    // set owner
+    game->getCards()->at(0)->setOwner(0);
+    game->getCards()->at(1)->setOwner(1);
+    game->getCards()->at(2)->setOwner(1);
+    game->getCards()->at(3)->setOwner(2);
+    game->getCards()->at(4)->setOwner(2);
 }
 
 void MainWindow::changeLayout(double factor) {
@@ -113,7 +144,7 @@ void MainWindow::changeLayout(double factor) {
     if (scene != NULL) {
         scene->setSceneRect(0, 0, windowWidth, windowHeight);
         setViewSize(windowWidth+4, windowHeight+4);
-        fieldHeight = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
+        fieldSize = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
         prepareGame();
     }
 }
@@ -130,7 +161,7 @@ void MainWindow::drawBoard() {
             field->setRow(row);
             field->setCol(col);
             field->setPieceType(' ');
-            field->setPos(borderX + fieldHeight * col, borderY + fieldHeight * (4-row));
+            field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
 
             // add piece to field
             int pieceNumber = field->identifyPiece();
@@ -148,29 +179,19 @@ void MainWindow::drawBoard() {
 }
 
 void MainWindow::drawCardSlots() {
-    // scaling the cardslots to windowsize
-    double sizeY = (scene->height() - 4*borderY) / 3;
-    double sizeX = sizeY;
-
-    // determine the cards
-    int intArray[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-    srand(unsigned(time(NULL)));
-    std::random_shuffle(&intArray[0], &intArray[16], myrandom);
-
     // drawing the slotsGrid
     QList<CardSlot*> slotsRow;
-    int elem = 0;
     for (int player = 0; player < 3; player++) {
         slotsRow.clear();
         int maxSlots = game->getCardsPerPlayer();
         if (player == 0) maxSlots = game->getNeutralCardsPerPlayer();
         for (int number = 0; number < maxSlots; number++) {
-            CardSlot *slot = new CardSlot(sizeY);
+            CardSlot *slot = new CardSlot(slotSize);
             slot->setOwner(player);
-            double posX = scene->height() + number * sizeX + (number + 1) * borderX;
-            double posY = ((-1.5 * player + 2.5) * player + 1) * sizeY + ((-1.5 * player + 2.5) * player + 2) * borderY;
+            double posX = scene->height() + number * slotSize + (number + 1) * borderX;
+            double posY = ((-1.5 * player + 2.5) * player + 1) * slotSize + ((-1.5 * player + 2.5) * player + 2) * borderY;
             slot->setPos(posX, posY);
-            slot->addCard(intArray[elem++], slot->rect().width(), slot->rect().height(), player);
+            slot->addCard(player, number);
             scene->addItem(slot);
             slotsRow.append(slot);
         }
@@ -191,7 +212,7 @@ QString MainWindow::generateSetupString() {
     QString saveString = "";
     for (int i = 0; i < game->getPieces()->size(); i++) {
         Piece *piece = game->getPieces()->at(i);
-        if (saveString != "") saveString += " ";
+        if (saveString != "") saveString += ",";
         saveString += piece->getType();
         switch (game->getPieces()->at(i)->getCol()) {
         case 0:
@@ -211,6 +232,15 @@ QString MainWindow::generateSetupString() {
         }
         saveString += QString::number(game->getPieces()->at(i)->getRow()+1);
     }
+    saveString += "|";
+    for (int k = 0; k < 3; k++) {
+        for (int i = 0; i < game->getCards()->size(); i++)
+            if (game->getCards()->at(i)->getOwner() == k) {
+                if (k != 0) saveString += ",";
+                saveString += QString::number(game->getCards()->at(i)->getID());
+            }
+    }
+
     return saveString;
 }
 
@@ -220,8 +250,8 @@ void MainWindow::loadGame() {
     if (!fileName.isEmpty()) {
         QFile file(fileName);
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("Application"), tr("Cannot read file %1:\n%2.")
-                             .arg(QDir::toNativeSeparators(fileName), file.errorString()));
+            QMessageBox::warning(this, tr("Application"), tr("Cannot read file %1:\n%2.")
+                        .arg(QDir::toNativeSeparators(fileName), file.errorString()));
                 return;
             }
         QTextStream in(&file);
@@ -248,13 +278,14 @@ void MainWindow::newGame(QString setupString) {
     // reset settings
     if (!game->getFirstPlayersTurn()) game->changePlayersTurn();
     if (game->getFlipBoard()) game->flipBoard();
+    ui->notation->clear();
 
     // reset lists
     if (game->getPieces()) game->getPieces()->clear();
-    //if (game->getCards()) game->getCards()->clear();
+    if (game->getCards()) game->getCards()->clear();
 
     // setup string
-    if (setupString == "") setupString = "Sa1 Sb1 Mc1 Sd1 Se1 sa5 sb5 mc5 sd5 se5";
+    if (setupString == "") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
     analyseSetupString(setupString);
 
     // prepare the game

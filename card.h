@@ -16,6 +16,7 @@ public:
 
     // getters
     inline QString getName() { return name; }
+    inline int getID() { return id; }
     inline int getOwner() { return owner; }
     inline int getXFromChoice(const int number) { return choice[number][0]; }
     inline int getYFromChoice(const int number) { return choice[number][1]; }
@@ -25,7 +26,7 @@ public:
     inline void setOwner(int newOwner) { if (newOwner > -1 && newOwner < 3) owner = newOwner; }
 
     //functions
-    void setCardValues(int cardID, double slotWidth, double slotHeight);
+    void setCardValues(int cardID);
 
 private:
     // variables

@@ -30,7 +30,7 @@ void Piece::drawPiece() {
     }
     if (type != ' ') {
         QPixmap img(":/pics/pieces/" + piece + "_" + color + ".png");
-        img = img.scaled(game->getWindow()->getFieldHeight(), game->getWindow()->getFieldHeight());
+        img = img.scaled(game->getWindow()->getFieldSize(), game->getWindow()->getFieldSize());
         setPixmap(img);
     }
 }

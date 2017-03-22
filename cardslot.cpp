@@ -24,10 +24,14 @@ void CardSlot::setOwner(int newOwner) {
         owner = newOwner;
 }
 
-void CardSlot::addCard(int id, double slotWidth, double slotHeight, int player) {
-    Card *card = new Card(this);
-    card->setOwner(player);
-    card->setCardValues(id, slotWidth, slotHeight);
+void CardSlot::addCard(int player, int number) {
+    // determine correct card
+    QList<int> list;
+    for (int i = 0; i < game->getCards()->size(); i++)
+         if (game->getCards()->at(i)->getOwner() == player) list.append(i);
+    card = game->getCards()->at(list.at(number));
+    card->setParentItem(this);
+    // check if card has to be flipped
     if (!game->getFlipBoard()) {
         if (game->getFirstPlayersTurn() && player == 2) {
             card->setTransformOriginPoint(card->boundingRect().height() / 2, card->boundingRect().width() / 2);

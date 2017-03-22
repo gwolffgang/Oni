@@ -36,5 +36,4 @@ void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 
 void Button::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );
-   // game->getWindow()->on_actionFlipOnce_triggered();
 }
