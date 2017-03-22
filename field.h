@@ -43,7 +43,6 @@ public:
     int identifyPiece();
     void linkPiece(Piece *linkedPiece);
     void pickUpPiece(Piece *piece);
-    void putBackPiece(Field *origin);
 };
 
 #endif // FIELD_H

@@ -30,7 +30,7 @@ Oni::Oni() {
     capturedPieces = new QList<Piece*>;
 }
 
-void Oni::setPickedUpPiece(Piece *newPiece) {
+/*void Oni::setPickedUpPiece(Piece *newPiece) {
     if (newPiece == NULL) {
         delete pickedUpPiece;
         pickedUpPiece = NULL;
@@ -43,10 +43,10 @@ void Oni::setPickedUpPiece(Piece *newPiece) {
         pickedUpPiece->setType(newPiece->getType());
         pickedUpPiece->drawPiece();
         QPointF piecePos = game->getBoard()->at(newPiece->getRow()).at(newPiece->getCol())->pos() ;
-        pickedUpPiece->setPos(piecePos + QPointF(game->window->getBorderX(), game->window->getBorderY()));
+        pickedUpPiece->setPos(piecePos);
         window->getScene()->addItem(pickedUpPiece);
     }
-}
+}*/
 
 void Oni::exchangeCards(Card *card1, Card *card2) {
     Card *temporary = new Card;

@@ -2,6 +2,7 @@
 #define ONI_H
 
 #include <QApplication>
+#include <QBrush>
 #include <QFileDialog>
 #include <QGraphicsScene>
 #include <QGraphicsView>
@@ -47,7 +48,7 @@ public:
     inline void setFieldOfOrigin(Field *origin) { fieldOfOrigin = origin; }
     inline void setGameResult(int winner) { gameResult = winner; }
     inline void setOpenGameFileName(QString newString) { openGameFileName = newString; }
-    void setPickedUpPiece(Piece *newPiece);
+    inline void setPickedUpPiece(Piece *newPiece) { pickedUpPiece = newPiece; }
     inline void setRows(int newRows) { rows = newRows; }
 
     //functions

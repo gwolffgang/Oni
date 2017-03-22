@@ -10,12 +10,6 @@
 class Card : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
-private:
-    // variables
-    QString name;
-    int owner;
-    int choice[4][2], id;
-
 public:
     // constructors
     Card(QGraphicsItem *parent = NULL);
@@ -32,6 +26,12 @@ public:
 
     //functions
     void setCardValues(int cardID, double slotWidth, double slotHeight);
+
+private:
+    // variables
+    QString name;
+    int owner;
+    int choice[4][2], id;
 };
 
 #endif // CARD_H

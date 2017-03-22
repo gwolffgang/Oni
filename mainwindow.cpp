@@ -13,9 +13,17 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene = NULL;
 
     // presettings
-    changeLayout(0.7);
+    changeLayout(0.75);
     windowTitle = "Oni - new unsaved game";
     setWindowTitle(windowTitle);
+
+    // setup brushes
+    brushEmpty           = QBrush(Qt::NoBrush);
+    brushHovered         = QBrush(Qt::gray, Qt::Dense4Pattern);
+    brushSelected        = QBrush(Qt::magenta, Qt::Dense4Pattern);
+    brushChooseableCard1 = QBrush(Qt::yellow, Qt::Dense4Pattern);
+    brushChooseableCard2 = QBrush(Qt::blue, Qt::Dense4Pattern);
+    brushChooseableBoth  = QBrush(Qt::green, Qt::Dense4Pattern);
 
     // scene setup
     scene = new QGraphicsScene(this);
@@ -66,7 +74,6 @@ void MainWindow::analyseSetupString(QString string) {
 
 void MainWindow::changeLayout(double factor) {
     // Change menu checkings
-
     if (!ui->actionFullScreen->isChecked()) {
         if (factor == 0.25) {
             ui->actionTinyLayout->setChecked(true);
@@ -213,8 +220,7 @@ void MainWindow::loadGame() {
     if (!fileName.isEmpty()) {
         QFile file(fileName);
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
-        QMessageBox::warning(this, tr("Application"),
-                             tr("Cannot read file %1:\n%2.")
+        QMessageBox::warning(this, tr("Application"), tr("Cannot read file %1:\n%2.")
                              .arg(QDir::toNativeSeparators(fileName), file.errorString()));
                 return;
             }
@@ -228,7 +234,6 @@ void MainWindow::loadGame() {
         #endif
 
         game->setOpenGameFileName(fileName);
-        QMessageBox::information(this, "Text", newString);
         newGame(newString);
 
         // set window title
@@ -326,21 +331,16 @@ void MainWindow::setViewSize(double width, double height) {
     ui->view->setFixedSize(width, height);
 }
 
-void MainWindow::mouseMoveEvent(QMouseEvent *event) {
-    // picked up piece follows the cursor
-    if (game->getPickedUpPiece() != NULL)
-        game->getPickedUpPiece()->setPos(event->pos()
-            - QPointF(game->getPickedUpPiece()->pixmap().height() / 2,
-                      game->getPickedUpPiece()->pixmap().height() / 2));
-}
-
 void MainWindow::on_actionSave_triggered() {
     bool success = false;
     if (game->getOpenGameFileName() != "") success = saveGame(game->getOpenGameFileName());
     else success = saveGameAs();
 }
 
-void MainWindow::on_actionFlipOnce_triggered() { game->flipBoard(); prepareGame(); }
+void MainWindow::on_actionFlipOnce_triggered() {
+    game->flipBoard();
+    prepareGame();
+}
 
 void MainWindow::on_actionAboutQt_triggered() {
     QApplication::aboutQt();

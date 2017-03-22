@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow
 
 public:
     Ui::MainWindow *ui;
+    QBrush brushEmpty, brushHovered, brushSelected, brushChooseableCard1, brushChooseableCard2, brushChooseableBoth;
 
     // constructors
     explicit MainWindow(QWidget *parent = 0);
@@ -54,10 +55,6 @@ public:
     void saveTurnInNotation();
     void unparentPieces();
     void setViewSize(double width, double height);
-
-protected:
-    // events
-    void mouseMoveEvent(QMouseEvent *event) override;
 
 private slots:
     // Game

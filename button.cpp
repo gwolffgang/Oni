@@ -1,5 +1,6 @@
 #include "button.h"
 #include "oni.h"
+#include <QTimer>
 
 extern Oni *game;
 
@@ -34,5 +35,6 @@ void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Button::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    game->flipBoard();
+    QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );
+   // game->getWindow()->on_actionFlipOnce_triggered();
 }

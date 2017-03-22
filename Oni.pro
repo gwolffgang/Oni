@@ -26,21 +26,21 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     oni.cpp \
-    field.cpp \
     card.cpp \
-    cardslot.cpp \
     piece.cpp \
     aboutwindow.cpp \
-    button.cpp
+    button.cpp \
+    field.cpp \
+    cardslot.cpp
 
 HEADERS  += mainwindow.h \
     oni.h \
-    field.h \
     card.h \
-    cardslot.h \
     piece.h \
     aboutwindow.h \
-    button.h
+    button.h \
+    field.h \
+    cardslot.h
 
 FORMS    += mainwindow.ui \
     aboutwindow.ui

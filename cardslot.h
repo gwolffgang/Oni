@@ -3,7 +3,6 @@
 
 #include <QMouseEvent>
 #include <QObject>
-#include <QGraphicsRectItem>
 
 #include "card.h"
 
@@ -14,6 +13,12 @@ private:
     //variables
     Card *card;
     int owner;          // 0 = neutral, 1 = player white, 2 = player black
+
+protected:
+    //events
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 
 public:
     //constructors
@@ -27,11 +32,6 @@ public:
 
     //functions
     void addCard(int id, double slotWidth, double slotHeight, int player);
-
-    //events
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 };
 
 #endif // CARDSLOT_H
