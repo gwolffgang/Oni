@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene = NULL;
 
     // presettings
-    changeLayout(0.9);
+    changeLayout(0.7);
     windowTitle = "Oni - new unsaved game";
     setWindowTitle(windowTitle);
 
@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene = new QGraphicsScene(this);
     scene->setBackgroundBrush(QBrush(QImage(":/pics/paper.png")));
     scene->setSceneRect(0, 0, windowWidth, windowHeight);
-    fieldHeight = ((scene->sceneRect().height() - 2*borderY) / 5);
+    fieldHeight = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
     ui->view->setScene(scene);
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -65,27 +65,54 @@ void MainWindow::analyseSetupString(QString string) {
 }
 
 void MainWindow::changeLayout(double factor) {
+    // Change menu checkings
+
+    if (!ui->actionFullScreen->isChecked()) {
+        if (factor == 0.25) {
+            ui->actionTinyLayout->setChecked(true);
+            ui->actionSmallLayout->setChecked(false);
+            ui->actionNormalLayout->setChecked(false);
+            ui->actionLargeLayout->setChecked(false);
+        } else if (factor == 0.50) {
+            ui->actionTinyLayout->setChecked(false);
+            ui->actionSmallLayout->setChecked(true);
+            ui->actionNormalLayout->setChecked(false);
+            ui->actionLargeLayout->setChecked(false);
+        } else if (factor == 0.75) {
+            ui->actionTinyLayout->setChecked(false);
+            ui->actionSmallLayout->setChecked(false);
+            ui->actionNormalLayout->setChecked(true);
+            ui->actionLargeLayout->setChecked(false);
+        } else if (factor == 1.00) {
+            ui->actionTinyLayout->setChecked(false);
+            ui->actionSmallLayout->setChecked(false);
+            ui->actionNormalLayout->setChecked(false);
+            ui->actionLargeLayout->setChecked(true);
+        }
+    }
     screen = QGuiApplication::primaryScreen();
     QRect desktop = screen->availableGeometry();
     borderX = 10 * factor;
     borderY = 10 * factor;
+    sideBarSize = 40 * factor;
     windowHeight = desktop.height() * factor;
-    windowWidth = 3*borderX + windowHeight + 2*((windowHeight - 4*borderY) / 3);
+    windowWidth = windowHeight + 3*borderX + 2*((windowHeight - 4*borderY) / 3);
     while (windowWidth > desktop.width()-4) {
         windowHeight--;
         windowWidth = 3*borderX + windowHeight + 2*((windowHeight - 4*borderY) / 3);
     }
+    setGeometry(0,0,windowWidth,windowHeight);
     setFixedSize(windowWidth, windowHeight);
     if (scene != NULL) {
         scene->setSceneRect(0, 0, windowWidth, windowHeight);
         setViewSize(windowWidth+4, windowHeight+4);
-        fieldHeight = ((scene->sceneRect().height() - 2*borderY) / 5);
+        fieldHeight = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
         prepareGame();
     }
 }
 
-void MainWindow::createBoard() {
-    // creating the board
+void MainWindow::drawBoard() {
+    // drawing the board
     game->getBoard()->clear();
     QList<Field*> fieldsRow;
     for (int row = 0; row < game->getRows(); row++) {
@@ -98,33 +125,18 @@ void MainWindow::createBoard() {
             field->setPieceType(' ');
             field->setPos(borderX + fieldHeight * col, borderY + fieldHeight * (4-row));
 
-            // add field to row
-            fieldsRow.append(field);
-        }
-        // add row to board
-        game->getBoard()->append(fieldsRow);
-    }
-}
-
-void MainWindow::createCardSlots() {
-
-}
-
-void MainWindow::drawBoard() {
-    // drawing the board
-    Oni *test = game;
-    for (int row = 0; row < game->getBoard()->size(); row++) {
-        for (int col = 0; col < game->getBoard()->at(row).size(); col++) {
-            Field *field = game->getBoard()->at(row).at(col);
             // add piece to field
             int pieceNumber = field->identifyPiece();
             if (pieceNumber != -1) {
                 field->linkPiece(game->getPieces()->at(pieceNumber));
                 field->getPiece()->drawPiece();
             }
-            // add field to scene
+            // add field to row
+            fieldsRow.append(field);
             scene->addItem(field);
         }
+        // add row to board
+        game->getBoard()->append(fieldsRow);
     }
 }
 
@@ -157,6 +169,15 @@ void MainWindow::drawCardSlots() {
         }
         game->getSlotsGrid()->append(slotsRow);
     }
+}
+
+void MainWindow::drawSideBar() {
+    flipButton = new Button;
+    flipButton->drawButton("flipButton", "right");
+    double posX = this->height() - sideBarSize;
+    double posY = (this->height() - sideBarSize - flipButton->pixmap().height() ) /2;
+    flipButton->setPos(posX, posY);
+    scene->addItem(flipButton);
 }
 
 QString MainWindow::generateSetupString() {
@@ -225,7 +246,7 @@ void MainWindow::newGame(QString setupString) {
 
     // reset lists
     if (game->getPieces()) game->getPieces()->clear();
-    if (game->getCards()) game->getCards()->clear();
+    //if (game->getCards()) game->getCards()->clear();
 
     // setup string
     if (setupString == "") setupString = "Sa1 Sb1 Mc1 Sd1 Se1 sa5 sb5 mc5 sd5 se5";
@@ -243,11 +264,13 @@ void MainWindow::positionNotation() {
 }
 
 void MainWindow::prepareGame() {
-   // if (game->getPieces()) unparentPieces();
-    scene->clear();
-    createBoard();
-    createCardSlots();
+    // Remove items from scene
+    QList<QGraphicsItem*> items = scene->items();
+    foreach(QGraphicsItem *item, items) scene->removeItem(item);
+
+    // Generate and draw Items to the scene
     drawBoard();
+    drawSideBar();
     drawCardSlots();
     positionNotation();
 }
@@ -294,10 +317,6 @@ void MainWindow::saveTurnInNotation() {
     ui->notation->addItem(generateSetupString());
 }
 
-/* void MainWindow::showPosition(QListWidgetItem *) {
-
-} */
-
 void MainWindow::unparentPieces() {
     for (int i = 0; i < game->getPieces()->size(); i++)
         game->getPieces()->at(i)->setParentItem(NULL);
@@ -315,12 +334,30 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event) {
                       game->getPickedUpPiece()->pixmap().height() / 2));
 }
 
-void MainWindow::on_actionAboutQt_triggered() {
-    QApplication::aboutQt();
-}
-
 void MainWindow::on_actionSave_triggered() {
     bool success = false;
     if (game->getOpenGameFileName() != "") success = saveGame(game->getOpenGameFileName());
     else success = saveGameAs();
+}
+
+void MainWindow::on_actionFlipOnce_triggered() { game->flipBoard(); prepareGame(); }
+
+void MainWindow::on_actionAboutQt_triggered() {
+    QApplication::aboutQt();
+}
+
+void MainWindow::on_actionFullScreen_triggered()
+{
+    if (ui->actionFullScreen->isChecked()) {
+        ui->actionFullScreen->setChecked(true);
+        QMainWindow::showFullScreen();
+        changeLayout(1.0);
+    } else {
+        ui->actionFullScreen->setChecked(false);
+        QMainWindow::showNormal();
+        if (ui->actionTinyLayout->isChecked()) changeLayout(0.25);
+        if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
+        if (ui->actionNormalLayout->isChecked()) changeLayout(0.75);
+        if (ui->actionLargeLayout->isChecked()) changeLayout(1.00);
+    }
 }

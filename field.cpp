@@ -17,7 +17,7 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
     QGraphicsRectItem *rect = new QGraphicsRectItem;
     setRect(0, 0, size, size);
 
-    //allow responding to hover and dropping events
+    //allow responding to hover events
     setAcceptHoverEvents(true);
 }
 

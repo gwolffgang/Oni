@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     card.cpp \
     cardslot.cpp \
     piece.cpp \
-    aboutwindow.cpp
+    aboutwindow.cpp \
+    button.cpp
 
 HEADERS  += mainwindow.h \
     oni.h \
@@ -38,10 +39,13 @@ HEADERS  += mainwindow.h \
     card.h \
     cardslot.h \
     piece.h \
-    aboutwindow.h
+    aboutwindow.h \
+    button.h
 
 FORMS    += mainwindow.ui \
     aboutwindow.ui
 
 RESOURCES += \
     res.qrc
+
+DISTFILES +=

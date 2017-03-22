@@ -74,10 +74,27 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionRules"/>
+    <addaction name="separator"/>
     <addaction name="actionAboutOni"/>
     <addaction name="actionAboutQt"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <widget class="QMenu" name="menuFlipBoard">
+     <property name="title">
+      <string>Flip board</string>
+     </property>
+     <addaction name="actionFlipOnce"/>
+     <addaction name="actionFlipEveryMove"/>
+    </widget>
+    <addaction name="menuFlipBoard"/>
+    <addaction name="actionHideNotation"/>
+   </widget>
    <addaction name="menuGame"/>
+   <addaction name="menuSettings"/>
    <addaction name="menuLayout"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -160,7 +177,7 @@
     <string>&amp;FullScreen</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+F</string>
+    <string>Alt+Return</string>
    </property>
   </action>
   <action name="actionTinyLayout">
@@ -192,26 +209,45 @@
     <string>Ctrl+A</string>
    </property>
   </action>
+  <action name="actionRules">
+   <property name="text">
+    <string>&amp;Rules of the game</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionHideNotation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Hide &amp;notation</string>
+   </property>
+  </action>
+  <action name="actionFlipOnce">
+   <property name="text">
+    <string>&amp;Once</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionFlipEveryMove">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Every move</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+F</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections>
-  <connection>
-   <sender>actionFullScreen</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>showFullScreen()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>373</x>
-     <y>253</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>actionExit</sender>
    <signal>triggered()</signal>
