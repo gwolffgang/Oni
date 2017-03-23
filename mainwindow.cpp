@@ -163,6 +163,7 @@ void MainWindow::drawBoard() {
             field->setCol(col);
             field->setPieceType(' ');
             field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
+            field->colorizeField();
 
             // add piece to field
             int pieceNumber = field->identifyPiece();

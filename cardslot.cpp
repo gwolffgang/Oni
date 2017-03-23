@@ -3,12 +3,13 @@
 
 extern Oni *game;
 
-CardSlot::CardSlot(double size, QGraphicsItem *parent) {
+CardSlot::CardSlot(double size, QGraphicsItem *parent) : QGraphicsRectItem(parent) {
     // presettings
     owner = 0;
 
     //create a slot to put to the scene
-    QGraphicsRectItem *rect = new QGraphicsRectItem;
+    QGraphicsRectItem *rect;
+    rect = new QGraphicsRectItem;
     setRect(0, 0, size, size);
 
     //colorize field
@@ -55,7 +56,7 @@ void CardSlot::drawCard(int player, int number) {
 }
 
 void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
+    event->ignore();
 }
 
 void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
@@ -64,10 +65,12 @@ void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
         setBrush(brush);
         setCursor(Qt::PointingHandCursor);
     }
+    event->ignore();
 }
 
 void CardSlot::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     QBrush brush(Qt::gray, Qt::SolidPattern);
     setBrush(brush);
     setCursor(Qt::ArrowCursor);
+    event->ignore();
 }

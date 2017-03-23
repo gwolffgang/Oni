@@ -28,12 +28,15 @@ void Button::drawButton(QString type, QString pos) {
 
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     setCursor(Qt::PointingHandCursor);
+    event->ignore();
 }
 
 void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     setCursor(Qt::ArrowCursor);
+    event->ignore();
 }
 
 void Button::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );
+    event->ignore();
 }

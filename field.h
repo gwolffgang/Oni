@@ -28,6 +28,7 @@ public:
 
     // getters
     inline int getCol() { return col; }
+    inline QColor getColor() { return color; }
     inline Piece *getPiece() { return piece; }
     inline char getPieceType() { return pieceType; }
     inline int getRow() { return row; }
@@ -40,6 +41,7 @@ public:
 
     // functions
     void captureOrChangePiece(Piece *target);
+    void colorizeField();
     void dropPiece();
     int identifyPiece();
     void linkPiece(Piece *linkedPiece);

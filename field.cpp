@@ -27,11 +27,14 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
 void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if ((game->getFirstPlayersTurn() && (this->getPieceType() == 'M' || this->getPieceType() == 'S')) ||
         (!game->getFirstPlayersTurn() && (this->getPieceType() == 'm' || this->getPieceType() == 's'))) {
-        color = game->getWindow()->colorHovered;
-        QBrush brush(color, Qt::Dense4Pattern);
-        setBrush(brush);
+        if (piece != game->getPickedUpPiece()) {
+            color = game->getWindow()->colorHovered;
+            QBrush brush(color, Qt::Dense4Pattern);
+            setBrush(brush);
+        }
         setCursor(Qt::PointingHandCursor);
     }
+    event->ignore();
 }
 
 void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
@@ -43,6 +46,7 @@ void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     QBrush brush(color, Qt::Dense4Pattern);
     setBrush(brush);
     setCursor(Qt::ArrowCursor);
+    event->ignore();
 }
 
 void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -62,6 +66,7 @@ void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
             // pick up piece
             pickUpPiece(game->getPieces()->at(pieceNumber));
     }
+    event->ignore();
 }
 
 void Field::captureOrChangePiece(Piece *target) {
@@ -76,19 +81,26 @@ void Field::captureOrChangePiece(Piece *target) {
         dropPiece();
     } else {
         // put back picked up piece
-        game->getFieldOfOrigin()->setPieceType(game->getPickedUpPiece()->getType());
-
-        color = game->getWindow()->colorNone;
+        color = game->getWindow()->colorHovered;
         QBrush brush(color, Qt::Dense4Pattern);
         setBrush(brush);
 
-        // pick up new piece
-        pickUpPiece(target);
+        if (target != game->getPickedUpPiece()) pickUpPiece(target);
+        else {
+            game->setPickedUpPiece(NULL);
+            game->setFieldOfOrigin(NULL);
+        }
     }
+}
+
+void Field::colorizeField() {
+    QBrush brush(color, Qt::Dense4Pattern);
+    setBrush(brush);
 }
 
 void Field::dropPiece() {
     linkPiece(game->getPickedUpPiece());
+    game->getFieldOfOrigin()->setPieceType(' ');
     game->changePlayersTurn();
     game->getWindow()->saveTurnInNotation();
     //game->exchangeCards(usedCard, game->getCards()[game->identifyCards(0).at(0)]);
@@ -127,8 +139,7 @@ void Field::pickUpPiece(Piece *piece) {
         // pick the piece up
         game->setPickedUpPiece(piece);
 
-        // mark field as pieceless but choosen
-        this->setPieceType(' ');
+        // mark field as selected
         color = game->getWindow()->colorSelected;
         QBrush brush(color, Qt::Dense4Pattern);
         setBrush(brush);
