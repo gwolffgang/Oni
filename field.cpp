@@ -90,15 +90,6 @@ void Field::captureOrChangePiece(Piece *target) {
     }
 }
 
-<<<<<<< HEAD
-void Field::colorizeField() {
-    // colorize field
-    QBrush brush(color, Qt::Dense4Pattern);
-    setBrush(brush);
-}
-
-=======
->>>>>>> 507cfa3d04fcaa4796a31120ade315e3a2ab4678
 void Field::dropPiece() {
     // drop piece
     linkPiece(game->getPickedUpPiece());
