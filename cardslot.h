@@ -31,7 +31,7 @@ public:
     void setOwner(int newOwner);
 
     //functions
-    void addCard(int player, int number);
+    void drawCard(int player, int number);
 };
 
 #endif // CARDSLOT_H

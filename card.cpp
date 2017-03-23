@@ -134,6 +134,9 @@ void Card::setCardValues(int cardID) {
             choice[2][0] = 0;   choice[2][1] = 0;
             choice[3][0] = 0;   choice[3][1] = 0;
     }
+}
+
+void Card::drawCard() {
     // drawing the card
     QPixmap img(":/pics/cards/" + name + ".png");
     setPos(game->getWindow()->getBorderX(), game->getWindow()->getBorderY());

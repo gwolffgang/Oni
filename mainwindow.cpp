@@ -192,7 +192,7 @@ void MainWindow::drawCardSlots() {
             double posX = scene->height() + number * slotSize + (number + 1) * borderX;
             double posY = ((-1.5 * player + 2.5) * player + 1) * slotSize + ((-1.5 * player + 2.5) * player + 2) * borderY;
             slot->setPos(posX, posY);
-            slot->addCard(player, number);
+            slot->drawCard(player, number);
             scene->addItem(slot);
             slotsRow.append(slot);
         }
@@ -206,6 +206,10 @@ void MainWindow::drawSideBar() {
     double posX = this->height() - sideBarSize;
     double posY = (this->height() - sideBarSize - flipButton->pixmap().height() ) /2;
     flipButton->setPos(posX, posY);
+    if (game->getFlipBoard()) {
+        flipButton->setTransformOriginPoint(flipButton->pixmap().width() / 2, flipButton->pixmap().height() / 2);
+        flipButton->setRotation(180);
+    }
     scene->addItem(flipButton);
 }
 

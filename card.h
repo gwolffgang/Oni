@@ -27,6 +27,7 @@ public:
 
     //functions
     void setCardValues(int cardID);
+    void drawCard();
 
 private:
     // variables

@@ -24,30 +24,31 @@ void CardSlot::setOwner(int newOwner) {
         owner = newOwner;
 }
 
-void CardSlot::addCard(int player, int number) {
+void CardSlot::drawCard(int player, int number) {
     // determine correct card
     QList<int> list;
     for (int i = 0; i < game->getCards()->size(); i++)
          if (game->getCards()->at(i)->getOwner() == player) list.append(i);
     card = game->getCards()->at(list.at(number));
     card->setParentItem(this);
+    card->drawCard();
     // check if card has to be flipped
     if (!game->getFlipBoard()) {
         if (game->getFirstPlayersTurn() && player == 2) {
-            card->setTransformOriginPoint(card->boundingRect().height() / 2, card->boundingRect().width() / 2);
+            card->setTransformOriginPoint(card->boundingRect().width() / 2, card->boundingRect().height() / 2);
             card->setRotation(180);
         }
         if (!game->getFirstPlayersTurn() && (player == 0 || player == 2)) {
-            card->setTransformOriginPoint(card->boundingRect().height() / 2, card->boundingRect().width() / 2);
+            card->setTransformOriginPoint(card->boundingRect().width() / 2, card->boundingRect().height() / 2);
             card->setRotation(180);
         }
     } else {
         if (!game->getFirstPlayersTurn() && player == 1) {
-            card->setTransformOriginPoint(card->boundingRect().height() / 2, card->boundingRect().width() / 2);
+            card->setTransformOriginPoint(card->boundingRect().width() / 2, card->boundingRect().height() / 2);
             card->setRotation(180);
         }
         if (game->getFirstPlayersTurn() && (player == 0 || player == 1)) {
-            card->setTransformOriginPoint(card->boundingRect().height() / 2, card->boundingRect().width() / 2);
+            card->setTransformOriginPoint(card->boundingRect().width() / 2, card->boundingRect().height() / 2);
             card->setRotation(180);
         }
     }
