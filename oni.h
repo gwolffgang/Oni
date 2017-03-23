@@ -34,7 +34,7 @@ public:
     inline bool getFlipBoard() { return flipedBoard; }
     inline int getGameResult() { return gameResult; }
     inline QString getOpenGameFileName() { return openGameFileName; }
-    inline int getNeutralCardsPerPlayer() { return neutralCardsPerPlayer; }
+    inline int getNeutralCardsPerGame() { return neutralCardsPerGame; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
     inline QList<Piece*> *getPieces() { return pieces; }
     inline int getRows() { return rows; }
@@ -53,7 +53,7 @@ public:
 
     //functions
     void exchangeCards(Card *card1, Card *card2);
-    QList<int> identifyCards(int owner);
+    QList<Card*> identifyCards(int owner);
     void setUpWindowSize(double factor);
 
 private:
@@ -66,7 +66,7 @@ private:
     QString openGameFileName;
     Piece *pickedUpPiece;
     Field *fieldOfOrigin;
-    int rows, cols, cardsPerPlayer, neutralCardsPerPlayer;
+    int rows, cols, cardsPerPlayer, neutralCardsPerGame;
 
     int gameResult;        // game_result: 0 = ongoing game; 1 = player 1 has won; -1 = player 2 has won
     bool firstPlayersTurn;  // firstPlayersTurn: true = turn of player 1, false = turn of player 2

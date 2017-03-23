@@ -18,8 +18,8 @@ public:
     inline QString getName() { return name; }
     inline int getID() { return id; }
     inline int getOwner() { return owner; }
-    inline int getXFromChoice(const int number) { return choice[number][0]; }
-    inline int getYFromChoice(const int number) { return choice[number][1]; }
+    inline int getColFromChoice(const int number) { return choice[number][0]; }
+    inline int getRowFromChoice(const int number) { return choice[number][1]; }
 
     // setters
     inline void setName(QString newName) { if (name != "") name = newName; }

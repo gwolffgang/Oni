@@ -13,11 +13,11 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
     row = -1;
     col = -1;
     pieceType = ' ';
-    color = Qt::transparent;
 
     //create a field to put to the scene
     float size = game->getWindow()->getFieldSize();
-    QGraphicsRectItem *rect = new QGraphicsRectItem;
+    QGraphicsRectItem *rect;
+    rect = new QGraphicsRectItem;
     setRect(0, 0, size, size);
 
     //allow responding to hover events
@@ -28,8 +28,7 @@ void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if ((game->getFirstPlayersTurn() && (this->getPieceType() == 'M' || this->getPieceType() == 'S')) ||
         (!game->getFirstPlayersTurn() && (this->getPieceType() == 'm' || this->getPieceType() == 's'))) {
         if (piece != game->getPickedUpPiece()) {
-            color = game->getWindow()->colorHovered;
-            QBrush brush(color, Qt::Dense4Pattern);
+            QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
             setBrush(brush);
         }
         setCursor(Qt::PointingHandCursor);
@@ -38,15 +37,12 @@ void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    color = game->getWindow()->colorNone;
-    if (game->getFieldOfOrigin() != NULL && (game->getFieldOfOrigin()->getCol() == this->getCol() &&
-          game->getFieldOfOrigin()->getRow() == this->getRow())) {
-        color = game->getWindow()->colorSelected;
+    if (this->brush().color() == game->getWindow()->colorHovered) {
+        QBrush brush(Qt::NoBrush);
+        setBrush(brush);
+        setCursor(Qt::ArrowCursor);
+        event->ignore();
     }
-    QBrush brush(color, Qt::Dense4Pattern);
-    setBrush(brush);
-    setCursor(Qt::ArrowCursor);
-    event->ignore();
 }
 
 void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -81,9 +77,9 @@ void Field::captureOrChangePiece(Piece *target) {
         // drop piece
         dropPiece();
     } else {
+        unmarkAllFields();
         // put back picked up piece
-        color = game->getWindow()->colorHovered;
-        QBrush brush(color, Qt::Dense4Pattern);
+        QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
         setBrush(brush);
 
         if (target != game->getPickedUpPiece()) pickUpPiece(target);
@@ -94,12 +90,15 @@ void Field::captureOrChangePiece(Piece *target) {
     }
 }
 
+<<<<<<< HEAD
 void Field::colorizeField() {
     // colorize field
     QBrush brush(color, Qt::Dense4Pattern);
     setBrush(brush);
 }
 
+=======
+>>>>>>> 507cfa3d04fcaa4796a31120ade315e3a2ab4678
 void Field::dropPiece() {
     // drop piece
     linkPiece(game->getPickedUpPiece());
@@ -109,6 +108,7 @@ void Field::dropPiece() {
     //game->exchangeCards(usedCard, game->getCards()[game->identifyCards(0).at(0)]);
 
     // cleaning up
+    unmarkAllFields();
     game->setFieldOfOrigin(NULL);
     game->setPickedUpPiece(NULL);
 
@@ -143,9 +143,77 @@ void Field::pickUpPiece(Piece *piece) {
         // pick the piece up
         game->setPickedUpPiece(piece);
 
+        // unmark all fields
+        unmarkAllFields();
+
         // mark field as selected
-        color = game->getWindow()->colorSelected;
-        QBrush brush(color, Qt::Dense4Pattern);
+        QBrush brush(game->getWindow()->colorSelected, Qt::Dense4Pattern);
         setBrush(brush);
+
+        // determine possible fields to move to
+        QList<QList<Field*>> fields;
+
+        // setup variables
+        int player = game->getFieldOfOrigin()->getPiece()->getOwner();
+        int factor = 1;
+        char master = 'M', scolar = 'S';
+        if (player == 2) {
+            factor = -1;
+            master = 'm';
+            scolar = 's';
+        }
+        int fieldCol = this->getCol();
+        int fieldRow = this->getRow();
+
+        // identify cards of player
+        QList<Card*> cards = game->identifyCards(player);
+
+        // helper list for every cards choices
+        QList<Field*> cardFieldList;
+        for (int i = 0; i < cards.size(); i++) {
+            cardFieldList.clear();
+            for (int choice = 0; choice < 4; choice++) {
+                int choiceCol = cards.at(i)->getColFromChoice(choice);
+                int choiceRow = cards.at(i)->getRowFromChoice(choice);
+                if (choiceCol != 0 || choiceRow != 0) {
+                    int newFieldCol = fieldCol + choiceCol * factor;
+                    int newFieldRow = fieldRow + choiceRow * factor;
+                    if ((newFieldCol < 5 && newFieldCol > -1) && (newFieldRow < 5 && newFieldRow > -1)) {
+                        char newFieldPieceType = game->getBoard()->at(newFieldRow).at(newFieldCol)->getPieceType();
+                        if (newFieldPieceType != master && newFieldPieceType != scolar)
+                            cardFieldList.append(game->getBoard()->at(newFieldRow).at(newFieldCol));
+                    }
+                }
+            }
+            fields.append(cardFieldList);
+        }
+
+        // Colorize fields
+        QList<Field*> doubleAccessFields;
+        foreach (Field *fieldCard1, fields.at(0)) {
+            brush = QBrush(game->getWindow()->colorChooseableCard1, Qt::Dense4Pattern);
+            fieldCard1->setBrush(brush);
+            foreach (Field *fieldCard2, fields.at(1)) {
+                if (fieldCard1 == fieldCard2) doubleAccessFields.append(fieldCard1);
+                else {
+                    brush = QBrush(game->getWindow()->colorChooseableCard2, Qt::Dense4Pattern);
+                    fieldCard2->setBrush(brush);
+                }
+            }
+        }
+        foreach (Field *fieldDouble, doubleAccessFields) {
+            brush = QBrush(game->getWindow()->colorChooseableBoth, Qt::Dense4Pattern);
+            fieldDouble->setBrush(brush);
+        }
     }
 }
+
+void Field::unmarkAllFields() {
+    QBrush brush(Qt::NoBrush);
+    for (int k = 0; k < game->getBoard()->size(); k++) {
+        for (int l = 0; l < game->getBoard()->at(k).size(); l++) {
+            game->getBoard()->at(k).at(l)->setBrush(brush);
+        }
+    }
+}
+

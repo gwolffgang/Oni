@@ -1,4 +1,5 @@
 #include <QMessageBox>
+#include <QTimer>
 
 #include "mainwindow.h"
 #include "oni.h"
@@ -18,8 +19,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     windowTitle = "Oni - new unsaved game";
     setWindowTitle(windowTitle);
 
-    // setup brushes
-    colorNone            = Qt::transparent;
+    // setup brushcolors
     colorHovered         = Qt::gray;
     colorSelected        = Qt::darkCyan;
     colorChooseableCard1 = Qt::yellow;
@@ -156,31 +156,48 @@ void MainWindow::changeLayout(double factor) {
 
 void MainWindow::drawBoard() {
     // drawing the board
-    game->getBoard()->clear();
-    QList<Field*> fieldsRow;
-    for (int row = 0; row < game->getRows(); row++) {
-        fieldsRow.clear();
-        for (int col = 0; col < game->getCols(); col++) {
-            // create field
-            Field *field = new Field;
-            field->setRow(row);
-            field->setCol(col);
-            field->setPieceType(' ');
-            field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
-            field->colorizeField();
+    if (game->getBoard()->size() == 0) {
+        QList<Field*> fieldsRow;
+        for (int row = 0; row < game->getRows(); row++) {
+            fieldsRow.clear();
+            for (int col = 0; col < game->getCols(); col++) {
+                // create field
+                Field *field = new Field;
+                field->setRow(row);
+                field->setCol(col);
+                field->setPieceType(' ');
+                field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
 
-            // add piece to field
-            int pieceNumber = field->identifyPiece();
-            if (pieceNumber != -1) {
-                field->linkPiece(game->getPieces()->at(pieceNumber));
-                field->getPiece()->drawPiece();
+                // add piece to field
+                int pieceNumber = field->identifyPiece();
+                if (pieceNumber != -1) {
+                    field->linkPiece(game->getPieces()->at(pieceNumber));
+                    field->getPiece()->drawPiece();
+                }
+                // add field to row
+                fieldsRow.append(field);
+                scene->addItem(field);
             }
-            // add field to row
-            fieldsRow.append(field);
-            scene->addItem(field);
+            // add row to board
+            game->getBoard()->append(fieldsRow);
         }
-        // add row to board
-        game->getBoard()->append(fieldsRow);
+    }
+    else {
+        for (int row = 0; row < game->getRows(); row++)
+            for (int col = 0; col < game->getCols(); col++) {
+                Field *field = game->getBoard()->at(row).at(col);
+                field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
+                float size = game->getWindow()->getFieldSize();
+                field->setRect(0, 0, size, size);
+
+                // add piece to field
+                int pieceNumber = field->identifyPiece();
+                if (pieceNumber != -1) {
+                    field->linkPiece(game->getPieces()->at(pieceNumber));
+                    field->getPiece()->drawPiece();
+                }
+                scene->addItem(field);
+            }
     }
 }
 
@@ -190,7 +207,7 @@ void MainWindow::drawCardSlots() {
     for (int player = 0; player < 3; player++) {
         slotsRow.clear();
         int maxSlots = game->getCardsPerPlayer();
-        if (player == 0) maxSlots = game->getNeutralCardsPerPlayer();
+        if (player == 0) maxSlots = game->getNeutralCardsPerGame();
         for (int number = 0; number < maxSlots; number++) {
             CardSlot *slot = new CardSlot(slotSize);
             slot->setOwner(player);
@@ -209,7 +226,7 @@ void MainWindow::drawSideBar() {
     // drawing in-game side bar
     flipButton = new Button;
     flipButton->drawButton("flipButton", "right");
-    double posX = this->height() - sideBarSize;
+    double posX = this->height() - sideBarSize - borderX;
     double posY = (this->height() - sideBarSize - flipButton->pixmap().height() ) /2;
     flipButton->setPos(posX, posY);
     if (game->getFlipBoard()) {
