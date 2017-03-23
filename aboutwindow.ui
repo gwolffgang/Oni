@@ -122,16 +122,22 @@
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:14px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:large; font-weight:600; color:#000000;&quot;&gt;Oni&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;This software is a digitally version of the boardgame &lt;/span&gt;&lt;a href=&quot;http://www.arcanewonders.com/Onitama&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Onitama&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; color:#000000;&quot;&gt; by &lt;/span&gt;&lt;a href=&quot;http://www.arcanewonders.com/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Arcane Wonders&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; color:#000000;&quot;&gt;. We do not own any rights on the original game.&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;Onitama is a two-player, perfect information abstract game with a random starting setup.&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600; text-decoration: underline; color:#000000;&quot;&gt;Github&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;This software was written in C++, while the GUI uses Qt.&lt;br /&gt;You can find our sourcecode on Github: &lt;/span&gt;&lt;a href=&quot;https://github.com/gwolffgang/Oni&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/gwolffgang/Oni&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:medium; font-weight:600; text-decoration: underline; color:#000000;&quot;&gt;Developers&lt;/span&gt;&lt;/p&gt;
-&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; color:#000000;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alexandar Tomic&lt;/li&gt;
-&lt;li style=&quot; color:#000000;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Benjamin Brinkmann&lt;/li&gt;
-&lt;li style=&quot; color:#000000;&quot; align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Georg Wolffgang&lt;/li&gt;&lt;/ul&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:14px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:12pt; font-weight:600; color:#000000;&quot;&gt;Oni&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; color:#000000;&quot;&gt;This software is a digitally version of the boardgame &lt;/span&gt;&lt;a href=&quot;http://www.arcanewonders.com/Onitama&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Onitama&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; color:#000000;&quot;&gt; by &lt;/span&gt;&lt;a href=&quot;http://www.arcanewonders.com/&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;Arcane Wonders&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; color:#000000;&quot;&gt;. We do not own any rights on the original game.&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; color:#000000;&quot;&gt;Onitama is a two-player, perfect information abstract game with a random starting setup.&lt;br /&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; font-weight:600; text-decoration: underline; color:#000000;&quot;&gt;Github&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; color:#000000;&quot;&gt;This software was written in C++, while the GUI uses Qt.&lt;br /&gt;You can find our sourcecode on Github: &lt;/span&gt;&lt;a href=&quot;https://github.com/gwolffgang/Oni&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; text-decoration: underline; color:#0000ff;&quot;&gt;https://github.com/gwolffgang/Oni&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; font-weight:600; text-decoration: underline; color:#000000;&quot;&gt;Developers&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;justify&quot; style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;table border=&quot;0&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;&quot; cellspacing=&quot;2&quot; cellpadding=&quot;0&quot;&gt;
+&lt;tr&gt;
+&lt;td&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt; color:#000000;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Georg Wolffgang&lt;br /&gt;(lead programmer)&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt; color:#000000;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Alexandar Tomic&lt;br /&gt;(coder/debugger)&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;
+&lt;td&gt;
+&lt;ul style=&quot;margin-top: 0px; margin-bottom: 0px; margin-left: 0px; margin-right: 0px; -qt-list-indent: 1;&quot;&gt;&lt;li style=&quot; font-size:8pt; color:#000000;&quot; style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Benjamin Brinkmann&lt;br /&gt;(AI-programmer)&lt;/li&gt;&lt;/ul&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
@@ -183,7 +189,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="text">
-         <string>https://openclipart.org/detail/265528/samurai-men</string>
+         <string>&lt;a href=&quot;https://openclipart.org/detail/265528/samurai-men&quot;&gt;https://openclipart.org/detail/265528/samurai-men&lt;/a&gt;</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -291,7 +297,7 @@ p, li { white-space: pre-wrap; }
          </size>
         </property>
         <property name="text">
-         <string>https://openclipart.org/detail/233706/samurai-leaf</string>
+         <string>&lt;a href=&quot;https://openclipart.org/detail/233706/samurai-leaf&quot;&gt;https://openclipart.org/detail/233706/samurai-leaf&lt;/a&gt;</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -377,9 +383,9 @@ p, li { white-space: pre-wrap; }
       <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'.SF NS Text'; font-size:13pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:14px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:large; font-weight:600; color:#000000;&quot;&gt;Licenses&lt;/span&gt;&lt;/p&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; color:#000000;&quot;&gt;All graphics are under the license of &lt;/span&gt;&lt;a href=&quot;https://www.google.de/url?sa=t&amp;amp;rct=j&amp;amp;q=&amp;amp;esrc=s&amp;amp;source=web&amp;amp;cd=4&amp;amp;cad=rja&amp;amp;uact=8&amp;amp;sqi=2&amp;amp;ved=0ahUKEwjDkZW41-fSAhVGShQKHVvhAKwQFggvMAM&amp;amp;url=https%3A%https://de.wikipedia.org/wiki/GNU_General_Public_License&amp;amp;bvm=bv.150120842,d.bGs&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GNU General Public License&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; color:#000000;&quot;&gt; or selfmade.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:7.8pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:14px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:12pt; font-weight:600; color:#000000;&quot;&gt;Licenses&lt;/span&gt;&lt;/p&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; color:#000000;&quot;&gt;All graphics are under the license of &lt;/span&gt;&lt;a href=&quot;https://de.wikipedia.org/wiki/GNU_General_Public_License&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;GNU General Public License&lt;/span&gt;&lt;/a&gt;&lt;span style=&quot; font-family:'.SF NS Text'; font-size:8pt; color:#000000;&quot;&gt; or selfmade.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textInteractionFlags">
       <set>Qt::LinksAccessibleByKeyboard|Qt::LinksAccessibleByMouse</set>
