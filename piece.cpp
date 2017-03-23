@@ -8,6 +8,20 @@ Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
     row = col = -1;
 }
 
+int Piece::getOwner() {
+    switch (type) {
+    case 'M':
+        return 1;
+    case 'S':
+        return 1;
+    case 'm':
+        return 2;
+    case 's':
+        return 2;
+    }
+    return 0;
+}
+
 void Piece::drawPiece() {
     // draw piece
     QString piece, color;

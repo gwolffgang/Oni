@@ -15,6 +15,7 @@ public:
 
     // getters
     inline int getCol() { return col; }
+    int getOwner();
     inline int getRow() { return row; }
     inline char getType() { return type; }
 

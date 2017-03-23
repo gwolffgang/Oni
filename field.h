@@ -14,7 +14,6 @@ private:
     int col, row;
     char pieceType;
     Piece *piece;
-    QColor color;
 
 protected:
     // events
@@ -26,9 +25,11 @@ public:
     // constructors
     Field(QGraphicsItem *parent = NULL);
 
+    // operators
+    inline bool operator==(Field *field) { if ((field->row == row) && (field->col == col)) return true; return false; }
+
     // getters
     inline int getCol() { return col; }
-    inline QColor getColor() { return color; }
     inline Piece *getPiece() { return piece; }
     inline char getPieceType() { return pieceType; }
     inline int getRow() { return row; }
@@ -41,11 +42,11 @@ public:
 
     // functions
     void captureOrChangePiece(Piece *target);
-    void colorizeField();
     void dropPiece();
     int identifyPiece();
     void linkPiece(Piece *linkedPiece);
     void pickUpPiece(Piece *piece);
+    void unmarkAllFields();
 };
 
 #endif // FIELD_H

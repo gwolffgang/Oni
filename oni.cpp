@@ -12,7 +12,7 @@ Oni::Oni() {
     // card settings
     slotsGrid = new QList<QList<CardSlot*>>;
     cardsPerPlayer = 2;
-    neutralCardsPerPlayer = 1;
+    neutralCardsPerGame = 1;
 
     // window settings
     window = new MainWindow;
@@ -39,9 +39,9 @@ void Oni::exchangeCards(Card *card1, Card *card2) {
     delete temporary;
 }
 
-QList<int> Oni::identifyCards(int owner) {
-    QList<int> list;
+QList<Card*> Oni::identifyCards(int owner) {
+    QList<Card*> list;
     for (int i = 0; i < cards->count(); i++)
-        if (cards->at(i)->getOwner() == owner) list.append(i);
+        if (cards->at(i)->getOwner() == owner) list.append(cards->at(i));
     return list;
 }

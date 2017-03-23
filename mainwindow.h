@@ -16,7 +16,7 @@ class MainWindow : public QMainWindow
 
 public:
     Ui::MainWindow *ui;
-    QColor colorNone, colorHovered, colorSelected, colorChooseableCard1, colorChooseableCard2, colorChooseableBoth;
+    QColor colorHovered, colorSelected, colorChooseableCard1, colorChooseableCard2, colorChooseableBoth;
 
     // constructors
     explicit MainWindow(QWidget *parent = 0);
