@@ -18,12 +18,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     setWindowTitle(windowTitle);
 
     // setup brushes
-    brushEmpty           = QBrush(Qt::NoBrush);
-    brushHovered         = QBrush(Qt::gray, Qt::Dense4Pattern);
-    brushSelected        = QBrush(Qt::magenta, Qt::Dense4Pattern);
-    brushChooseableCard1 = QBrush(Qt::yellow, Qt::Dense4Pattern);
-    brushChooseableCard2 = QBrush(Qt::blue, Qt::Dense4Pattern);
-    brushChooseableBoth  = QBrush(Qt::green, Qt::Dense4Pattern);
+    colorNone            = Qt::transparent;
+    colorHovered         = Qt::gray;
+    colorSelected        = Qt::darkCyan;
+    colorChooseableCard1 = Qt::yellow;
+    colorChooseableCard2 = Qt::blue;
+    colorChooseableBoth  = Qt::green;
 
     // scene setup
     scene = new QGraphicsScene(this);
@@ -139,12 +139,13 @@ void MainWindow::changeLayout(double factor) {
         windowHeight--;
         windowWidth = 3*borderX + windowHeight + 2*((windowHeight - 4*borderY) / 3);
     }
-    setGeometry(0,0,windowWidth,windowHeight);
-    setFixedSize(windowWidth, windowHeight);
+    setGeometry(0,0,windowWidth+4,windowHeight+4);
+    setFixedSize(windowWidth+4, windowHeight+4);
     if (scene != NULL) {
         scene->setSceneRect(0, 0, windowWidth, windowHeight);
         setViewSize(windowWidth+4, windowHeight+4);
         fieldSize = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
+        slotSize = (scene->height() - 4*borderY) / 3;
         prepareGame();
     }
 }

@@ -13,6 +13,7 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
     row = -1;
     col = -1;
     pieceType = ' ';
+    color = Qt::transparent;
 
     //create a field to put to the scene
     float size = game->getWindow()->getFieldSize();
@@ -21,24 +22,25 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
 
     //allow responding to hover events
     setAcceptHoverEvents(true);
-    setFlag(QGraphicsItem::ItemIsFocusable);
 }
 
 void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if ((game->getFirstPlayersTurn() && (this->getPieceType() == 'M' || this->getPieceType() == 'S')) ||
         (!game->getFirstPlayersTurn() && (this->getPieceType() == 'm' || this->getPieceType() == 's'))) {
-        QBrush brush = game->getWindow()->brushHovered;
+        color = game->getWindow()->colorHovered;
+        QBrush brush(color, Qt::Dense4Pattern);
         setBrush(brush);
         setCursor(Qt::PointingHandCursor);
     }
 }
 
 void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    QBrush brush = game->getWindow()->brushEmpty;
+    color = game->getWindow()->colorNone;
     if (game->getFieldOfOrigin() != NULL && (game->getFieldOfOrigin()->getCol() == this->getCol() &&
           game->getFieldOfOrigin()->getRow() == this->getRow())) {
-        brush = game->getWindow()->brushSelected;
+        color = game->getWindow()->colorSelected;
     }
+    QBrush brush(color, Qt::Dense4Pattern);
     setBrush(brush);
     setCursor(Qt::ArrowCursor);
 }
@@ -76,7 +78,8 @@ void Field::captureOrChangePiece(Piece *target) {
         // put back picked up piece
         game->getFieldOfOrigin()->setPieceType(game->getPickedUpPiece()->getType());
 
-        QBrush brush = game->getWindow()->brushEmpty;
+        color = game->getWindow()->colorNone;
+        QBrush brush(color, Qt::Dense4Pattern);
         setBrush(brush);
 
         // pick up new piece
@@ -126,7 +129,8 @@ void Field::pickUpPiece(Piece *piece) {
 
         // mark field as pieceless but choosen
         this->setPieceType(' ');
-        QBrush brush = game->getWindow()->brushSelected;
+        color = game->getWindow()->colorSelected;
+        QBrush brush(color, Qt::Dense4Pattern);
         setBrush(brush);
     }
 }

@@ -14,6 +14,7 @@ private:
     int col, row;
     char pieceType;
     Piece *piece;
+    QColor color;
 
 protected:
     // events
