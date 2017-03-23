@@ -3,6 +3,7 @@
 
 extern Oni *game;
 
+    // randomizer for playing cards
 int randomizer(const int max) {
     static bool seeded = false;
     if(!seeded) {
@@ -21,6 +22,7 @@ void Card::setCardValues(int cardID) {
     // determinate card
     id = cardID;
     if (id == 0) id = randomizer(16);
+    // movement options
     switch (id) {
         case 1:
             name = "BOAR";

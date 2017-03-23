@@ -55,7 +55,6 @@ public:
     bool saveGame(const QString &fileName);
     bool saveGameAs();
     void saveTurnInNotation();
-    void unparentPieces();
     void setViewSize(double width, double height);
 
 private slots:

@@ -8,7 +8,7 @@ Button::Button(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
     //allow responding to hover events
     setAcceptHoverEvents(true);
 }
-
+    //function for buttin drawing
 void Button::drawButton(QString type, QString pos) {
     if (type != "") {
         QPixmap img(":/pics/" + type + ".png");
@@ -25,7 +25,7 @@ void Button::drawButton(QString type, QString pos) {
         setPixmap(img);
     }
 }
-
+    // possible button-events
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     setCursor(Qt::PointingHandCursor);
     event->ignore();

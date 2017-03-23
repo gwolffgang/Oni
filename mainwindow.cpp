@@ -9,6 +9,7 @@ extern Oni *game;
 int myrandom(int i) { return std::rand()%i; }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+    // set up the UI
     ui->setupUi(this);
     scene = NULL;
 
@@ -129,15 +130,18 @@ void MainWindow::changeLayout(double factor) {
         }
     }
     screen = QGuiApplication::primaryScreen();
+    // measure and fill available screen
     QRect desktop = screen->availableGeometry();
+    // default factor: 0.75
     borderX = 10 * factor;
     borderY = 10 * factor;
     sideBarSize = 40 * factor;
+    // setting window size in dependency of available screen
     windowHeight = desktop.height() * factor;
     windowWidth = windowHeight + 3*borderX + 2*((windowHeight - 4*borderY) / 3);
     while (windowWidth > desktop.width()-4) {
         windowHeight--;
-        windowWidth = 3*borderX + windowHeight + 2*((windowHeight - 4*borderY) / 3);
+        windowWidth = windowHeight + 3*borderX + 2*((windowHeight - 4*borderY) / 3);
     }
     setGeometry(0,0,windowWidth+4,windowHeight+4);
     setFixedSize(windowWidth+4, windowHeight+4);
@@ -202,6 +206,7 @@ void MainWindow::drawCardSlots() {
 }
 
 void MainWindow::drawSideBar() {
+    // drawing in-game side bar
     flipButton = new Button;
     flipButton->drawButton("flipButton", "right");
     double posX = this->height() - sideBarSize;
@@ -215,6 +220,7 @@ void MainWindow::drawSideBar() {
 }
 
 QString MainWindow::generateSetupString() {
+    // generate declaration of fields
     QString saveString = "";
     for (int i = 0; i < game->getPieces()->size(); i++) {
         Piece *piece = game->getPieces()->at(i);
@@ -251,6 +257,7 @@ QString MainWindow::generateSetupString() {
 }
 
 void MainWindow::loadGame() {
+    // load previously saved game
     //if (maybeSave()) {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), "/current/saves", "Oni Savegames (*.oni)");
     if (!fileName.isEmpty()) {
@@ -318,6 +325,7 @@ void MainWindow::prepareGame() {
 }
 
 bool MainWindow::saveGame(const QString &fileName) {
+    // overwrite current save game
     QFile file(fileName);
         if (!file.open(QFile::WriteOnly | QFile::Text)) {
             QMessageBox::warning(this, tr("Application"),
@@ -347,6 +355,7 @@ bool MainWindow::saveGame(const QString &fileName) {
 }
 
 bool MainWindow::saveGameAs() {
+    // save current game
     QFileDialog dialog(this);
         dialog.setWindowModality(Qt::WindowModal);
         dialog.setAcceptMode(QFileDialog::AcceptSave);
@@ -356,35 +365,35 @@ bool MainWindow::saveGameAs() {
 }
 
 void MainWindow::saveTurnInNotation() {
+    // notation of completed turns
     ui->notation->addItem(generateSetupString());
 }
 
-void MainWindow::unparentPieces() {
-    for (int i = 0; i < game->getPieces()->size(); i++)
-        game->getPieces()->at(i)->setParentItem(NULL);
-}
-
 void MainWindow::setViewSize(double width, double height) {
+    // view size
     ui->view->setFixedSize(width, height);
 }
 
 void MainWindow::on_actionSave_triggered() {
+    // menubar option
     bool success = false;
     if (game->getOpenGameFileName() != "") success = saveGame(game->getOpenGameFileName());
     else success = saveGameAs();
 }
 
 void MainWindow::on_actionFlipOnce_triggered() {
+    // menubar option
     game->flipBoard();
     prepareGame();
 }
 
 void MainWindow::on_actionAboutQt_triggered() {
+    // menubar option
     QApplication::aboutQt();
 }
 
-void MainWindow::on_actionFullScreen_triggered()
-{
+void MainWindow::on_actionFullScreen_triggered(){
+    // menubar option
     if (ui->actionFullScreen->isChecked()) {
         ui->actionFullScreen->setChecked(true);
         QMainWindow::showFullScreen();

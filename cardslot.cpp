@@ -21,6 +21,7 @@ CardSlot::CardSlot(double size, QGraphicsItem *parent) : QGraphicsRectItem(paren
 }
 
 void CardSlot::setOwner(int newOwner) {
+    // assigning owner
     if (newOwner < 3 && newOwner > -1)
         owner = newOwner;
 }
@@ -60,6 +61,7 @@ void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+    // change non-clickable card background, if cursor is pointing there
     if ((game->getFirstPlayersTurn() && this->getOwner() == 1) || (!game->getFirstPlayersTurn() && this->getOwner() == 2)) {
         QBrush brush(Qt::darkGray, Qt::SolidPattern);
         setBrush(brush);
@@ -69,6 +71,7 @@ void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void CardSlot::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+    // change non-clickable card background back, if cursor was pointing there
     QBrush brush(Qt::gray, Qt::SolidPattern);
     setBrush(brush);
     setCursor(Qt::ArrowCursor);

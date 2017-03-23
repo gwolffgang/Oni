@@ -70,6 +70,7 @@ void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void Field::captureOrChangePiece(Piece *target) {
+    // capture or change piece
     if ((!game->getFirstPlayersTurn() && (target->getType() == 'M' || target->getType() == 'S')) ||
         (game->getFirstPlayersTurn() && (target->getType() == 'm' || target->getType() == 's'))) {
         // remove captured piece
@@ -94,11 +95,13 @@ void Field::captureOrChangePiece(Piece *target) {
 }
 
 void Field::colorizeField() {
+    // colorize field
     QBrush brush(color, Qt::Dense4Pattern);
     setBrush(brush);
 }
 
 void Field::dropPiece() {
+    // drop piece
     linkPiece(game->getPickedUpPiece());
     game->getFieldOfOrigin()->setPieceType(' ');
     game->changePlayersTurn();
@@ -113,6 +116,7 @@ void Field::dropPiece() {
 }
 
 int Field::identifyPiece() {
+    // identify piece
     for (int i = 0; i < game->getPieces()->size(); i++)
         if (game->getPieces()->at(i)->getRow() == this->getRow() && game->getPieces()->at(i)->getCol() == this->getCol())
             return i;

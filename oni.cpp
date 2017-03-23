@@ -31,13 +31,14 @@ Oni::Oni() {
     cards = new QList<Card*>;
 }
 
-void Oni::exchangeCards(Card *card1, Card *card2) {
+/*void Oni::exchangeCards(Card *card1, Card *card2) {
+
     Card *temporary = new Card;
     temporary->setOwner(card1->getOwner());
     card1->setOwner(card2->getOwner());
     card2->setOwner(temporary->getOwner());
     delete temporary;
-}
+}*/
 
 QList<int> Oni::identifyCards(int owner) {
     QList<int> list;
