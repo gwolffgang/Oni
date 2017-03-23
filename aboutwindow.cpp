@@ -4,6 +4,10 @@
 
 AboutWindow::AboutWindow(QWidget *parent) : QDialog(parent), ui(new Ui::AboutWindow) {
     ui->setupUi(this);
+    ui->aboutLabel->setOpenExternalLinks(true);
+    ui->licensesLabel->setOpenExternalLinks(true);
+    ui->link_M->setOpenExternalLinks(true);
+    ui->link_S->setOpenExternalLinks(true);
 }
 
 AboutWindow::~AboutWindow() {
