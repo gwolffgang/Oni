@@ -1,5 +1,4 @@
 #include <QMessageBox>
-#include <QTimer>
 
 #include "mainwindow.h"
 #include "oni.h"
@@ -35,9 +34,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->view->setScene(scene);
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setViewSize(windowWidth+5, windowHeight+5);
+    ui->view->setFixedSize(windowWidth+5, windowHeight+5);
 
-    // About dialog
+    // dialog windows
     about = new AboutWindow(this);
 }
 
@@ -96,12 +95,6 @@ void MainWindow::analyseSetupString(QString string) {
             game->getCards()->append(card);
         }
     }
-    // set owner
-    game->getCards()->at(0)->setOwner(0);
-    game->getCards()->at(1)->setOwner(1);
-    game->getCards()->at(2)->setOwner(1);
-    game->getCards()->at(3)->setOwner(2);
-    game->getCards()->at(4)->setOwner(2);
 }
 
 void MainWindow::changeLayout(double factor) {
@@ -143,11 +136,12 @@ void MainWindow::changeLayout(double factor) {
         windowHeight--;
         windowWidth = windowHeight + 3*borderX + 2*((windowHeight - 4*borderY) / 3);
     }
-    setGeometry(0,0,windowWidth+4,windowHeight+4);
-    setFixedSize(windowWidth+4, windowHeight+4);
+    setGeometry(0,0,windowWidth+5,windowHeight+5);
+    setFixedSize(windowWidth+5, windowHeight+5);
+
     if (scene != NULL) {
         scene->setSceneRect(0, 0, windowWidth, windowHeight);
-        setViewSize(windowWidth+4, windowHeight+4);
+        ui->view->setFixedSize(windowWidth+5, windowHeight+5);
         fieldSize = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
         slotSize = (scene->height() - 4*borderY) / 3;
         prepareGame();
@@ -204,6 +198,7 @@ void MainWindow::drawBoard() {
 void MainWindow::drawCardSlots() {
     // drawing the slotsGrid
     QList<CardSlot*> slotsRow;
+    CardSlot *slot;
     for (int player = 0; player < 3; player++) {
         slotsRow.clear();
         // determite number of needed cardslots
@@ -211,16 +206,37 @@ void MainWindow::drawCardSlots() {
         if (player == 0) maxSlots = game->getNeutralCardsPerGame();
         // draw cardslots
         for (int number = 0; number < maxSlots; number++) {
-            CardSlot *slot = new CardSlot(slotSize);
-            slot->setOwner(player);
+            if (game->getSlotsGrid()->size() < 3) {
+                slot = new CardSlot(slotSize);
+                slot->setOwner(player);
+                slot->assignCard(player, number);
+            } else {
+                if (game->getSlotsGrid()->at(2).size() < 2) {
+                    slot = new CardSlot(slotSize);
+                    slot->setOwner(player);
+                    slot->assignCard(player, number);
+                } else slot = game->getSlotsGrid()->at(player).at(number);
+            }
             double posX = scene->height() + number * slotSize + (number + 1) * borderX;
             double posY = ((-1.5 * player + 2.5) * player + 1) * slotSize + ((-1.5 * player + 2.5) * player + 2) * borderY;
+            if (game->getCardChoiceActive()) {
+                if ((game->getFirstPlayersTurn() && player == 1) || (!game->getFirstPlayersTurn() && player == 2)) {
+                    posX = 0.1*windowWidth + 1.1*number*slotSize;
+                    posY = 0.2*windowHeight;
+                }
+            }
+
             slot->setPos(posX, posY);
-            slot->drawCard(player, number);
+            slot->getCard()->setParentItem(slot);
+            slot->getCard()->drawCard(player);
             scene->addItem(slot);
-            slotsRow.append(slot);
+            slot->colorizePlayersSlots(player, number);
+            if (game->getSlotsGrid()->size() < 3) slotsRow.append(slot);
+            else if(game->getSlotsGrid()->at(2).size() < 2)
+                slotsRow.append(slot);
         }
-        game->getSlotsGrid()->append(slotsRow);
+        if (game->getSlotsGrid()->size() < 3) game->getSlotsGrid()->append(slotsRow);
+        else if(game->getSlotsGrid()->at(2).size() < 2) game->getSlotsGrid()->append(slotsRow);
     }
 }
 
@@ -231,7 +247,7 @@ void MainWindow::drawSideBar() {
     double posX = this->height() - sideBarSize - borderX;
     double posY = (this->height() - sideBarSize - flipButton->pixmap().height() ) /2;
     flipButton->setPos(posX, posY);
-    if (game->getFlipBoard()) {
+    if (game->getFlippedBoard()) {
         flipButton->setTransformOriginPoint(flipButton->pixmap().width() / 2, flipButton->pixmap().height() / 2);
         flipButton->setRotation(180);
     }
@@ -265,11 +281,10 @@ QString MainWindow::generateSetupString() {
     }
     saveString += "|";
     for (int k = 0; k < 3; k++) {
-        for (int i = 0; i < game->getCards()->size(); i++)
-            if (game->getCards()->at(i)->getOwner() == k) {
-                if (k != 0) saveString += ",";
-                saveString += QString::number(game->getCards()->at(i)->getID());
-            }
+        for (int l = 0; l < game->getSlotsGrid()->at(k).size(); l++) {
+            if (k != 0) saveString += ",";
+            saveString += QString::number(game->getSlotsGrid()->at(k).at(l)->getCard()->getID());
+        }
     }
 
     return saveString;
@@ -308,8 +323,8 @@ void MainWindow::loadGame() {
 
 void MainWindow::newGame(QString setupString) {
     // reset settings
-    if (!game->getFirstPlayersTurn()) game->changePlayersTurn();
-    if (game->getFlipBoard()) game->flipBoard();
+    game->setFirstPlayersTurn(true);
+    game->setFlippedBoard(false);
     ui->notation->clear();
 
     // reset lists
@@ -341,6 +356,9 @@ void MainWindow::prepareGame() {
     drawSideBar();
     drawCardSlots();
     positionNotation();
+    if (game->getCardChoiceActive()) {
+
+    }
 }
 
 bool MainWindow::saveGame(const QString &fileName) {
@@ -388,11 +406,6 @@ void MainWindow::saveTurnInNotation() {
     ui->notation->addItem(generateSetupString());
 }
 
-void MainWindow::setViewSize(double width, double height) {
-    // view size
-    ui->view->setFixedSize(width, height);
-}
-
 void MainWindow::on_actionSave_triggered() {
     // menubar option
     bool success = false;
@@ -402,7 +415,7 @@ void MainWindow::on_actionSave_triggered() {
 
 void MainWindow::on_actionFlipOnce_triggered() {
     // menubar option
-    game->flipBoard();
+    game->setFlippedBoard(!game->getFlippedBoard());
     prepareGame();
 }
 

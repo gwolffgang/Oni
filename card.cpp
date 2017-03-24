@@ -15,7 +15,6 @@ int randomizer(const int max) {
 
 Card::Card(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
     name = "";
-    owner = 0;
 }
 
 void Card::setCardValues(int cardID) {
@@ -138,10 +137,22 @@ void Card::setCardValues(int cardID) {
     }
 }
 
-void Card::drawCard() {
+void Card::drawCard(int player) {
     // drawing the card
     QPixmap img(":/pics/cards/" + name + ".png");
     setPos(game->getWindow()->getBorderX(), game->getWindow()->getBorderY());
     img = img.scaled(game->getWindow()->getSlotSize() - 2*game->getWindow()->getBorderX(), game->getWindow()->getSlotSize() - 2*game->getWindow()->getBorderY());
     setPixmap(img);
+
+    // check if card has to be flipped
+    setTransformOriginPoint(this->boundingRect().width()/2, this->boundingRect().height()/2);
+    if (!game->getFlippedBoard()) {
+        if ((game->getFirstPlayersTurn() && player == 2) || (!game->getFirstPlayersTurn() && (player == 0 || player == 2)))
+            setRotation(180);
+        else setRotation(0);
+    } else {
+        if ((!game->getFirstPlayersTurn() && player == 1) || (game->getFirstPlayersTurn() && (player == 0 || player == 1)))
+            setRotation(180);
+        else setRotation(0);
+    }
 }

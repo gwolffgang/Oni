@@ -6,6 +6,7 @@
 
 #include "piece.h"
 #include "card.h"
+#include "cardslot.h"
 
 class Field : public QObject, public QGraphicsRectItem {
     Q_OBJECT
@@ -43,7 +44,6 @@ public:
 
     // functions
     void captureOrChangePiece(Piece *target);
-    Card *chooseUsedCard(int player);
     void dropPiece();
     void exchangeCards();
     int identifyPiece();

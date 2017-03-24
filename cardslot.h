@@ -26,12 +26,15 @@ public:
 
     // getter
     inline int getOwner() { return owner; }
+    inline Card *getCard() { return card; }
 
     // setter
     void setOwner(int newOwner);
+    void setCard(Card *newCard) { card = newCard; }
 
     //functions
-    void drawCard(int player, int number);
+    void assignCard(int player, int number);
+    void colorizePlayersSlots(int player, int number);
 };
 
 #endif // CARDSLOT_H

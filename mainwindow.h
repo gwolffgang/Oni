@@ -3,8 +3,10 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+
 #include "aboutwindow.h"
 #include "button.h"
+#include "cardslot.h"
 
 namespace Ui {
 class MainWindow;
@@ -13,6 +15,14 @@ class MainWindow;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
+
+private:
+    QScreen *screen;
+    QGraphicsScene *scene;
+    AboutWindow *about;
+    QString windowTitle;
+    Button *flipButton;
+    double windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize;
 
 public:
     Ui::MainWindow *ui;
@@ -44,6 +54,7 @@ public:
     inline void aboutOni() { about->show(); }
     void analyseSetupString(QString string);
     void changeLayout(double factor);
+    void createCardslots();
     void drawBoard();
     void drawCardSlots();
     void drawSideBar();
@@ -55,7 +66,6 @@ public:
     bool saveGame(const QString &fileName);
     bool saveGameAs();
     void saveTurnInNotation();
-    void setViewSize(double width, double height);
 
 private slots:
     // Refresh
@@ -77,14 +87,6 @@ private slots:
     void on_actionRules_triggered();
     void on_actionAboutOni_triggered() { aboutOni(); }
     void on_actionAboutQt_triggered();
-
-private:
-    QScreen *screen;
-    QGraphicsScene *scene;
-    AboutWindow *about;
-    QString windowTitle;
-    Button *flipButton;
-    double windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize;
 };
 
 #endif // MAINWINDOW_H

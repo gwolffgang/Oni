@@ -7,7 +7,7 @@ Oni::Oni() {
     board = new QList<QList<Field*>>;
     rows = 5;
     cols = 5;
-    flipedBoard = false;
+    flippedBoard = false;
 
     // card settings
     slotsGrid = new QList<QList<CardSlot*>>;
@@ -21,6 +21,7 @@ Oni::Oni() {
     // game settings
     gameResult = 0;
     firstPlayersTurn = true;
+    cardChoiceActive = false;
     pickedUpPiece = NULL;
     fieldOfOrigin = NULL;
     openGameFileName = "";
@@ -33,22 +34,17 @@ Oni::Oni() {
 
 QList<Card*> Oni::identifyCards(int owner) {
     QList<Card*> list;
-    for (int i = 0; i < cards->count(); i++)
-        if (cards->at(i)->getOwner() == owner) list.append(cards->at(i));
+    int slotsSize = slotsGrid->at(owner).size();
+    for (int k = 0; k < slotsSize; k++) {
+        list.append(slotsGrid->at(owner).at(k)->getCard());
+    }
     return list;
 }
 
-void Oni::switchCards(Card *usedCard) {
-    Card temporary;
-    Card *neutral = NULL;
-    // get neutral card
-    int i = 0;
-    do {
-        neutral = game->getCards()->at(i);
-        i++;
-    } while(neutral->getOwner() > 0);
+void Oni::switchCards(CardSlot *usedCardSlot) {
+    Card *temporary = NULL;
     // switch cards
-    temporary.setOwner(usedCard->getOwner());
-    usedCard->setOwner(neutral->getOwner());
-    neutral->setOwner(temporary.getOwner());
+    temporary = usedCardSlot->getCard();
+    usedCardSlot->setCard(game->getSlotsGrid()->at(0).at(0)->getCard());
+    game->getSlotsGrid()->at(0).at(0)->setCard(temporary);
 }
