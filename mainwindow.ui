@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -74,7 +74,7 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
-    <addaction name="actionRules"/>
+    <addaction name="actionAboutRules"/>
     <addaction name="separator"/>
     <addaction name="actionAboutOni"/>
     <addaction name="actionAboutQt"/>
@@ -209,7 +209,7 @@
     <string>Ctrl+A</string>
    </property>
   </action>
-  <action name="actionRules">
+  <action name="actionAboutRules">
    <property name="text">
     <string>&amp;Rules of the game</string>
    </property>
