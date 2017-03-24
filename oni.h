@@ -10,6 +10,7 @@
 #include <QObject>
 #include <QScreen>
 #include <QTextStream>
+#include <QtPrintSupport/QPrinter>
 
 #include "card.h"
 #include "cardslot.h"
@@ -52,7 +53,7 @@ public:
     inline void setRows(int newRows) { rows = newRows; }
 
     //functions
-    void exchangeCards(Card *card1, Card *card2);
+    void switchCards(Card *usedCard);
     QList<Card*> identifyCards(int owner);
     void setUpWindowSize(double factor);
 

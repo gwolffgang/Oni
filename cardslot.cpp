@@ -35,18 +35,15 @@ void CardSlot::drawCard(int player, int number) {
     card->setParentItem(this);
     card->drawCard();
     // check if card has to be flipped
+    card->setTransformOriginPoint(card->boundingRect().width() / 2, card->boundingRect().height() / 2);
     if (!game->getFlipBoard()) {
-        if ((game->getFirstPlayersTurn() && player == 2) |
-            (!game->getFirstPlayersTurn() && (player == 0 || player == 2))) {
-            card->setTransformOriginPoint(card->boundingRect().width() / 2, card->boundingRect().height() / 2);
+        if ((game->getFirstPlayersTurn() && player == 2) || (!game->getFirstPlayersTurn() && (player == 0 || player == 2)))
             card->setRotation(180);
-        }
+        else card->setRotation(0);
     } else {
-        if ((!game->getFirstPlayersTurn() && player == 1) |
-            (game->getFirstPlayersTurn() && (player == 0 || player == 1))) {
-            card->setTransformOriginPoint(card->boundingRect().width() / 2, card->boundingRect().height() / 2);
+        if ((!game->getFirstPlayersTurn() && player == 1) || (game->getFirstPlayersTurn() && (player == 0 || player == 1)))
             card->setRotation(180);
-        }
+        else card->setRotation(0);
     }
 }
 

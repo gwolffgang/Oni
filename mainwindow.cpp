@@ -206,8 +206,10 @@ void MainWindow::drawCardSlots() {
     QList<CardSlot*> slotsRow;
     for (int player = 0; player < 3; player++) {
         slotsRow.clear();
+        // determite number of needed cardslots
         int maxSlots = game->getCardsPerPlayer();
         if (player == 0) maxSlots = game->getNeutralCardsPerGame();
+        // draw cardslots
         for (int number = 0; number < maxSlots; number++) {
             CardSlot *slot = new CardSlot(slotSize);
             slot->setOwner(player);
@@ -423,4 +425,10 @@ void MainWindow::on_actionFullScreen_triggered(){
         if (ui->actionNormalLayout->isChecked()) changeLayout(0.75);
         if (ui->actionLargeLayout->isChecked()) changeLayout(1.00);
     }
+}
+
+void MainWindow::on_actionRules_triggered() {
+   // QPrinter printer(QPrinter::HighResolution);
+   // printer.setOutputFormat(QPrinter::PdfFormat);
+   // printer.setOutputFileName(":/docs/Onitama Deutsch.pdf");
 }

@@ -31,18 +31,24 @@ Oni::Oni() {
     cards = new QList<Card*>;
 }
 
-/*void Oni::exchangeCards(Card *card1, Card *card2) {
-
-    Card *temporary = new Card;
-    temporary->setOwner(card1->getOwner());
-    card1->setOwner(card2->getOwner());
-    card2->setOwner(temporary->getOwner());
-    delete temporary;
-}*/
-
 QList<Card*> Oni::identifyCards(int owner) {
     QList<Card*> list;
     for (int i = 0; i < cards->count(); i++)
         if (cards->at(i)->getOwner() == owner) list.append(cards->at(i));
     return list;
+}
+
+void Oni::switchCards(Card *usedCard) {
+    Card temporary;
+    Card *neutral = NULL;
+    // get neutral card
+    int i = 0;
+    do {
+        neutral = game->getCards()->at(i);
+        i++;
+    } while(neutral->getOwner() > 0);
+    // switch cards
+    temporary.setOwner(usedCard->getOwner());
+    usedCard->setOwner(neutral->getOwner());
+    neutral->setOwner(temporary.getOwner());
 }

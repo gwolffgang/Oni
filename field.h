@@ -5,6 +5,7 @@
 #include <QMouseEvent>
 
 #include "piece.h"
+#include "card.h"
 
 class Field : public QObject, public QGraphicsRectItem {
     Q_OBJECT
@@ -42,7 +43,9 @@ public:
 
     // functions
     void captureOrChangePiece(Piece *target);
+    Card *chooseUsedCard(int player);
     void dropPiece();
+    void exchangeCards();
     int identifyPiece();
     void linkPiece(Piece *linkedPiece);
     void pickUpPiece(Piece *piece);

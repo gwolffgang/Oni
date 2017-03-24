@@ -74,6 +74,7 @@ private slots:
     void on_actionLargeLayout_triggered() { changeLayout(1.0); }
     void on_actionFullScreen_triggered();
     // Help
+    void on_actionRules_triggered();
     void on_actionAboutOni_triggered() { aboutOni(); }
     void on_actionAboutQt_triggered();
 
