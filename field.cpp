@@ -141,6 +141,11 @@ void Field::dropPiece() {
         if (game->getBoard()->at(4).at(2)->getPieceType() == 'M') game->winGame(1);
         if (game->getCapturedRed()->size() > 0 && game->getCapturedRed()->last()->getType() == 'M') game->winGame(-1);
         if (game->getCapturedBlue()->size() > 0 && game->getCapturedBlue()->last()->getType() == 'm') game->winGame(1);
+        if (game->getGameResult() != 0) {
+            if (game->getGameResult() == 1) game->getWindow()->notateVictory("1-0");
+            else game->getWindow()->notateVictory("0-1");
+        }
+
 
         // flip board every move check
         if (game->getWindow()->getFlipEveryMove())

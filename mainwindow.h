@@ -68,6 +68,7 @@ public:
     QString generateSetupString();
     void loadGame();
     void newGame(QString setupString = "");
+    void notateVictory(QString result);
     void positionNotation();
     void prepareGame();
     bool saveGame(const QString &fileName);

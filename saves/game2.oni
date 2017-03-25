@@ -1,1 +1,3 @@
-Sa1,Sc2,Mb2,Se1,sa5,sa4,mc5,sd3,se5|14,8,4,9,12|0,false,true,false
+Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|8,12,14,2,4|true,false,false
+Sa1,Sb1,Mc1,Sc2,Se1,sa5,sb5,mc5,sd5,se5|12,8,14,2,4|false,false,false
+Sa1,Sb1,Mc1,Sc2,Se1,sa5,sb4,mc5,sd5,se5|4,8,14,2,12|true,false,false

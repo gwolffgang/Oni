@@ -113,12 +113,11 @@ void MainWindow::analyseSetupString(QString string) {
     // get game settings
     if (part.size() >2) {
         elem = part.at(2).split(",");
-        game->setGameResult(elem.at(0).toInt());
-        if (elem.at(1) == "true") game->setFirstPlayersTurn(true);
+        if (elem.at(0) == "true") game->setFirstPlayersTurn(true);
         else game->setFirstPlayersTurn(false);
-        if (elem.at(2) == "true") game->setFlippedBoard(true);
+        if (elem.at(1) == "true") game->setFlippedBoard(true);
         else game->setFlippedBoard(false);
-        if (elem.at(3) == "true") ui->actionFlipEveryMove->setChecked(true);
+        if (elem.at(2) == "true") ui->actionFlipEveryMove->setChecked(true);
         else ui->actionFlipEveryMove->setChecked(false);
     }
 
@@ -359,11 +358,13 @@ QString MainWindow::generateNotationString(QString lastTurn, QString thisTurn) {
     }
     if (usedPieces.size() == 2) notationString += usedPieces.at(0) + "-" + usedPieces.at(1).at(1) + usedPieces.at(1).at(2);
     else {
-        if (usedPieces.at(2).at(0) == usedPieces.at(0).at(0)) notationString += usedPieces.at(0) + "x" + usedPieces.at(2);
-        else notationString += usedPieces.at(1) + "x" + usedPieces.at(2);
+        if (usedPieces.at(2).at(0) == usedPieces.at(0).at(0)) notationString += usedPieces.at(0) + "x" + usedPieces.at(1);
+        else notationString += usedPieces.at(1) + "x" + usedPieces.at(0);
     }
     // add used card (neutral card of actual cards)
-    notationString += " (" + newCards.at(0) + ")";
+    Card temp;
+    temp.setCardValues(newCards.at(0).toInt());
+    notationString += " (" + QString(temp.getName()) + ")";
 
     return notationString;
 }
@@ -402,10 +403,13 @@ QString MainWindow::generateSetupString() {
                 saveString += QString::number(game->getSlotsGrid()->at(k).at(l)->getCard()->getID());
             }
         }
-    }
+    } else
+        for (int k = 0; k < 5; k++) {
+            if (k != 0) saveString += ",";
+            saveString += QString::number(game->getCards()->at(k)->getID());
+        }
     saveString += "|";
     // set game settings
-    saveString += QString::number(game->getGameResult()) + ",";
     saveString += QString(game->getFirstPlayersTurn() ? "true" : "false") + ",";
     saveString += QString(game->getFlippedBoard() ? "true" : "false") + ",";
     saveString += QString(ui->actionFlipEveryMove->isChecked() ? "true" : "false");
@@ -414,7 +418,6 @@ QString MainWindow::generateSetupString() {
 
 void MainWindow::loadGame() {
     // load previously saved game
-    //if (maybeSave()) {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), "/current/saves", "Oni Savegames (*.oni)");
     if (!fileName.isEmpty()) {
         QFile file(fileName);
@@ -427,13 +430,20 @@ void MainWindow::loadGame() {
         #ifndef QT_NO_CURSOR
             QApplication::setOverrideCursor(Qt::WaitCursor);
         #endif
-        QString newString = in.readAll();
+            QString line = "";
+            game->getTurns()->clear();
+            while (!in.atEnd()) {
+                line = in.readLine();
+                game->getTurns()->append(line);
+            }
         #ifndef QT_NO_CURSOR
             QApplication::restoreOverrideCursor();
         #endif
 
         game->setOpenGameFileName(fileName);
-        newGame(newString);
+        if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1")
+            newGame(game->getTurns()->at( game->getTurns()->size()-2) );
+        else newGame(game->getTurns()->last());
 
         // set window title
         QStringList elem = fileName.split("/");
@@ -450,13 +460,16 @@ void MainWindow::newGame(QString setupString) {
     game->setFlippedBoard(false);
     game->getCapturedBlue()->clear();
     game->getCapturedRed()->clear();
-    ui->notation->clear();
+    game->setCardChoiceActive(false);
 
     // reset lists
+    if (setupString == "") game->getTurns()->clear();
+    ui->notation->clear();
     if (game->getPieces()) game->getPieces()->clear();
     if (game->getCards()) game->getCards()->clear();
     if (game->getBoard()) game->getBoard()->clear();
     if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
+
     for (int k = 0; k < game->getCapturedBlue()->size(); k++) {
         Piece *victim = game->getCapturedBlue()->at(k);
         bool delItem = false;
@@ -473,12 +486,26 @@ void MainWindow::newGame(QString setupString) {
     }
 
     // setup string
-    if (setupString == "") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|1,2,3,4,2";
+    if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
     analyseSetupString(setupString);
-    game->getTurns()->append(generateSetupString());
+    if (game->getTurns()->size() == 0) game->getTurns()->append(generateSetupString());
+
+    // fill notation window
+    int maxLines = game->getTurns()->size();
+    if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") maxLines--;
+    for (int i = 1; i < maxLines; i++)
+        ui->notation->addItem(generateNotationString(game->getTurns()->at(i-1),game->getTurns()->at(i)));
+    if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") notateVictory(game->getTurns()->last());
 
     // prepare the game
     prepareGame();
+}
+
+void MainWindow::notateVictory(QString result) {
+    ui->notation->addItem(result);
+    game->getTurns()->append(result);
+    if (result == "1-0") game->setGameResult(1);
+    else game->setGameResult(-1);
 }
 
 void MainWindow::positionNotation() {
@@ -515,7 +542,8 @@ bool MainWindow::saveGame(const QString &fileName) {
     #ifndef QT_NO_CURSOR
         QApplication::setOverrideCursor(Qt::WaitCursor);
     #endif
-        out << generateSetupString();
+        for (int i = 0; i < game->getTurns()->size(); i++)
+            out << game->getTurns()->at(i) << endl;
     #ifndef QT_NO_CURSOR
         QApplication::restoreOverrideCursor();
     #endif
