@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include <QDesktopServices>
 
 #include "aboutwindow.h"
 #include "button.h"
@@ -63,6 +64,7 @@ public:
     void drawBoard();
     void drawCardSlots();
     void drawSideBar();
+    QString generateNotationString(QString lastTurn, QString thisTurn);
     QString generateSetupString();
     void loadGame();
     void newGame(QString setupString = "");

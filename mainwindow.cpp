@@ -337,6 +337,37 @@ void MainWindow::drawSideBar() {
 
 }
 
+QString MainWindow::generateNotationString(QString lastTurn, QString thisTurn) {
+    QString notationString = "";
+    QStringList part = lastTurn.split("|");
+    QStringList lastPieces = part.at(0).split(",");
+    part = thisTurn.split("|");
+    QStringList newPieces = part.at(0).split(",");
+    QStringList newCards = part.at(1).split(",");
+    QStringList usedPieces;
+    foreach (QString pieceLast, lastPieces) {
+        bool found = false;
+        foreach (QString pieceNew, newPieces)
+            if (pieceLast == pieceNew) found = true;
+        if (found == false) usedPieces.append(pieceLast);
+    }
+    foreach (QString pieceNew, newPieces) {
+        bool found = false;
+        foreach (QString pieceLast, lastPieces)
+            if (pieceLast == pieceNew) found = true;
+        if (found == false) usedPieces.append(pieceNew);
+    }
+    if (usedPieces.size() == 2) notationString += usedPieces.at(0) + "-" + usedPieces.at(1).at(1) + usedPieces.at(1).at(2);
+    else {
+        if (usedPieces.at(2).at(0) == usedPieces.at(0).at(0)) notationString += usedPieces.at(0) + "x" + usedPieces.at(2);
+        else notationString += usedPieces.at(1) + "x" + usedPieces.at(2);
+    }
+    // add used card (neutral card of actual cards)
+    notationString += " (" + newCards.at(0) + ")";
+
+    return notationString;
+}
+
 QString MainWindow::generateSetupString() {
     // set fields
     QString saveString = "";
@@ -364,10 +395,12 @@ QString MainWindow::generateSetupString() {
     }
     saveString += "|";
     // set cards
-    for (int k = 0; k < 3; k++) {
-        for (int l = 0; l < game->getSlotsGrid()->at(k).size(); l++) {
-            if (k != 0) saveString += ",";
-            saveString += QString::number(game->getSlotsGrid()->at(k).at(l)->getCard()->getID());
+    if (game->getSlotsGrid()->size() > 0) {
+        for (int k = 0; k < 3; k++) {
+            for (int l = 0; l < game->getSlotsGrid()->at(k).size(); l++) {
+                if (k != 0) saveString += ",";
+                saveString += QString::number(game->getSlotsGrid()->at(k).at(l)->getCard()->getID());
+            }
         }
     }
     saveString += "|";
@@ -442,6 +475,7 @@ void MainWindow::newGame(QString setupString) {
     // setup string
     if (setupString == "") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|1,2,3,4,2";
     analyseSetupString(setupString);
+    game->getTurns()->append(generateSetupString());
 
     // prepare the game
     prepareGame();
@@ -498,7 +532,7 @@ bool MainWindow::saveGame(const QString &fileName) {
 
 bool MainWindow::saveGameAs() {
     // save current game
-    QFileDialog dialog(this);
+    QFileDialog dialog(this, qApp->applicationDirPath().append("/saves"));
         dialog.setWindowModality(Qt::WindowModal);
         dialog.setAcceptMode(QFileDialog::AcceptSave);
         if (dialog.exec() != QDialog::Accepted)
@@ -507,8 +541,15 @@ bool MainWindow::saveGameAs() {
 }
 
 void MainWindow::saveTurnInNotation() {
-    // notation of completed turns
-    ui->notation->addItem(generateSetupString());
+     QString lastMove, thisMove;
+    // notation of all turns
+    thisMove = generateSetupString();
+    lastMove = game->getTurns()->last();
+    game->getTurns()->append(thisMove);
+
+    // building notation entry
+    ui->notation->addItem(generateNotationString(lastMove, thisMove));
+
 }
 
 void MainWindow::on_actionSetupPosition_triggered() {
@@ -550,7 +591,7 @@ void MainWindow::on_actionFullScreen_triggered(){
 }
 
 void MainWindow::on_actionAboutRules_triggered() {
-   // QPrinter printer(QPrinter::HighResolution);
-   // printer.setOutputFormat(QPrinter::PdfFormat);
-   // printer.setOutputFileName(":/docs/Onitama Deutsch.pdf");
+    QFile RulesFile("qrc:/myFile.pdf");
+    RulesFile.copy(qApp->applicationDirPath().append("/docs/OnitamaDeutsch.pdf"));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath().append("/docs/OnitamaDeutsch.pdf")));
 }

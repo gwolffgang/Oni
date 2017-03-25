@@ -145,7 +145,6 @@ void Field::dropPiece() {
         // flip board every move check
         if (game->getWindow()->getFlipEveryMove())
             QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );
-
     }
     // force window refresh
     QTimer::singleShot( 1, game->getWindow(), SLOT(refreshWindow()) );

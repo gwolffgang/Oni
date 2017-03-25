@@ -34,6 +34,7 @@ Oni::Oni() {
     capturedBlue = new QList<Piece*>;
     capturedRed = new QList<Piece*>;
     cards = new QList<Card*>;
+    turns = new QList<QString>;
 }
 
 QList<Card*> Oni::identifyCards(int owner) {

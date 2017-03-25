@@ -68,14 +68,13 @@
     <addaction name="separator"/>
     <addaction name="actionFullScreen"/>
    </widget>
-   <widget class="QMenu" name="menuHelp">
+   <widget class="QMenu" name="menuAbout">
     <property name="locale">
      <locale language="English" country="Germany"/>
     </property>
     <property name="title">
-     <string>&amp;Help</string>
+     <string>&amp;About</string>
     </property>
-    <addaction name="actionAboutRules"/>
     <addaction name="separator"/>
     <addaction name="actionAboutOni"/>
     <addaction name="actionAboutQt"/>
@@ -103,7 +102,7 @@
    <addaction name="menuEngine"/>
    <addaction name="menuSettings"/>
    <addaction name="menuLayout"/>
-   <addaction name="menuHelp"/>
+   <addaction name="menuAbout"/>
   </widget>
   <action name="actionNew">
    <property name="text">

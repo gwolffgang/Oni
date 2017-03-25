@@ -28,6 +28,7 @@ private:
     QList<Piece*> *pieces, *capturedBlue, *capturedRed;
     QList<QList<CardSlot*>> *slotsGrid;
     QList<Card*> *cards;
+    QList<QString> *turns;
     QString openGameFileName;
     Piece *pickedUpPiece;
     Field *fieldOfOrigin, *chosenField;
@@ -61,6 +62,7 @@ public:
     inline QList<Piece*> *getPieces() { return pieces; }
     inline int getRows() { return rows; }
     inline QList<QList<CardSlot*>> *getSlotsGrid() { return slotsGrid; }
+    inline QList<QString> *getTurns() { return turns; }
     inline MainWindow *getWindow() { return window; }
 
     // setters
