@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene->setBackgroundBrush(QBrush(QImage(":/pics/paper.png")));
     scene->setSceneRect(0, 0, windowWidth, windowHeight);
     fieldSize = (scene->sceneRect().height() - 2*borderY - sideBarSize) / 5;
-    slotSize = (scene->height() - 4*borderY) / 3;
+    slotSize = (scene->height() - 4*borderY -32) / 3;
     ui->view->setScene(scene);
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -169,7 +169,7 @@ void MainWindow::changeLayout(double factor) {
         scene->setSceneRect(0, 0, windowWidth, windowHeight);
         ui->view->setFixedSize(windowWidth+5, windowHeight+5);
         fieldSize = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
-        slotSize = (scene->height() - 4*borderY) / 3;
+        slotSize = (scene->height() - 4*borderY -32) / 3;
         prepareGame();
     }
 }
@@ -509,7 +509,7 @@ void MainWindow::notateVictory(QString result) {
 }
 
 void MainWindow::positionNotation() {
-    double size = (scene->height() - 4*borderY) / 3;
+    double size = (scene->height()-32 - 4*borderY) / 3;
     double posX = scene->height() + size + 2*borderX;
     double posY = size + 2*borderY;
     ui->notation->setGeometry(posX, posY, size, size);
