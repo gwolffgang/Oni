@@ -309,15 +309,32 @@ void MainWindow::drawSideBar() {
     else scene->addItem(turnBlue);
 
     // Captured pieces
+    bool delItem = false;
+    for (int i = 0; i < game->getCapturedBlue()->count(); i++) {
+        Piece *victim = game->getCapturedBlue()->at(i);
+        if (victim->getType() == 's') {
+            victim->setPixmap(victim->pixmap().scaled(game->getWindow()->getSideBarSize()*2, game->getWindow()->getSideBarSize()*2 / victim->pixmap().width() * victim->pixmap().height()));
+            victim->setPos(posXright - 2*borderX, windowHeight - 2*borderY - turnRed->boundingRect().height() - game->getWindow()->getSideBarSize() - victim->pixmap().height()*(i+1));
+            delItem = false;
+            for (int k = 0; k < scene->items().size(); k++)
+                if (scene->items().at(k) == victim) delItem = true;
+            if (delItem) scene->removeItem(victim);
+            scene->addItem(victim);
+        }
+    }
     for (int i = 0; i < game->getCapturedRed()->count(); i++) {
         Piece *victim = game->getCapturedRed()->at(i);
         if (victim->getType() == 'S') {
             victim->setPixmap(victim->pixmap().scaled(game->getWindow()->getSideBarSize()*2, game->getWindow()->getSideBarSize()*2 / victim->pixmap().width() * victim->pixmap().height()));
             victim->setPos(posXright - 2*borderX, 2*borderY + turnRed->boundingRect().height() + victim->pixmap().height()*i);
-
+            delItem = false;
+            for (int k = 0; k < scene->items().size(); k++)
+                if (scene->items().at(k) == victim) delItem = true;
+            if (delItem) scene->removeItem(victim);
             scene->addItem(victim);
         }
     }
+
 }
 
 QString MainWindow::generateSetupString() {
@@ -398,6 +415,8 @@ void MainWindow::newGame(QString setupString) {
     game->setGameResult(0);
     game->setFirstPlayersTurn(true);
     game->setFlippedBoard(false);
+    game->getCapturedBlue()->clear();
+    game->getCapturedRed()->clear();
     ui->notation->clear();
 
     // reset lists
@@ -405,6 +424,20 @@ void MainWindow::newGame(QString setupString) {
     if (game->getCards()) game->getCards()->clear();
     if (game->getBoard()) game->getBoard()->clear();
     if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
+    for (int k = 0; k < game->getCapturedBlue()->size(); k++) {
+        Piece *victim = game->getCapturedBlue()->at(k);
+        bool delItem = false;
+        for (int k = 0; k < scene->items().size(); k++)
+            if (scene->items().at(k) == victim) delItem = true;
+        if (delItem) scene->removeItem(victim);
+    }
+    for (int k = 0; k < game->getCapturedRed()->size(); k++) {
+        Piece *victim = game->getCapturedRed()->at(k);
+        bool delItem = false;
+        for (int k = 0; k < scene->items().size(); k++)
+            if (scene->items().at(k) == victim) delItem = true;
+        if (delItem) scene->removeItem(victim);
+    }
 
     // setup string
     if (setupString == "") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|1,2,3,4,2";
