@@ -25,7 +25,7 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
 }
 
 void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    if (!game->getCardChoiceActive()) {
+    if (!game->getCardChoiceActive() && game->getGameResult() == 0) {
         if ((game->getFirstPlayersTurn() && (this->getPieceType() == 'M' || this->getPieceType() == 'S')) ||
             (!game->getFirstPlayersTurn() && (this->getPieceType() == 'm' || this->getPieceType() == 's'))) {
             if (piece != game->getPickedUpPiece()) {
@@ -51,7 +51,7 @@ void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 
 void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     // identify possible piece from pieces list
-    if (this->brush().style() != Qt::NoBrush && !game->getCardChoiceActive()) {
+    if (this->brush().style() != Qt::NoBrush && !game->getCardChoiceActive() && game->getGameResult() == 0) {
         int pieceNumber = identifyPiece();
         if (pieceNumber == -1) {
             // no piece on that field
@@ -107,13 +107,35 @@ void Field::dropPiece() {
         game->getWindow()->saveTurnInNotation();
         game->getFieldOfOrigin()->setPieceType(' ');
 
+        // set turnmarker
+        if (game->getFirstPlayersTurn()) {
+            game->getWindow()->getScene()->addItem(game->getWindow()->getTurnRed());
+            game->getWindow()->getScene()->removeItem(game->getWindow()->getTurnBlue());
+        }
+        else {
+            game->getWindow()->getScene()->addItem(game->getWindow()->getTurnBlue());
+            game->getWindow()->getScene()->removeItem(game->getWindow()->getTurnRed());
+        }
+
         // cleaning up
         unmarkAllFields();
         game->setFieldOfOrigin(NULL);
         game->setPickedUpPiece(NULL);
-    } else {
+
+        // winning conditions check
+        if (game->getBoard()->at(0).at(2)->getPieceType() == 'm') game->winGame(-1);
+        if (game->getBoard()->at(4).at(2)->getPieceType() == 'M') game->winGame(1);
+        if (game->getCapturedPieces()->size() > 0) {
+            if (game->getCapturedPieces()->last()->getType() == 'M') game->winGame(-1);
+            if (game->getCapturedPieces()->last()->getType() == 'm') game->winGame(1);
+        }
+
+        // flip board every move check
+        if (game->getWindow()->getFlipEveryMove())
+            QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );
 
     }
+    // force window refresh
     QTimer::singleShot( 1, game->getWindow(), SLOT(refreshWindow()) );
 }
 

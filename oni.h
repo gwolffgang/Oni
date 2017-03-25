@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QMessageBox>
 #include <QMouseEvent>
 #include <QObject>
 #include <QScreen>
@@ -75,7 +76,7 @@ public:
     //functions
     void switchCards(CardSlot *usedCardSlot);
     QList<Card*> identifyCards(int owner);
-    void setUpWindowSize(double factor);
+    void winGame(int winner);
 };
 
 #endif // ONI_H

@@ -46,7 +46,6 @@ FORMS    += mainwindow.ui \
     aboutwindow.ui
 
 RESOURCES += \
-    res.qrc \
-    docs.qrc
+    res.qrc
 
 DISTFILES +=

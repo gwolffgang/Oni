@@ -41,7 +41,7 @@
      <x>0</x>
      <y>0</y>
      <width>984</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuGame">
@@ -49,6 +49,7 @@
      <string>&amp;Game</string>
     </property>
     <addaction name="actionNew"/>
+    <addaction name="actionSetupPosition"/>
     <addaction name="separator"/>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
@@ -93,7 +94,13 @@
     <addaction name="menuFlipBoard"/>
     <addaction name="actionHideNotation"/>
    </widget>
+   <widget class="QMenu" name="menuEngine">
+    <property name="title">
+     <string>Engine</string>
+    </property>
+   </widget>
    <addaction name="menuGame"/>
+   <addaction name="menuEngine"/>
    <addaction name="menuSettings"/>
    <addaction name="menuLayout"/>
    <addaction name="menuHelp"/>
@@ -242,6 +249,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+F</string>
+   </property>
+  </action>
+  <action name="actionSetupPosition">
+   <property name="text">
+    <string>Setup &amp;position</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
  </widget>

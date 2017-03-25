@@ -44,6 +44,10 @@ MainWindow::~MainWindow() {
     delete ui;
 }
 
+bool MainWindow::getFlipEveryMove() {
+    return ui->actionFlipEveryMove->isChecked();
+}
+
 void MainWindow::analyseSetupString(QString string) {
     // seperate pieces and cards
     QStringList part = string.split("|");
@@ -87,7 +91,7 @@ void MainWindow::analyseSetupString(QString string) {
         game->getCards()->clear();
         // determine random, unique cards
         int intArray[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-        srand(unsigned(time(NULL)));
+        srand(unsigned((NULL)));
         std::random_shuffle(&intArray[0], &intArray[16], myrandom);
         for (int i = 0; i < 5; i++) {
             Card *card = new Card;
@@ -160,8 +164,8 @@ void MainWindow::drawBoard() {
                 field->setRow(row);
                 field->setCol(col);
                 field->setPieceType(' ');
-                field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
-
+                if (!game->getFlippedBoard()) field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
+                else field->setPos(borderX + fieldSize * (4-col), borderY + fieldSize * row);
                 // add piece to field
                 int pieceNumber = field->identifyPiece();
                 if (pieceNumber != -1) {
@@ -180,7 +184,8 @@ void MainWindow::drawBoard() {
         for (int row = 0; row < game->getRows(); row++)
             for (int col = 0; col < game->getCols(); col++) {
                 Field *field = game->getBoard()->at(row).at(col);
-                field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
+                if (!game->getFlippedBoard()) field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
+                else field->setPos(borderX + fieldSize * (4-col), borderY + fieldSize * row);
                 float size = game->getWindow()->getFieldSize();
                 field->setRect(0, 0, size, size);
 
@@ -217,8 +222,16 @@ void MainWindow::drawCardSlots() {
                     slot->assignCard(player, number);
                 } else slot = game->getSlotsGrid()->at(player).at(number);
             }
+
             double posX = scene->height() + number * slotSize + (number + 1) * borderX;
-            double posY = ((-1.5 * player + 2.5) * player + 1) * slotSize + ((-1.5 * player + 2.5) * player + 2) * borderY;
+            double posY;
+            if (game->getFlippedBoard())
+                //  1->0, 0->1, 2->2
+                posY = ((1.5 * player - 2.5) * player + 1) * slotSize + ((1.5 * player - 2.5) * player + 2) * borderY;
+            else
+                //   2->0, 0->1, 1->2
+                posY = ((-1.5 * player + 2.5) * player + 1) * slotSize + ((-1.5 * player + 2.5) * player + 2) * borderY;
+
             if (game->getCardChoiceActive()) {
                 if ((game->getFirstPlayersTurn() && player == 1) || (!game->getFirstPlayersTurn() && player == 2)) {
                     posX = 0.1*windowWidth + 1.1*number*slotSize;
@@ -241,17 +254,36 @@ void MainWindow::drawCardSlots() {
 }
 
 void MainWindow::drawSideBar() {
-    // drawing in-game side bar
+    double posX, posY;
+    // drawing in-game sidebar "right"
+    posX = this->height() - sideBarSize - borderX;
+
+    // FlipButton
     flipButton = new Button;
     flipButton->drawButton("flipButton", "right");
-    double posX = this->height() - sideBarSize - borderX;
-    double posY = (this->height() - sideBarSize - flipButton->pixmap().height() ) /2;
+    posY = (this->height() - sideBarSize - flipButton->pixmap().height() ) /2;
     flipButton->setPos(posX, posY);
     if (game->getFlippedBoard()) {
         flipButton->setTransformOriginPoint(flipButton->pixmap().width() / 2, flipButton->pixmap().height() / 2);
         flipButton->setRotation(180);
     }
     scene->addItem(flipButton);
+
+    // TurnMarker
+    turnRed = new Button;
+    turnRed->drawButton("turnRed", "right");
+    if (game->getFlippedBoard()) posY = borderY;
+    else posY = (this->height() - sideBarSize - borderY - turnRed->pixmap().height() );
+    turnRed->setPos(posX, posY);
+
+    turnBlue = new Button;
+    turnBlue->drawButton("turnBlue", "right");
+    if (game->getFlippedBoard()) posY = (this->height() - sideBarSize - borderY - turnBlue->pixmap().height() );
+    else posY = borderY;
+    turnBlue->setPos(posX, posY);
+
+    if (game->getFirstPlayersTurn()) scene->addItem(turnRed);
+    else scene->addItem(turnBlue);
 }
 
 QString MainWindow::generateSetupString() {
@@ -323,6 +355,7 @@ void MainWindow::loadGame() {
 
 void MainWindow::newGame(QString setupString) {
     // reset settings
+    game->setGameResult(0);
     game->setFirstPlayersTurn(true);
     game->setFlippedBoard(false);
     ui->notation->clear();
@@ -330,6 +363,8 @@ void MainWindow::newGame(QString setupString) {
     // reset lists
     if (game->getPieces()) game->getPieces()->clear();
     if (game->getCards()) game->getCards()->clear();
+    if (game->getBoard()) game->getBoard()->clear();
+    if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
 
     // setup string
     if (setupString == "") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
@@ -356,9 +391,6 @@ void MainWindow::prepareGame() {
     drawSideBar();
     drawCardSlots();
     positionNotation();
-    if (game->getCardChoiceActive()) {
-
-    }
 }
 
 bool MainWindow::saveGame(const QString &fileName) {
@@ -406,6 +438,10 @@ void MainWindow::saveTurnInNotation() {
     ui->notation->addItem(generateSetupString());
 }
 
+void MainWindow::on_actionSetupPosition_triggered() {
+
+}
+
 void MainWindow::on_actionSave_triggered() {
     // menubar option
     bool success = false;
@@ -440,7 +476,7 @@ void MainWindow::on_actionFullScreen_triggered(){
     }
 }
 
-void MainWindow::on_actionRules_triggered() {
+void MainWindow::on_actionAboutRules_triggered() {
    // QPrinter printer(QPrinter::HighResolution);
    // printer.setOutputFormat(QPrinter::PdfFormat);
    // printer.setOutputFileName(":/docs/Onitama Deutsch.pdf");

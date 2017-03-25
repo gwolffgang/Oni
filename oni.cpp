@@ -1,3 +1,6 @@
+#include <QMessageBox>
+#include <QTimer>
+
 #include "oni.h"
 
 extern Oni *game;
@@ -39,6 +42,17 @@ QList<Card*> Oni::identifyCards(int owner) {
         list.append(slotsGrid->at(owner).at(k)->getCard());
     }
     return list;
+}
+
+void Oni::winGame(int winner) {
+    gameResult = winner;
+    QString victor;
+    if (winner == 1) victor = "Red";
+    else victor = "Blue";
+    QMessageBox::StandardButton reply = QMessageBox::information(NULL, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
+    if (reply == QMessageBox::Save) QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionSave_triggered()) );
+
+    // setWindowTitle(getwindowTitle() + " 1-0");
 }
 
 void Oni::switchCards(CardSlot *usedCardSlot) {

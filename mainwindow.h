@@ -22,6 +22,8 @@ private:
     AboutWindow *about;
     QString windowTitle;
     Button *flipButton;
+    Button *turnRed;
+    Button *turnBlue;
     double windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize;
 
 public:
@@ -38,9 +40,12 @@ public:
     inline int getBorderX() { return borderX; }
     inline int getBorderY() { return borderY; }
     inline double getFieldSize() { return fieldSize; }
+    bool getFlipEveryMove();
     inline QGraphicsScene *getScene() { return scene; }
     inline double getSlotSize() { return slotSize; }
     inline double getSideBarSize() { return sideBarSize; }
+    inline Button *getTurnBlue() { return turnBlue; }
+    inline Button *getTurnRed() { return turnRed; }
     inline double getWindowHeight() { return windowHeight; }
     inline double getWindowWidth() { return windowWidth; }
 
@@ -72,6 +77,7 @@ private slots:
     void refreshWindow() { prepareGame(); }
     // Game
     void on_actionNew_triggered() { newGame(); }
+    void on_actionSetupPosition_triggered();
     void on_actionLoad_triggered() { loadGame(); }
     void on_actionSave_triggered();
     void on_actionSaveAs_triggered() { saveGameAs(); }
@@ -84,7 +90,7 @@ private slots:
     void on_actionLargeLayout_triggered() { changeLayout(1.0); }
     void on_actionFullScreen_triggered();
     // Help
-    void on_actionRules_triggered();
+    void on_actionAboutRules_triggered();
     void on_actionAboutOni_triggered() { aboutOni(); }
     void on_actionAboutQt_triggered();
 };

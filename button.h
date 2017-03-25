@@ -10,9 +10,12 @@ public:
     Button(QGraphicsItem *parent = NULL);
 
     // functions
-    void drawButton(QString type = "", QString pos = "left");
+    void drawButton(QString buttonType = "", QString buttonPos = "left");
 
 protected:
+    // variables
+    QString type, pos;
+
     // events
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
