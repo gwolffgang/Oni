@@ -93,13 +93,7 @@
     <addaction name="menuFlipBoard"/>
     <addaction name="actionHideNotation"/>
    </widget>
-   <widget class="QMenu" name="menuEngine">
-    <property name="title">
-     <string>Engine</string>
-    </property>
-   </widget>
    <addaction name="menuGame"/>
-   <addaction name="menuEngine"/>
    <addaction name="menuSettings"/>
    <addaction name="menuLayout"/>
    <addaction name="menuAbout"/>
