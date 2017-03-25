@@ -1,7 +1,6 @@
 #ifndef CARD_H
 #define CARD_H
 
-#include <iostream>
 #include <QGraphicsPixmapItem>
 #include <string.h>
 #include <time.h>
@@ -18,6 +17,9 @@ private:
 public:
     // constructors
     Card(QGraphicsItem *parent = NULL);
+
+    // operators
+    bool operator==(Card *card) { if (card->id == id) return true; else return false; }
 
     // getters
     inline QString getName() { return name; }

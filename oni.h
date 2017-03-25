@@ -25,7 +25,7 @@ private:
     //variables
     MainWindow *window;
     QList<QList<Field*>> *board;
-    QList<Piece*> *pieces, *capturedPieces;
+    QList<Piece*> *pieces, *capturedBlue, *capturedRed;
     QList<QList<CardSlot*>> *slotsGrid;
     QList<Card*> *cards;
     QString openGameFileName;
@@ -43,7 +43,9 @@ public:
 
     // getters
     inline QList<QList<Field*>> *getBoard() { return board; }
-    inline QList<Piece*> *getCapturedPieces() { return capturedPieces; }
+    inline QList<Piece*> *getCapturedBlue() { return capturedBlue; }
+    inline QList<Piece*> *getCapturedRed() { return capturedRed; }
+
     inline QList<Card*> *getCards() { return cards; }
     inline bool getCardChoiceActive() { return cardChoiceActive; }
     inline int getCardsPerPlayer () { return cardsPerPlayer; }

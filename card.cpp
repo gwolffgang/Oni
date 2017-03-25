@@ -1,3 +1,4 @@
+#include <iostream>
 #include "card.h"
 #include "oni.h"
 

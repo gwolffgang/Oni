@@ -1,4 +1,6 @@
 #include <QMessageBox>
+#include <iostream>
+#include <time.h>
 
 #include "mainwindow.h"
 #include "oni.h"
@@ -6,7 +8,7 @@
 
 extern Oni *game;
 
-int myrandom(int i) { return std::rand()%i; }
+int myrandom(int i) { srand(unsigned(time(NULL))); return std::rand()%i; }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     // set up the UI
@@ -80,25 +82,46 @@ void MainWindow::analyseSetupString(QString string) {
         if (!game->getPieces()->contains(piece)) game->getPieces()->append(piece);
     }
     // get cards
-    elem = part.at(1).split(",");
-    for (int i = 0; i < elem.size(); i++) {
-        Card *card = new Card;
-        card->setCardValues(elem.at(i).toInt());
-        if (!game->getCards()->contains(card)) game->getCards()->append(card);
-    }
-    if (game->getCards()->size() != 5) {
-        // clear cards list
-        game->getCards()->clear();
-        // determine random, unique cards
-        int intArray[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
-        srand(unsigned((NULL)));
-        std::random_shuffle(&intArray[0], &intArray[16], myrandom);
-        for (int i = 0; i < 5; i++) {
+    if (part.size() > 1) {
+        elem = part.at(1).split(",");
+        bool nope = false;
+        for (int i = 0; i < elem.size(); i++) {
             Card *card = new Card;
-            card->setCardValues(intArray[i]);
-            game->getCards()->append(card);
+            card->setCardValues(elem.at(i).toInt());
+            nope = false;
+            for (int k = 0; k < game->getCards()->size(); k++)
+                if (card->getID() == game->getCards()->at(k)->getID()) {
+                    nope = true;
+                    continue;
+                }
+            if (!nope) game->getCards()->append(card);
+        }
+        if (game->getCards()->size() != 5) {
+            // clear cards list
+            game->getCards()->clear();
+            // determine random, unique cards
+            int intArray[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+            srand(unsigned((NULL)));
+            std::random_shuffle(&intArray[0], &intArray[16], myrandom);
+            for (int i = 0; i < 5; i++) {
+                Card *card = new Card;
+                card->setCardValues(intArray[i]);
+                game->getCards()->append(card);
+            }
         }
     }
+    // get game settings
+    if (part.size() >2) {
+        elem = part.at(2).split(",");
+        game->setGameResult(elem.at(0).toInt());
+        if (elem.at(1) == "true") game->setFirstPlayersTurn(true);
+        else game->setFirstPlayersTurn(false);
+        if (elem.at(2) == "true") game->setFlippedBoard(true);
+        else game->setFlippedBoard(false);
+        if (elem.at(3) == "true") ui->actionFlipEveryMove->setChecked(true);
+        else ui->actionFlipEveryMove->setChecked(false);
+    }
+
 }
 
 void MainWindow::changeLayout(double factor) {
@@ -254,15 +277,15 @@ void MainWindow::drawCardSlots() {
 }
 
 void MainWindow::drawSideBar() {
-    double posX, posY;
+    double posXright = 0, posYbuttom = 0, posX = 0, posY = 0;
     // drawing in-game sidebar "right"
-    posX = this->height() - sideBarSize - borderX;
+    posXright = this->height() - sideBarSize - borderX;
+    posYbuttom = this->height() - sideBarSize - borderY;
 
     // FlipButton
     flipButton = new Button;
     flipButton->drawButton("flipButton", "right");
-    posY = (this->height() - sideBarSize - flipButton->pixmap().height() ) /2;
-    flipButton->setPos(posX, posY);
+    flipButton->setPos(posXright, (this->height() - sideBarSize - flipButton->pixmap().height() ) /2);
     if (game->getFlippedBoard()) {
         flipButton->setTransformOriginPoint(flipButton->pixmap().width() / 2, flipButton->pixmap().height() / 2);
         flipButton->setRotation(180);
@@ -274,20 +297,31 @@ void MainWindow::drawSideBar() {
     turnRed->drawButton("turnRed", "right");
     if (game->getFlippedBoard()) posY = borderY;
     else posY = (this->height() - sideBarSize - borderY - turnRed->pixmap().height() );
-    turnRed->setPos(posX, posY);
+    turnRed->setPos(posXright, posY);
 
     turnBlue = new Button;
     turnBlue->drawButton("turnBlue", "right");
     if (game->getFlippedBoard()) posY = (this->height() - sideBarSize - borderY - turnBlue->pixmap().height() );
     else posY = borderY;
-    turnBlue->setPos(posX, posY);
+    turnBlue->setPos(posXright, posY);
 
     if (game->getFirstPlayersTurn()) scene->addItem(turnRed);
     else scene->addItem(turnBlue);
+
+    // Captured pieces
+    for (int i = 0; i < game->getCapturedRed()->count(); i++) {
+        Piece *victim = game->getCapturedRed()->at(i);
+        if (victim->getType() == 'S') {
+            victim->setPixmap(victim->pixmap().scaled(game->getWindow()->getSideBarSize()*2, game->getWindow()->getSideBarSize()*2 / victim->pixmap().width() * victim->pixmap().height()));
+            victim->setPos(posXright - 2*borderX, 2*borderY + turnRed->boundingRect().height() + victim->pixmap().height()*i);
+
+            scene->addItem(victim);
+        }
+    }
 }
 
 QString MainWindow::generateSetupString() {
-    // generate declaration of fields
+    // set fields
     QString saveString = "";
     for (int i = 0; i < game->getPieces()->size(); i++) {
         Piece *piece = game->getPieces()->at(i);
@@ -312,13 +346,19 @@ QString MainWindow::generateSetupString() {
         saveString += QString::number(game->getPieces()->at(i)->getRow()+1);
     }
     saveString += "|";
+    // set cards
     for (int k = 0; k < 3; k++) {
         for (int l = 0; l < game->getSlotsGrid()->at(k).size(); l++) {
             if (k != 0) saveString += ",";
             saveString += QString::number(game->getSlotsGrid()->at(k).at(l)->getCard()->getID());
         }
     }
-
+    saveString += "|";
+    // set game settings
+    saveString += QString::number(game->getGameResult()) + ",";
+    saveString += QString(game->getFirstPlayersTurn() ? "true" : "false") + ",";
+    saveString += QString(game->getFlippedBoard() ? "true" : "false") + ",";
+    saveString += QString(ui->actionFlipEveryMove->isChecked() ? "true" : "false");
     return saveString;
 }
 
@@ -367,7 +407,7 @@ void MainWindow::newGame(QString setupString) {
     if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
 
     // setup string
-    if (setupString == "") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
+    if (setupString == "") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|1,2,3,4,2";
     analyseSetupString(setupString);
 
     // prepare the game

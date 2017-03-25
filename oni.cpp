@@ -31,7 +31,8 @@ Oni::Oni() {
 
     // initiate lists
     pieces = new QList<Piece*>;
-    capturedPieces = new QList<Piece*>;
+    capturedBlue = new QList<Piece*>;
+    capturedRed = new QList<Piece*>;
     cards = new QList<Card*>;
 }
 

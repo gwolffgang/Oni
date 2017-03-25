@@ -73,11 +73,25 @@ void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 void Field::captureOrChangePiece(Piece *target) {
     // capture or change piece
-    if ((!game->getFirstPlayersTurn() && (target->getType() == 'M' || target->getType() == 'S')) ||
-        (game->getFirstPlayersTurn() && (target->getType() == 'm' || target->getType() == 's'))) {
+    int targetOwner = 0;
+    switch (target->getType()) {
+    case 'S':
+        targetOwner = 1;
+        break;
+    case 'M':
+        targetOwner = 1;
+        break;
+    case 's':
+        targetOwner = 2;
+        break;
+    case 'm':
+        targetOwner = 2;
+    }
+    if ((!game->getFirstPlayersTurn() && targetOwner == 1) || (game->getFirstPlayersTurn() && (targetOwner == 2))) {
         // remove captured piece
         game->getWindow()->getScene()->removeItem(target);
-        game->getCapturedPieces()->append(target);
+        if (targetOwner == 1) game->getCapturedRed()->append(target);
+        else game->getCapturedBlue()->append(target);
         game->getPieces()->removeAll(target);
 
         // drop piece
@@ -125,10 +139,8 @@ void Field::dropPiece() {
         // winning conditions check
         if (game->getBoard()->at(0).at(2)->getPieceType() == 'm') game->winGame(-1);
         if (game->getBoard()->at(4).at(2)->getPieceType() == 'M') game->winGame(1);
-        if (game->getCapturedPieces()->size() > 0) {
-            if (game->getCapturedPieces()->last()->getType() == 'M') game->winGame(-1);
-            if (game->getCapturedPieces()->last()->getType() == 'm') game->winGame(1);
-        }
+        if (game->getCapturedRed()->size() > 0 && game->getCapturedRed()->last()->getType() == 'M') game->winGame(-1);
+        if (game->getCapturedBlue()->size() > 0 && game->getCapturedBlue()->last()->getType() == 'm') game->winGame(1);
 
         // flip board every move check
         if (game->getWindow()->getFlipEveryMove())
