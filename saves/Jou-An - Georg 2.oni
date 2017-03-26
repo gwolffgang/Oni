@@ -1,0 +1,7 @@
+Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|12,10,14,5,16|true,false,true
+Sa1,Sb1,Md2,Sd1,Se1,sa5,sb5,mc5,sd5,se5|14,10,12,5,16|false,false,true
+Sa1,Sb1,Md2,Sd1,Se1,sa5,sb3,mc5,sd5,se5|16,10,12,5,14|true,true,true
+Sa1,Sb1,Mc3,Sd1,Se1,sa5,sb3,mc5,sd5,se5|12,10,16,5,14|false,false,true
+Sa1,Sb1,Mc3,Sd1,Se1,sa5,sb3,mc5,sc4,se5|14,10,16,5,12|true,true,true
+Sa1,Sb1,Mc5,Sd1,Se1,sa5,sb3,sc4,se5|16,10,14,5,12|false,false,true
+1-0

@@ -244,7 +244,7 @@ void MainWindow::drawCardSlots() {
                     slot->assignCard(player, number);
                 } else slot = game->getSlotsGrid()->at(player).at(number);
             }
-
+            slot->setRect(0, 0, slotSize, slotSize);
             double posX = scene->height() + number * slotSize + (number + 1) * borderX;
             double posY;
             if (game->getFlippedBoard())
@@ -461,6 +461,9 @@ void MainWindow::newGame(QString setupString) {
     game->getCapturedBlue()->clear();
     game->getCapturedRed()->clear();
     game->setCardChoiceActive(false);
+    windowTitle = "Oni - new unsaved game";
+    setWindowTitle(windowTitle);
+    game->setOpenGameFileName("");
 
     // reset lists
     if (setupString == "") game->getTurns()->clear();
