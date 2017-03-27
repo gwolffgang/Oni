@@ -146,7 +146,6 @@ void Field::dropPiece() {
             else game->getWindow()->notateVictory("0-1");
         }
 
-
         // flip board every move check
         if (game->getWindow()->getFlipEveryMove())
             QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );

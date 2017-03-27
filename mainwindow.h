@@ -88,6 +88,7 @@ private slots:
     void on_actionResign_triggered();
     // Settings
     void on_actionFlipOnce_triggered();
+    void on_actionHideNotation_triggered();
     // Layout
     void on_actionTinyLayout_triggered() { changeLayout(0.25); }
     void on_actionSmallLayout_triggered() { changeLayout(0.5); }

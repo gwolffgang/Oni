@@ -217,20 +217,15 @@
     <string>Ctrl+A</string>
    </property>
   </action>
-  <action name="actionAboutRules">
-   <property name="text">
-    <string>&amp;Rules of the game</string>
-   </property>
-   <property name="shortcut">
-    <string>F1</string>
-   </property>
-  </action>
   <action name="actionHideNotation">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="text">
     <string>Hide &amp;notation</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
    </property>
   </action>
   <action name="actionFlipOnce">

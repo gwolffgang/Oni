@@ -496,8 +496,19 @@ void MainWindow::newGame(QString setupString) {
     // fill notation window
     int maxLines = game->getTurns()->size();
     if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") maxLines--;
-    for (int i = 1; i < maxLines; i++)
-        ui->notation->addItem(generateNotationString(game->getTurns()->at(i-1),game->getTurns()->at(i)));
+    for (int i = 1; i < maxLines; i++) {
+        QListWidgetItem *item;
+        if (i%2 == 1) {
+            item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". " + generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
+            item->setBackground(QColor(200,55,55));
+        } else {
+            item = new QListWidgetItem(generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
+            item->setBackground(Qt::blue);
+            item->setTextAlignment(Qt::AlignRight);
+        }
+        item->setForeground(Qt::gray);
+        ui->notation->addItem(item);
+    }
     if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") notateVictory(game->getTurns()->last());
 
     // prepare the game
@@ -506,15 +517,17 @@ void MainWindow::newGame(QString setupString) {
 
 void MainWindow::notateVictory(QString result) {
     ui->notation->addItem(result);
+    ui->notation->scrollToBottom();
     game->getTurns()->append(result);
     if (result == "1-0") game->setGameResult(1);
     else game->setGameResult(-1);
 }
 
 void MainWindow::positionNotation() {
-    double size = (scene->height()-32 - 4*borderY) / 3;
+    double size = (scene->height() - 32 - 4*borderY) / 3;
     double posX = scene->height() + size + 2*borderX;
     double posY = size + 2*borderY;
+    ui->notation->scrollToBottom();
     ui->notation->setGeometry(posX, posY, size, size);
 }
 
@@ -579,8 +592,17 @@ void MainWindow::saveTurnInNotation() {
     game->getTurns()->append(thisMove);
 
     // building notation entry
-    ui->notation->addItem(generateNotationString(lastMove, thisMove));
-
+    QListWidgetItem *item;
+    if (!game->getFirstPlayersTurn()) {
+        item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". " + generateNotationString(lastMove, thisMove));
+        item->setBackground(QColor(200,55,55));
+    } else {
+        item = new QListWidgetItem(generateNotationString(lastMove, thisMove));
+        item->setBackground(Qt::blue);
+        item->setTextAlignment(Qt::AlignRight);
+    }
+    item->setForeground(Qt::gray);
+    ui->notation->addItem(item);
 }
 
 void MainWindow::on_actionSetupPosition_triggered() {
@@ -614,6 +636,17 @@ void MainWindow::on_actionFlipOnce_triggered() {
     // menubar option
     game->setFlippedBoard(!game->getFlippedBoard());
     prepareGame();
+}
+
+void MainWindow::on_actionHideNotation_triggered() {
+    if (ui->notation->isVisible()) {
+        ui->notation->setVisible(false);
+        ui->actionHideNotation->setChecked(true);
+    }
+    else {
+        ui->notation->setVisible(true);
+        ui->actionHideNotation->setChecked(false);
+    }
 }
 
 void MainWindow::on_actionAboutQt_triggered() {
