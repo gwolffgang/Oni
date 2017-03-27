@@ -84,6 +84,8 @@ private slots:
     void on_actionLoad_triggered() { loadGame(); }
     void on_actionSave_triggered();
     void on_actionSaveAs_triggered() { saveGameAs(); }
+    // Match
+    void on_actionResign_triggered();
     // Settings
     void on_actionFlipOnce_triggered();
     // Layout
@@ -92,8 +94,7 @@ private slots:
     void on_actionNormalLayout_triggered() { changeLayout(0.75); }
     void on_actionLargeLayout_triggered() { changeLayout(1.0); }
     void on_actionFullScreen_triggered();
-    // Help
-    void on_actionAboutRules_triggered();
+    // About
     void on_actionAboutOni_triggered() { aboutOni(); }
     void on_actionAboutQt_triggered();
 };

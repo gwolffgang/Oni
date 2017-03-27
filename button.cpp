@@ -27,18 +27,28 @@ void Button::drawButton(QString buttonType, QString buttonPos) {
         setPixmap(img);
     }
 }
-    // possible button-events
+
 void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (type == "flipButton") setCursor(Qt::PointingHandCursor);
+    if (type == "turnBlue" || type == "turnRed" ) {
+        drawButton("whiteFlag","right");
+        setCursor((Qt::PointingHandCursor));
+    }
     event->ignore();
 }
 
 void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
     if (type == "flipButton") setCursor(Qt::ArrowCursor);
+    if (type == "whiteFlag") {
+        if (game->getFirstPlayersTurn()) drawButton("turnRed", "right");
+        else drawButton("turnBlue", "right");
+        setCursor((Qt::ArrowCursor));
+    }
     event->ignore();
 }
 
 void Button::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (type == "flipButton") QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );
+    if (type == "whiteFlag") QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionResign_triggered()) );
     event->ignore();
 }

@@ -24,5 +24,6 @@
         <file>pics/buttons/flipButton.png</file>
         <file>pics/buttons/turnBlue.png</file>
         <file>pics/buttons/turnRed.png</file>
+        <file>pics/buttons/whiteFlag.png</file>
     </qresource>
 </RCC>

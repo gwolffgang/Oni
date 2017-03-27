@@ -594,6 +594,22 @@ void MainWindow::on_actionSave_triggered() {
     else success = saveGameAs();
 }
 
+void MainWindow::on_actionResign_triggered() {
+    if (game->getGameResult() == 0 && !game->getCardChoiceActive()) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Resign match", "Do you really want to resign?", QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::Yes) {
+            if (game->getFirstPlayersTurn()) {
+                game->setGameResult(-1);
+                game->getWindow()->notateVictory("0-1");
+            } else {
+                game->setGameResult(1);
+                game->getWindow()->notateVictory("1-0");
+            }
+        }
+    }
+}
+
 void MainWindow::on_actionFlipOnce_triggered() {
     // menubar option
     game->setFlippedBoard(!game->getFlippedBoard());
@@ -619,10 +635,4 @@ void MainWindow::on_actionFullScreen_triggered(){
         if (ui->actionNormalLayout->isChecked()) changeLayout(0.75);
         if (ui->actionLargeLayout->isChecked()) changeLayout(1.00);
     }
-}
-
-void MainWindow::on_actionAboutRules_triggered() {
-    QFile RulesFile("qrc:/myFile.pdf");
-    RulesFile.copy(qApp->applicationDirPath().append("/docs/OnitamaDeutsch.pdf"));
-    QDesktopServices::openUrl(QUrl::fromLocalFile(qApp->applicationDirPath().append("/docs/OnitamaDeutsch.pdf")));
 }
