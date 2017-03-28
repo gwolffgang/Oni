@@ -93,6 +93,7 @@
     </widget>
     <addaction name="menuFlipBoard"/>
     <addaction name="actionHideNotation"/>
+    <addaction name="actionAxisLabeling"/>
    </widget>
    <widget class="QMenu" name="menuMatch">
     <property name="title">
@@ -261,6 +262,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionAxisLabeling">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Axis labeling</string>
    </property>
   </action>
  </widget>

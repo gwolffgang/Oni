@@ -22,10 +22,9 @@ private:
     QGraphicsScene *scene;
     AboutWindow *about;
     QString windowTitle;
-    Button *flipButton;
-    Button *turnRed;
-    Button *turnBlue;
-    double windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize;
+    Button *flipButton, *turnRed, *turnBlue;
+    QList<QGraphicsTextItem*> *axisLabel;
+    double windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize, axisLabelSize;
 
 public:
     Ui::MainWindow *ui;
@@ -38,6 +37,7 @@ public:
     ~MainWindow();
 
     // getter
+    bool getAxisLabeling();
     inline int getBorderX() { return borderX; }
     inline int getBorderY() { return borderY; }
     inline double getFieldSize() { return fieldSize; }
@@ -61,6 +61,7 @@ public:
     void analyseSetupString(QString string);
     void changeLayout(double factor);
     void createCardslots();
+    void drawAxisLabeling();
     void drawBoard();
     void drawCardSlots();
     void drawSideBar();
@@ -90,14 +91,15 @@ private slots:
     void on_actionFlipOnce_triggered();
     void on_actionHideNotation_triggered();
     // Layout
-    void on_actionTinyLayout_triggered() { changeLayout(0.25); }
+    void on_actionTinyLayout_triggered() { changeLayout(0.3); }
     void on_actionSmallLayout_triggered() { changeLayout(0.5); }
-    void on_actionNormalLayout_triggered() { changeLayout(0.75); }
-    void on_actionLargeLayout_triggered() { changeLayout(1.0); }
+    void on_actionNormalLayout_triggered() { changeLayout(0.7); }
+    void on_actionLargeLayout_triggered() { changeLayout(0.9); }
     void on_actionFullScreen_triggered();
     // About
     void on_actionAboutOni_triggered() { aboutOni(); }
     void on_actionAboutQt_triggered();
+    void on_actionAxisLabeling_triggered();
 };
 
 #endif // MAINWINDOW_H

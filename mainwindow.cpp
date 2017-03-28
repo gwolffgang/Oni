@@ -1,4 +1,5 @@
 #include <QMessageBox>
+#include <QTimer>
 #include <iostream>
 #include <time.h>
 
@@ -16,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene = NULL;
 
     // presettings
-    changeLayout(0.75);
+    changeLayout(0.70);
     windowTitle = "Oni - new unsaved game";
     setWindowTitle(windowTitle);
 
@@ -31,12 +32,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     scene = new QGraphicsScene(this);
     scene->setBackgroundBrush(QBrush(QImage(":/pics/paper.png")));
     scene->setSceneRect(0, 0, windowWidth, windowHeight);
-    fieldSize = (scene->sceneRect().height() - 2*borderY - sideBarSize) / 5;
+    fieldSize = (scene->sceneRect().height() - 2*borderY - sideBarSize - axisLabelSize) / 5;
     slotSize = (scene->height() - 4*borderY -32) / 3;
     ui->view->setScene(scene);
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setFixedSize(windowWidth+5, windowHeight+5);
+    axisLabel = new QList<QGraphicsTextItem*>;
 
     // dialog windows
     about = new AboutWindow(this);
@@ -44,6 +46,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow() {
     delete ui;
+}
+
+bool MainWindow::getAxisLabeling() {
+    return ui->actionAxisLabeling->isChecked();
 }
 
 bool MainWindow::getFlipEveryMove() {
@@ -151,7 +157,9 @@ void MainWindow::changeLayout(double factor) {
     screen = QGuiApplication::primaryScreen();
     // measure and fill available screen
     QRect desktop = screen->availableGeometry();
-    // default factor: 0.75
+    // default factor: 0.70
+    if (getAxisLabeling() == true) axisLabelSize = 30 * factor;
+    else axisLabelSize = 0;
     borderX = 10 * factor;
     borderY = 10 * factor;
     sideBarSize = 40 * factor;
@@ -168,9 +176,33 @@ void MainWindow::changeLayout(double factor) {
     if (scene != NULL) {
         scene->setSceneRect(0, 0, windowWidth, windowHeight);
         ui->view->setFixedSize(windowWidth+5, windowHeight+5);
-        fieldSize = ((scene->sceneRect().height() - 2*borderY - sideBarSize) / 5);
+        fieldSize = ((scene->sceneRect().height() - 2*borderY - sideBarSize - axisLabelSize) / 5);
         slotSize = (scene->height() - 4*borderY -32) / 3;
         prepareGame();
+    }
+}
+
+void MainWindow::drawAxisLabeling() {
+    if (getAxisLabeling()) {
+        for (int row = 0; row < 5; row++) {
+            QGraphicsTextItem *label = new QGraphicsTextItem;
+            if (game->getFlippedBoard()) label->setPlainText(QString::number(row+1));
+            else label->setPlainText(QString::number(5-row)); 
+            if (ui->actionTinyLayout->isChecked() == false)
+                label->setPos(borderX, borderY + fieldSize/2 + fieldSize*row - label->boundingRect().height()/2);
+            else
+                label->setPos(-2*borderX, borderY + fieldSize/2 + fieldSize*row - label->boundingRect().height()/2);
+            axisLabel->append(label);
+            scene->addItem(label);
+        }
+        for (int col = 0; col < 5; col++) {
+            QGraphicsTextItem *label = new QGraphicsTextItem;
+            if (game->getFlippedBoard()) label->setPlainText(QString('e'-col));
+            else label->setPlainText(QString('a'+col));
+            label->setPos(borderX + axisLabelSize + fieldSize/2 + fieldSize*col - label->boundingRect().width()/2, 2*borderY + 5*fieldSize);
+            axisLabel->append(label);
+            scene->addItem(label);
+        }
     }
 }
 
@@ -186,8 +218,8 @@ void MainWindow::drawBoard() {
                 field->setRow(row);
                 field->setCol(col);
                 field->setPieceType(' ');
-                if (!game->getFlippedBoard()) field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
-                else field->setPos(borderX + fieldSize * (4-col), borderY + fieldSize * row);
+                if (!game->getFlippedBoard()) field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
+                else field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
                 // add piece to field
                 int pieceNumber = field->identifyPiece();
                 if (pieceNumber != -1) {
@@ -201,13 +233,12 @@ void MainWindow::drawBoard() {
             // add row to board
             game->getBoard()->append(fieldsRow);
         }
-    }
-    else {
+    } else {
         for (int row = 0; row < game->getRows(); row++)
             for (int col = 0; col < game->getCols(); col++) {
                 Field *field = game->getBoard()->at(row).at(col);
-                if (!game->getFlippedBoard()) field->setPos(borderX + fieldSize * col, borderY + fieldSize * (4-row));
-                else field->setPos(borderX + fieldSize * (4-col), borderY + fieldSize * row);
+                if (!game->getFlippedBoard()) field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
+                else field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
                 float size = game->getWindow()->getFieldSize();
                 field->setRect(0, 0, size, size);
 
@@ -279,12 +310,12 @@ void MainWindow::drawSideBar() {
     double posXright = 0, posYbuttom = 0, posX = 0, posY = 0;
     // drawing in-game sidebar "right"
     posXright = this->height() - sideBarSize - borderX;
-    posYbuttom = this->height() - sideBarSize - borderY;
+    posYbuttom = this->height() - sideBarSize - axisLabelSize - borderY;
 
     // FlipButton
     flipButton = new Button;
     flipButton->drawButton("flipButton", "right");
-    flipButton->setPos(posXright, (this->height() - sideBarSize - flipButton->pixmap().height() ) /2);
+    flipButton->setPos(posXright, (this->height() - sideBarSize - axisLabelSize - flipButton->pixmap().height() ) /2);
     if (game->getFlippedBoard()) {
         flipButton->setTransformOriginPoint(flipButton->pixmap().width() / 2, flipButton->pixmap().height() / 2);
         flipButton->setRotation(180);
@@ -295,12 +326,12 @@ void MainWindow::drawSideBar() {
     turnRed = new Button;
     turnRed->drawButton("turnRed", "right");
     if (game->getFlippedBoard()) posY = borderY;
-    else posY = (this->height() - sideBarSize - borderY - turnRed->pixmap().height() );
+    else posY = (this->height() - sideBarSize - axisLabelSize - borderY - turnRed->pixmap().height() );
     turnRed->setPos(posXright, posY);
 
     turnBlue = new Button;
     turnBlue->drawButton("turnBlue", "right");
-    if (game->getFlippedBoard()) posY = (this->height() - sideBarSize - borderY - turnBlue->pixmap().height() );
+    if (game->getFlippedBoard()) posY = (this->height() - sideBarSize - axisLabelSize - borderY - turnBlue->pixmap().height() );
     else posY = borderY;
     turnBlue->setPos(posXright, posY);
 
@@ -312,8 +343,8 @@ void MainWindow::drawSideBar() {
     for (int i = 0; i < game->getCapturedBlue()->count(); i++) {
         Piece *victim = game->getCapturedBlue()->at(i);
         if (victim->getType() == 's') {
-            victim->setPixmap(victim->pixmap().scaled(game->getWindow()->getSideBarSize()*2, game->getWindow()->getSideBarSize()*2 / victim->pixmap().width() * victim->pixmap().height()));
-            victim->setPos(posXright - 2*borderX, windowHeight - 2*borderY - turnRed->boundingRect().height() - game->getWindow()->getSideBarSize() - victim->pixmap().height()*(i+1));
+            victim->setPixmap(victim->pixmap().scaled(sideBarSize*2, sideBarSize*2 / victim->pixmap().width() * victim->pixmap().height()));
+            victim->setPos(posXright - 2*borderX, windowHeight - 2*borderY - turnRed->boundingRect().height() - sideBarSize - axisLabelSize - victim->pixmap().height()*(i+1));
             delItem = false;
             for (int k = 0; k < scene->items().size(); k++)
                 if (scene->items().at(k) == victim) delItem = true;
@@ -499,14 +530,14 @@ void MainWindow::newGame(QString setupString) {
     for (int i = 1; i < maxLines; i++) {
         QListWidgetItem *item;
         if (i%2 == 1) {
-            item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". " + generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
-            item->setBackground(QColor(200,55,55));
+            item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". "
+                                       + generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
+            item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
         } else {
             item = new QListWidgetItem(generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
-            item->setBackground(Qt::blue);
+            item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
             item->setTextAlignment(Qt::AlignRight);
         }
-        item->setForeground(Qt::gray);
         ui->notation->addItem(item);
     }
     if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") notateVictory(game->getTurns()->last());
@@ -539,6 +570,7 @@ void MainWindow::prepareGame() {
     // Generate and draw Items to the scene
     drawBoard();
     drawSideBar();
+    drawAxisLabeling();
     drawCardSlots();
     positionNotation();
 }
@@ -595,13 +627,12 @@ void MainWindow::saveTurnInNotation() {
     QListWidgetItem *item;
     if (!game->getFirstPlayersTurn()) {
         item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". " + generateNotationString(lastMove, thisMove));
-        item->setBackground(QColor(200,55,55));
+        item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
     } else {
         item = new QListWidgetItem(generateNotationString(lastMove, thisMove));
-        item->setBackground(Qt::blue);
+        item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
         item->setTextAlignment(Qt::AlignRight);
     }
-    item->setForeground(Qt::gray);
     ui->notation->addItem(item);
 }
 
@@ -663,9 +694,16 @@ void MainWindow::on_actionFullScreen_triggered(){
     } else {
         ui->actionFullScreen->setChecked(false);
         QMainWindow::showNormal();
-        if (ui->actionTinyLayout->isChecked()) changeLayout(0.25);
+        if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
         if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
-        if (ui->actionNormalLayout->isChecked()) changeLayout(0.75);
-        if (ui->actionLargeLayout->isChecked()) changeLayout(1.00);
+        if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
+        if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
     }
+}
+
+void MainWindow::on_actionAxisLabeling_triggered() {
+    if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
+    if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
+    if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
+    if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
 }
