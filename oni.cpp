@@ -28,6 +28,7 @@ Oni::Oni() {
     pickedUpPiece = NULL;
     fieldOfOrigin = NULL;
     openGameFileName = "";
+    actuallyDisplayedMove = 0;
 
     // initiate lists
     pieces = new QList<Piece*>;
@@ -53,8 +54,6 @@ void Oni::winGame(int winner) {
     else victor = "Blue";
     QMessageBox::StandardButton reply = QMessageBox::information(NULL, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
     if (reply == QMessageBox::Save) QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionSave_triggered()) );
-
-    // setWindowTitle(getwindowTitle() + " 1-0");
 }
 
 void Oni::switchCards(CardSlot *usedCardSlot) {

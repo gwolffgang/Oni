@@ -8,6 +8,7 @@
 #include <QGraphicsView>
 #include <QMessageBox>
 #include <QMouseEvent>
+#include <QListWidget>
 #include <QObject>
 #include <QScreen>
 #include <QTextStream>
@@ -32,7 +33,7 @@ private:
     QString openGameFileName;
     Piece *pickedUpPiece;
     Field *fieldOfOrigin, *chosenField;
-    int rows, cols, cardsPerPlayer, neutralCardsPerGame;
+    int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove;
 
     int gameResult;        // game_result: 0 = ongoing game; 1 = player 1 has won; -1 = player 2 has won
     bool firstPlayersTurn;  // firstPlayersTurn: true = turn of player 1, false = turn of player 2
@@ -43,10 +44,10 @@ public:
     Oni();
 
     // getters
+    inline int getActuallyDisplayedMove() { return actuallyDisplayedMove; }
     inline QList<QList<Field*>> *getBoard() { return board; }
     inline QList<Piece*> *getCapturedBlue() { return capturedBlue; }
     inline QList<Piece*> *getCapturedRed() { return capturedRed; }
-
     inline QList<Card*> *getCards() { return cards; }
     inline bool getCardChoiceActive() { return cardChoiceActive; }
     inline int getCardsPerPlayer () { return cardsPerPlayer; }
@@ -66,6 +67,7 @@ public:
     inline MainWindow *getWindow() { return window; }
 
     // setters
+    inline void setActuallyDisplayedMove(int newMove) { actuallyDisplayedMove = newMove; }
     inline void setCardChoiceActive(bool state) { cardChoiceActive = state; }
     inline void setChosenField(Field *target) { chosenField = target; }
     inline void setCols(int newCols) { cols = newCols; }

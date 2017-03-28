@@ -1,9 +1,10 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QGraphicsScene>
 #include <QDesktopServices>
+#include <QGraphicsScene>
+#include <QListWidget>
+#include <QMainWindow>
 
 #include "aboutwindow.h"
 #include "button.h"
@@ -72,24 +73,35 @@ public:
     void notateVictory(QString result);
     void positionNotation();
     void prepareGame();
+    void refreshNotation();
     bool saveGame(const QString &fileName);
     bool saveGameAs();
     void saveTurnInNotation();
 
 private slots:
-    // Refresh
     void refreshWindow() { prepareGame(); }
+    void showMove(QListWidgetItem *item = NULL);
     // Game
-    void on_actionNew_triggered() { newGame(); }
+    void on_actionNew_triggered();
     void on_actionSetupPosition_triggered();
-    void on_actionLoad_triggered() { loadGame(); }
+    void on_actionLoad_triggered();
     void on_actionSave_triggered();
     void on_actionSaveAs_triggered() { saveGameAs(); }
     // Match
+    void on_actionLastMove_triggered();
+    void on_actionNextMove_triggered();
     void on_actionResign_triggered();
+    // Engine
+    void on_actionRedEasy_triggered();
+    void on_actionRedMedium_triggered();
+    void on_actionRedHard_triggered();
+    void on_actionBlueEasy_triggered();
+    void on_actionBlueMedium_triggered();
+    void on_actionBlueHard_triggered();
     // Settings
     void on_actionFlipOnce_triggered();
     void on_actionHideNotation_triggered();
+    void on_actionAxisLabeling_triggered();
     // Layout
     void on_actionTinyLayout_triggered() { changeLayout(0.3); }
     void on_actionSmallLayout_triggered() { changeLayout(0.5); }
@@ -99,7 +111,6 @@ private slots:
     // About
     void on_actionAboutOni_triggered() { aboutOni(); }
     void on_actionAboutQt_triggered();
-    void on_actionAxisLabeling_triggered();
 };
 
 #endif // MAINWINDOW_H

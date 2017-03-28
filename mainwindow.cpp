@@ -38,10 +38,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setFixedSize(windowWidth+5, windowHeight+5);
+    ui->notation->setSelectionMode(QAbstractItemView::SingleSelection);
     axisLabel = new QList<QGraphicsTextItem*>;
 
     // dialog windows
     about = new AboutWindow(this);
+
+    // connects
+    connect(ui->notation, SIGNAL(itemClicked(QListWidgetItem*)),
+                this, SLOT(showMove(QListWidgetItem*)));
 }
 
 MainWindow::~MainWindow() {
@@ -525,22 +530,7 @@ void MainWindow::newGame(QString setupString) {
     if (game->getTurns()->size() == 0) game->getTurns()->append(generateSetupString());
 
     // fill notation window
-    int maxLines = game->getTurns()->size();
-    if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") maxLines--;
-    for (int i = 1; i < maxLines; i++) {
-        QListWidgetItem *item;
-        if (i%2 == 1) {
-            item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". "
-                                       + generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
-            item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
-        } else {
-            item = new QListWidgetItem(generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
-            item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
-            item->setTextAlignment(Qt::AlignRight);
-        }
-        ui->notation->addItem(item);
-    }
-    if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") notateVictory(game->getTurns()->last());
+    refreshNotation();
 
     // prepare the game
     prepareGame();
@@ -617,11 +607,18 @@ bool MainWindow::saveGameAs() {
 }
 
 void MainWindow::saveTurnInNotation() {
-     QString lastMove, thisMove;
-    // notation of all turns
+    // refreshing of the notation if jumped back
+    QString lastMove, thisMove;
+    if (game->getTurns()->size() > (game->getActuallyDisplayedMove()+1)) {
+         for(int i = game->getTurns()->size(); i > game->getActuallyDisplayedMove()+1; i--)
+             game->getTurns()->removeLast();
+         game->getWindow()->refreshNotation();
+    }
+
     thisMove = generateSetupString();
     lastMove = game->getTurns()->last();
     game->getTurns()->append(thisMove);
+    game->setActuallyDisplayedMove(game->getActuallyDisplayedMove()+1);
 
     // building notation entry
     QListWidgetItem *item;
@@ -636,8 +633,47 @@ void MainWindow::saveTurnInNotation() {
     ui->notation->addItem(item);
 }
 
+void MainWindow::refreshNotation() {
+    ui->notation->clear();
+    int maxLines = game->getTurns()->size();
+    if (game->getTurns()->size() > 0 && (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1")) maxLines--;
+    for (int i = 1; i < maxLines; i++) {
+        QListWidgetItem *item;
+        if (i%2 == 1) {
+            item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". "
+                                       + generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
+            item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
+        } else {
+            item = new QListWidgetItem(generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
+            item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
+            item->setTextAlignment(Qt::AlignRight);
+        }
+        ui->notation->addItem(item);
+    }
+    if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") notateVictory(game->getTurns()->last());
+}
+
+void MainWindow::showMove(QListWidgetItem *item) {
+    for (int i = 0; i < ui->notation->count(); i++) {
+        if (ui->notation->item(i) == item) {
+            newGame(game->getTurns()->at(i+1));
+            game->setActuallyDisplayedMove(i+1);
+        }
+    }
+}
+
+void MainWindow::on_actionNew_triggered() {
+    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "New game", "Do you want to play a new game?<br>All unsaved changes to the actual game will be lost.");
+    if (reply == QMessageBox::Yes) newGame();
+}
+
 void MainWindow::on_actionSetupPosition_triggered() {
 
+}
+
+void MainWindow::on_actionLoad_triggered() {
+    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "New game", "Do you want to load another game?<br>All unsaved changes to the actual game will be lost.");
+    if (reply == QMessageBox::Yes) loadGame();
 }
 
 void MainWindow::on_actionSave_triggered() {
@@ -645,6 +681,14 @@ void MainWindow::on_actionSave_triggered() {
     bool success = false;
     if (game->getOpenGameFileName() != "") success = saveGame(game->getOpenGameFileName());
     else success = saveGameAs();
+}
+
+void MainWindow::on_actionLastMove_triggered() {
+    if (ui->notation->count() > 1 && ui->notation->currentRow() > 1) showMove(ui->notation->item(ui->notation->currentRow()-1));
+}
+
+void MainWindow::on_actionNextMove_triggered() {
+    if (ui->notation->count() > 1 && ui->notation->currentRow() < ui->notation->count()) showMove(ui->notation->item(ui->notation->currentRow()+1));
 }
 
 void MainWindow::on_actionResign_triggered() {
@@ -661,6 +705,30 @@ void MainWindow::on_actionResign_triggered() {
             }
         }
     }
+}
+
+void MainWindow::on_actionRedEasy_triggered() {
+
+}
+
+void MainWindow::on_actionRedMedium_triggered() {
+
+}
+
+void MainWindow::on_actionRedHard_triggered() {
+
+}
+
+void MainWindow::on_actionBlueEasy_triggered() {
+
+}
+
+void MainWindow::on_actionBlueMedium_triggered() {
+
+}
+
+void MainWindow::on_actionBlueHard_triggered() {
+
 }
 
 void MainWindow::on_actionFlipOnce_triggered() {
@@ -680,9 +748,11 @@ void MainWindow::on_actionHideNotation_triggered() {
     }
 }
 
-void MainWindow::on_actionAboutQt_triggered() {
-    // menubar option
-    QApplication::aboutQt();
+void MainWindow::on_actionAxisLabeling_triggered() {
+    if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
+    if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
+    if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
+    if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
 }
 
 void MainWindow::on_actionFullScreen_triggered(){
@@ -701,9 +771,7 @@ void MainWindow::on_actionFullScreen_triggered(){
     }
 }
 
-void MainWindow::on_actionAxisLabeling_triggered() {
-    if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
-    if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
-    if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
-    if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
+void MainWindow::on_actionAboutQt_triggered() {
+    // menubar option
+    QApplication::aboutQt();
 }
