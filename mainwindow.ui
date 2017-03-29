@@ -98,9 +98,16 @@
     <property name="title">
      <string>Match</string>
     </property>
-    <addaction name="actionLastMove"/>
-    <addaction name="actionNextMove"/>
-    <addaction name="separator"/>
+    <widget class="QMenu" name="menuGo_to">
+     <property name="title">
+      <string>Go to</string>
+     </property>
+     <addaction name="actionStartingPosition"/>
+     <addaction name="actionPreviousMove"/>
+     <addaction name="actionNextMove"/>
+     <addaction name="actionLastMove"/>
+    </widget>
+    <addaction name="menuGo_to"/>
     <addaction name="actionResign"/>
    </widget>
    <widget class="QMenu" name="menuEngine">
@@ -376,9 +383,9 @@
     <string>Ctrl+Alt+3</string>
    </property>
   </action>
-  <action name="actionLastMove">
+  <action name="actionPreviousMove">
    <property name="text">
-    <string>Show &amp;last move</string>
+    <string>&amp;Previous move</string>
    </property>
    <property name="shortcut">
     <string>Left</string>
@@ -386,10 +393,26 @@
   </action>
   <action name="actionNextMove">
    <property name="text">
-    <string>Show &amp;next move</string>
+    <string>&amp;Next move</string>
    </property>
    <property name="shortcut">
     <string>Right</string>
+   </property>
+  </action>
+  <action name="actionStartingPosition">
+   <property name="text">
+    <string>&amp;Starting position</string>
+   </property>
+   <property name="shortcut">
+    <string>Up</string>
+   </property>
+  </action>
+  <action name="actionLastMove">
+   <property name="text">
+    <string>&amp;Last move</string>
+   </property>
+   <property name="shortcut">
+    <string>Down</string>
    </property>
   </action>
  </widget>

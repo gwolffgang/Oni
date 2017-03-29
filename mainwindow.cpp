@@ -683,12 +683,28 @@ void MainWindow::on_actionSave_triggered() {
     else success = saveGameAs();
 }
 
-void MainWindow::on_actionLastMove_triggered() {
-    if (ui->notation->count() > 1 && ui->notation->currentRow() > 1) showMove(ui->notation->item(ui->notation->currentRow()-1));
+void MainWindow::on_actionStartingPosition_triggered() {
+    game->setActuallyDisplayedMove(0);
+    newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
+}
+
+void MainWindow::on_actionPreviousMove_triggered() {
+    if (game->getTurns()->size() > 1 && game->getActuallyDisplayedMove() > 0) {
+        game->setActuallyDisplayedMove(game->getActuallyDisplayedMove()-1);
+        newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
+    }
 }
 
 void MainWindow::on_actionNextMove_triggered() {
-    if (ui->notation->count() > 1 && ui->notation->currentRow() < ui->notation->count()) showMove(ui->notation->item(ui->notation->currentRow()+1));
+    if (game->getTurns()->size() > 1 && game->getActuallyDisplayedMove() < game->getTurns()->size()-1) {
+        game->setActuallyDisplayedMove(game->getActuallyDisplayedMove()+1);
+        newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
+    }
+}
+
+void MainWindow::on_actionLastMove_triggered() {
+    game->setActuallyDisplayedMove(game->getTurns()->size()-1);
+    newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
 }
 
 void MainWindow::on_actionResign_triggered() {
@@ -749,6 +765,7 @@ void MainWindow::on_actionHideNotation_triggered() {
 }
 
 void MainWindow::on_actionAxisLabeling_triggered() {
+    // menubar option
     if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
     if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
     if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);

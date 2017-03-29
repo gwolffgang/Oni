@@ -88,8 +88,10 @@ private slots:
     void on_actionSave_triggered();
     void on_actionSaveAs_triggered() { saveGameAs(); }
     // Match
-    void on_actionLastMove_triggered();
+    void on_actionStartingPosition_triggered();
+    void on_actionPreviousMove_triggered();
     void on_actionNextMove_triggered();
+    void on_actionLastMove_triggered();
     void on_actionResign_triggered();
     // Engine
     void on_actionRedEasy_triggered();
