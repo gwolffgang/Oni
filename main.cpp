@@ -5,6 +5,7 @@ Oni *game;
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setApplicationName("Oni");
     game = new Oni;
     game->getWindow()->newGame();
     return app.exec();

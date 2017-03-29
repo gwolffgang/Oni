@@ -506,7 +506,7 @@ QString MainWindow::generateSetupString() {
 
 void MainWindow::loadGame() {
     // load previously saved game
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), "/current/saves", "Oni Savegames (*.oni)");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), QDir::currentPath(), "Oni Savegames (*.oni)");
     if (!fileName.isEmpty()) {
         QFile file(fileName);
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -559,7 +559,6 @@ void MainWindow::newGame(QString setupString) {
 
     // setup string
     QString defaultString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
-    setupString = "mc1,Mc4,Sb3,sb5|";
     if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = defaultString;
     bool success = analyseSetupString(setupString);
     if (!success) {

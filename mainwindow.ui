@@ -49,7 +49,6 @@
      <string>&amp;Game</string>
     </property>
     <addaction name="actionNew"/>
-    <addaction name="actionSetupPosition"/>
     <addaction name="separator"/>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
@@ -110,32 +109,8 @@
     <addaction name="menuGo_to"/>
     <addaction name="actionResign"/>
    </widget>
-   <widget class="QMenu" name="menuEngine">
-    <property name="title">
-     <string>&amp;Engine</string>
-    </property>
-    <widget class="QMenu" name="menuPlayRed">
-     <property name="title">
-      <string>Play &amp;red</string>
-     </property>
-     <addaction name="actionRedEasy"/>
-     <addaction name="actionRedMedium"/>
-     <addaction name="actionRedHard"/>
-    </widget>
-    <widget class="QMenu" name="menuPlayBlue">
-     <property name="title">
-      <string>Play &amp;blue</string>
-     </property>
-     <addaction name="actionBlueEasy"/>
-     <addaction name="actionBlueMedium"/>
-     <addaction name="actionBlueHard"/>
-    </widget>
-    <addaction name="menuPlayRed"/>
-    <addaction name="menuPlayBlue"/>
-   </widget>
    <addaction name="menuGame"/>
    <addaction name="menuMatch"/>
-   <addaction name="menuEngine"/>
    <addaction name="menuSettings"/>
    <addaction name="menuLayout"/>
    <addaction name="menuAbout"/>

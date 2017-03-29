@@ -115,7 +115,19 @@ void Field::dropPiece() {
     if (game->getCardChoiceActive()) game->setCardChoiceActive(false);
     else exchangeCards();
 
-    if (!game->getCardChoiceActive()) {;
+    if (!game->getCardChoiceActive()) {
+        if (game->getTurns()->size() > (game->getActuallyDisplayedMove()+1)) {
+            QMessageBox::StandardButton reply = QMessageBox::question(NULL, "New game", "Do you want to play a new game?<br>All unsaved changes to the actual game will be lost.");
+            if (reply == QMessageBox::No) {
+                unmarkAllFields();
+                // put back picked up piece
+                game->setCardChoiceActive(false);
+                game->setPickedUpPiece(NULL);
+                game->setFieldOfOrigin(NULL);
+                game->getWindow()->prepareGame();
+                return;
+            }
+        }
         linkPiece(game->getPickedUpPiece());
         game->setFirstPlayersTurn(!game->getFirstPlayersTurn());
         game->getWindow()->saveTurnInNotation();
