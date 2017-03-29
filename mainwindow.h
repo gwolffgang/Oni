@@ -59,7 +59,7 @@ public:
 
     // functions
     inline void aboutOni() { about->show(); }
-    void analyseSetupString(QString string);
+    bool analyseSetupString(QString string);
     void changeLayout(double factor);
     void createCardslots();
     void drawAxisLabeling();
@@ -74,6 +74,7 @@ public:
     void positionNotation();
     void prepareGame();
     void refreshNotation();
+    void resetLists();
     bool saveGame(const QString &fileName);
     bool saveGameAs();
     void saveTurnInNotation();

@@ -61,11 +61,12 @@ bool MainWindow::getFlipEveryMove() {
     return ui->actionFlipEveryMove->isChecked();
 }
 
-void MainWindow::analyseSetupString(QString string) {
+bool MainWindow::analyseSetupString(QString string) {
     // seperate pieces and cards
     QStringList part = string.split("|");
 
     // get pieces
+    int count_M = 0, count_m = 0, count_S = 0, count_s = 0;
     QStringList elem = part.at(0).split(",");
     for (int i = 0; i < elem.size(); i++) {
         Piece *piece = new Piece;
@@ -90,9 +91,36 @@ void MainWindow::analyseSetupString(QString string) {
         piece->setRow(elem[i].at(2).digitValue() - 1);
 
         // add piece to pieces list
-        if (!game->getPieces()->contains(piece)) game->getPieces()->append(piece);
+        bool nope = false;
+        for (int k = 0; k < game->getPieces()->size(); k++)
+            if (piece->getCol() == game->getPieces()->at(k)->getCol() && piece->getRow() == game->getPieces()->at(k)->getRow()) {
+                nope = true;
+                continue;
+            }
+        if (!nope) {
+            if (piece->getType() == 'S' && count_S < 4) {
+                count_S++;
+                game->getPieces()->append(piece);
+            } else if (piece->getType() == 's' && count_s < 4) {
+                count_s++;
+                game->getPieces()->append(piece);
+            } else if (piece->getType() == 'M' && count_M < 1) {
+                count_M++;
+                game->getPieces()->append(piece);
+            } else if (piece->getType() == 'm' && count_m < 1) {
+                count_m++;
+                game->getPieces()->append(piece);
+            }
+        }
     }
+    // check numbers of masters
+    if (count_M != 1 || count_m != 1) return false;
+
+    // take care of missing pieces
+
     // get cards
+    // clear cards list
+    game->getCards()->clear();
     if (part.size() > 1) {
         elem = part.at(1).split(",");
         bool nope = false;
@@ -131,7 +159,7 @@ void MainWindow::analyseSetupString(QString string) {
         if (elem.at(2) == "true") ui->actionFlipEveryMove->setChecked(true);
         else ui->actionFlipEveryMove->setChecked(false);
     }
-
+    return true;
 }
 
 void MainWindow::changeLayout(double factor) {
@@ -503,30 +531,17 @@ void MainWindow::newGame(QString setupString) {
 
     // reset lists
     if (setupString == "") game->getTurns()->clear();
-    ui->notation->clear();
-    if (game->getPieces()) game->getPieces()->clear();
-    if (game->getCards()) game->getCards()->clear();
-    if (game->getBoard()) game->getBoard()->clear();
-    if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
-
-    for (int k = 0; k < game->getCapturedBlue()->size(); k++) {
-        Piece *victim = game->getCapturedBlue()->at(k);
-        bool delItem = false;
-        for (int k = 0; k < scene->items().size(); k++)
-            if (scene->items().at(k) == victim) delItem = true;
-        if (delItem) scene->removeItem(victim);
-    }
-    for (int k = 0; k < game->getCapturedRed()->size(); k++) {
-        Piece *victim = game->getCapturedRed()->at(k);
-        bool delItem = false;
-        for (int k = 0; k < scene->items().size(); k++)
-            if (scene->items().at(k) == victim) delItem = true;
-        if (delItem) scene->removeItem(victim);
-    }
+    resetLists();
 
     // setup string
-    if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
-    analyseSetupString(setupString);
+    QString defaultString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
+    if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = defaultString;
+    bool success = analyseSetupString(setupString);
+    if (!success) {
+        setupString = defaultString;
+        resetLists();
+        success = analyseSetupString(setupString);
+    }
     if (game->getTurns()->size() == 0) game->getTurns()->append(generateSetupString());
 
     // fill notation window
@@ -651,6 +666,28 @@ void MainWindow::refreshNotation() {
         ui->notation->addItem(item);
     }
     if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") notateVictory(game->getTurns()->last());
+}
+
+void MainWindow::resetLists() {
+    ui->notation->clear();
+    if (game->getPieces()) game->getPieces()->clear();
+    if (game->getCards()) game->getCards()->clear();
+    if (game->getBoard()) game->getBoard()->clear();
+    if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
+    for (int k = 0; k < game->getCapturedBlue()->size(); k++) {
+        Piece *victim = game->getCapturedBlue()->at(k);
+        bool delItem = false;
+        for (int k = 0; k < scene->items().size(); k++)
+            if (scene->items().at(k) == victim) delItem = true;
+        if (delItem) scene->removeItem(victim);
+    }
+    for (int k = 0; k < game->getCapturedRed()->size(); k++) {
+        Piece *victim = game->getCapturedRed()->at(k);
+        bool delItem = false;
+        for (int k = 0; k < scene->items().size(); k++)
+            if (scene->items().at(k) == victim) delItem = true;
+        if (delItem) scene->removeItem(victim);
+    }
 }
 
 void MainWindow::showMove(QListWidgetItem *item) {
