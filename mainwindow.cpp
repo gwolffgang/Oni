@@ -239,6 +239,16 @@ void MainWindow::drawAxisLabeling() {
     }
 }
 
+void MainWindow::drawBackGroundPicture() {
+    QGraphicsPixmapItem *back = new QGraphicsPixmapItem(QPixmap(":/pics/back.png"));
+        back->setPixmap(back->pixmap().scaled(fieldSize*5, fieldSize*5));
+        back->setPos(borderX + axisLabelSize, borderY);
+        scene->addItem(back);
+    }
+  //  QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap(":/pics/back.png"));
+  //  item->setPixmap(item->pixmap().scaled(item->boundingRect().height()/(fieldSize*5));
+  //  scene->addItem(item);}
+
 void MainWindow::drawBoard() {
     // drawing the board
     if (game->getBoard()->size() == 0) {
@@ -573,6 +583,7 @@ void MainWindow::prepareGame() {
     foreach(QGraphicsItem *item, items) scene->removeItem(item);
 
     // Generate and draw Items to the scene
+    drawBackGroundPicture();
     drawBoard();
     drawSideBar();
     drawAxisLabeling();

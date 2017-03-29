@@ -63,6 +63,7 @@ public:
     void changeLayout(double factor);
     void createCardslots();
     void drawAxisLabeling();
+    void drawBackGroundPicture();
     void drawBoard();
     void drawCardSlots();
     void drawSideBar();
