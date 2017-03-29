@@ -66,6 +66,7 @@ bool MainWindow::analyseSetupString(QString string) {
     QStringList part = string.split("|");
 
     // get pieces
+    if (part.size() == 0) return false;
     int count_M = 0, count_m = 0, count_S = 0, count_s = 0;
     QStringList elem = part.at(0).split(",");
     for (int i = 0; i < elem.size(); i++) {
@@ -117,6 +118,22 @@ bool MainWindow::analyseSetupString(QString string) {
     if (count_M != 1 || count_m != 1) return false;
 
     // take care of missing pieces
+    for (int i = count_S+1; i < 5; i++) {
+        Piece *victim = new Piece;
+        victim->setRow(-1);
+        victim->setCol(-1);
+        victim->setType('S');
+        game->getCapturedRed()->append(victim);
+        victim->drawPiece();
+    }
+    for (int i = count_s+1; i < 5; i++) {
+        Piece *victim = new Piece;
+        victim->setRow(-1);
+        victim->setCol(-1);
+        victim->setType('s');
+        game->getCapturedBlue()->append(victim);
+        victim->drawPiece();
+    }
 
     // get cards
     // clear cards list
@@ -135,6 +152,7 @@ bool MainWindow::analyseSetupString(QString string) {
                 }
             if (!nope) game->getCards()->append(card);
         }
+    }
         if (game->getCards()->size() != 5) {
             // clear cards list
             game->getCards()->clear();
@@ -148,7 +166,6 @@ bool MainWindow::analyseSetupString(QString string) {
                 game->getCards()->append(card);
             }
         }
-    }
     // get game settings
     if (part.size() >2) {
         elem = part.at(2).split(",");
@@ -245,9 +262,6 @@ void MainWindow::drawBackGroundPicture() {
         back->setPos(borderX + axisLabelSize, borderY);
         scene->addItem(back);
     }
-  //  QGraphicsPixmapItem* item = new QGraphicsPixmapItem(QPixmap(":/pics/back.png"));
-  //  item->setPixmap(item->pixmap().scaled(item->boundingRect().height()/(fieldSize*5));
-  //  scene->addItem(item);}
 
 void MainWindow::drawBoard() {
     // drawing the board
@@ -545,6 +559,7 @@ void MainWindow::newGame(QString setupString) {
 
     // setup string
     QString defaultString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
+    setupString = "mc1,Mc4,Sb3,sb5|";
     if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = defaultString;
     bool success = analyseSetupString(setupString);
     if (!success) {

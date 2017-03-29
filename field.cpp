@@ -116,7 +116,6 @@ void Field::dropPiece() {
     else exchangeCards();
 
     if (!game->getCardChoiceActive()) {;
-        Oni *test = game;
         linkPiece(game->getPickedUpPiece());
         game->setFirstPlayersTurn(!game->getFirstPlayersTurn());
         game->getWindow()->saveTurnInNotation();
