@@ -74,19 +74,14 @@ void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    // change non-clickable card background, if cursor is pointing there
-  /*  if ((game->getFirstPlayersTurn() && this->getOwner() == 1) || (!game->getFirstPlayersTurn() && this->getOwner() == 2)) {
-        QBrush brush(Qt::darkGray, Qt::SolidPattern);
-        setBrush(brush);
-        setCursor(Qt::PointingHandCursor);
-    }*/
+    if (game->getCardChoiceActive()) {
+        if ((game->getFirstPlayersTurn() && owner == 1) || (!game->getFirstPlayersTurn() && owner == 2))
+            setCursor(Qt::PointingHandCursor);
     event->ignore();
+    }
 }
 
 void CardSlot::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    // change non-clickable card background back, if cursor was pointing there
- /*   QBrush brush(Qt::gray, Qt::SolidPattern);
-    setBrush(brush);
-    setCursor(Qt::ArrowCursor);*/
+    setCursor(Qt::ArrowCursor);
     event->ignore();
 }
