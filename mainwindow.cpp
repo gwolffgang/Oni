@@ -182,22 +182,22 @@ bool MainWindow::analyseSetupString(QString string) {
 void MainWindow::changeLayout(double factor) {
     // Change menu checkings
     if (!ui->actionFullScreen->isChecked()) {
-        if (factor == 0.25) {
+        if (factor == 0.3) {
             ui->actionTinyLayout->setChecked(true);
             ui->actionSmallLayout->setChecked(false);
             ui->actionNormalLayout->setChecked(false);
             ui->actionLargeLayout->setChecked(false);
-        } else if (factor == 0.50) {
+        } else if (factor == 0.5) {
             ui->actionTinyLayout->setChecked(false);
             ui->actionSmallLayout->setChecked(true);
             ui->actionNormalLayout->setChecked(false);
             ui->actionLargeLayout->setChecked(false);
-        } else if (factor == 0.75) {
+        } else if (factor == 0.7) {
             ui->actionTinyLayout->setChecked(false);
             ui->actionSmallLayout->setChecked(false);
             ui->actionNormalLayout->setChecked(true);
             ui->actionLargeLayout->setChecked(false);
-        } else if (factor == 1.00) {
+        } else if (factor == 0.9) {
             ui->actionTinyLayout->setChecked(false);
             ui->actionSmallLayout->setChecked(false);
             ui->actionNormalLayout->setChecked(false);
