@@ -506,7 +506,7 @@ QString MainWindow::generateSetupString() {
 
 void MainWindow::loadGame() {
     // load previously saved game
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), QDir::currentPath(), "Oni Savegames (*.oni)");
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), QDir::currentPath()+"/saves", "Oni Savegames (*.oni)");
     if (!fileName.isEmpty()) {
         QFile file(fileName);
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -608,7 +608,10 @@ void MainWindow::prepareGame() {
 bool MainWindow::saveGame(const QString &fileName) {
     // overwrite current save game
     QFile file(fileName);
-        if (!file.open(QFile::WriteOnly | QFile::Text)) {
+   // QDesktopServices::storageLocation(QDir::home());
+    QStringList part = fileName.split(".");
+    if (part.size() == 1 || part.at(1) != "oni") file.setFileName(part.at(0) + ".oni");
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
             QMessageBox::warning(this, tr("Application"),
                                  tr("Cannot write file %1:\n%2.")
                                  .arg(QDir::toNativeSeparators(fileName),

@@ -6,6 +6,8 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     app.setApplicationName("Oni");
+    app.setApplicationDisplayName("Oni");
+    app.setWindowIcon(QIcon(":/pics/Oni.icns"));
     game = new Oni;
     game->getWindow()->newGame();
     return app.exec();
