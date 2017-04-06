@@ -4,6 +4,7 @@
 #include <QGraphicsPixmapItem>
 
 class Piece : public QGraphicsPixmapItem {
+
 private:
     // variables
     int row, col;

@@ -5,6 +5,7 @@
 #include <QGraphicsSceneHoverEvent>
 
 class Button : public QGraphicsPixmapItem {
+
 public:
     // constructors
     Button(QGraphicsItem *parent = NULL);

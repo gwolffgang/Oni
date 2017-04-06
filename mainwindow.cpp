@@ -1,7 +1,9 @@
+#include <QDialogButtonBox>
 #include <QMessageBox>
 #include <QTimer>
 #include <iostream>
 #include <time.h>
+#include <QDate>
 
 #include "mainwindow.h"
 #include "oni.h"
@@ -10,6 +12,12 @@
 extern Oni *game;
 
 int myrandom(int i) { srand(unsigned(time(NULL))); return std::rand()%i; }
+
+bool fileExists(QString path) {
+    QFileInfo check_file(path);
+    // check if file exists and if yes: Is it really a file and no directory?
+    return check_file.exists() && check_file.isFile();
+}
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
     // set up the UI
@@ -42,7 +50,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     axisLabel = new QList<QGraphicsTextItem*>;
 
     // dialog windows
-    about = new AboutWindow(this);
+    dialogAbout = new DialogAbout(this);
+    dialogSaveAs = new DialogSave(this);
 
     // connects
     connect(ui->notation, SIGNAL(itemClicked(QListWidgetItem*)),
@@ -504,9 +513,9 @@ QString MainWindow::generateSetupString() {
     return saveString;
 }
 
-void MainWindow::loadGame() {
+void MainWindow::loadGame(QString fileName) {
     // load previously saved game
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), QDir::currentPath()+"/saves", "Oni Savegames (*.oni)");
+    if (fileName == "") fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), QDir::currentPath()+"/saves", "Oni Savegames (*.oni)");
     if (!fileName.isEmpty()) {
         QFile file(fileName);
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -605,48 +614,43 @@ void MainWindow::prepareGame() {
     positionNotation();
 }
 
-bool MainWindow::saveGame(const QString &fileName) {
-    // overwrite current save game
-    QFile file(fileName);
-   // QDesktopServices::storageLocation(QDir::home());
-    QStringList part = fileName.split(".");
-    if (part.size() == 1 || part.at(1) != "oni") file.setFileName(part.at(0) + ".oni");
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-            QMessageBox::warning(this, tr("Application"),
-                                 tr("Cannot write file %1:\n%2.")
-                                 .arg(QDir::toNativeSeparators(fileName),
-                                      file.errorString()));
-            return false;
-        }
+void MainWindow::saveGame(const QString &fileName) {
+    QString newFileName = fileName;
+    if (newFileName == "") {
+        if (game->getWindow()->getDialogSaveAs()->exec() == QDialog::Accepted) {
+            QList<QString> names = game->getWindow()->getDialogSaveAs()->getValues();
+            game->setPlayerNames(names.at(0),names.at(1));
 
+            int i = 0;
+            QString number = "";
+            do {
+                if (++i > 1) number = " " + QString::number(i);
+                newFileName = "saves/" + names.at(0) + "-" + names.at(1) + " (" + QDate::currentDate().toString("yyyy-MM-dd") + ")"+ number +".oni";
+            } while (fileExists(newFileName));
+
+            // set window title
+            QStringList elem = newFileName.split("/");
+            QStringList name = elem.last().split(".");
+            windowTitle = "Oni - " + name.first();
+            setWindowTitle(windowTitle);
+            game->setOpenGameFileName(newFileName);
+        }
+    }
+    if (newFileName != "") {
+        // (over)write current savegame
+        QFile file(newFileName);
+        if (!file.open(QFile::WriteOnly | QFile::Text))
+            QMessageBox::warning(this, tr("Application"), tr("Cannot write file %1:\n%2.").arg(QDir::toNativeSeparators(fileName),file.errorString()));
         QTextStream out(&file);
-    #ifndef QT_NO_CURSOR
-        QApplication::setOverrideCursor(Qt::WaitCursor);
-    #endif
+        #ifndef QT_NO_CURSOR
+            QApplication::setOverrideCursor(Qt::WaitCursor);
+        #endif
         for (int i = 0; i < game->getTurns()->size(); i++)
             out << game->getTurns()->at(i) << endl;
-    #ifndef QT_NO_CURSOR
-        QApplication::restoreOverrideCursor();
-    #endif
-
-    game->setOpenGameFileName(fileName);
-
-    // set window title
-    QStringList elem = fileName.split("/");
-    QStringList name = elem.last().split(".");
-    windowTitle = "Oni - " + name.first();
-    setWindowTitle(windowTitle);
-    return true;
-}
-
-bool MainWindow::saveGameAs() {
-    // save current game
-    QFileDialog dialog(this, qApp->applicationDirPath().append("/saves"));
-        dialog.setWindowModality(Qt::WindowModal);
-        dialog.setAcceptMode(QFileDialog::AcceptSave);
-        if (dialog.exec() != QDialog::Accepted)
-            return false;
-        return saveGame(dialog.selectedFiles().first());
+        #ifndef QT_NO_CURSOR
+            QApplication::restoreOverrideCursor();
+        #endif
+    }
 }
 
 void MainWindow::saveTurnInNotation() {
@@ -679,7 +683,7 @@ void MainWindow::saveTurnInNotation() {
 void MainWindow::refreshNotation() {
     ui->notation->clear();
     int maxLines = game->getTurns()->size();
-    if (game->getTurns()->size() > 0 && (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1")) maxLines--;
+    if (game->getTurns()->size() > 1 && (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1")) maxLines--;
     for (int i = 1; i < maxLines; i++) {
         QListWidgetItem *item;
         if (i%2 == 1) {
@@ -693,7 +697,7 @@ void MainWindow::refreshNotation() {
         }
         ui->notation->addItem(item);
     }
-    if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") notateVictory(game->getTurns()->last());
+    if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") ui->notation->addItem(game->getTurns()->last());
 }
 
 void MainWindow::resetLists() {
@@ -719,16 +723,19 @@ void MainWindow::resetLists() {
 }
 
 void MainWindow::showMove(QListWidgetItem *item) {
-    for (int i = 0; i < ui->notation->count(); i++) {
-        if (ui->notation->item(i) == item) {
-            newGame(game->getTurns()->at(i+1));
-            game->setActuallyDisplayedMove(i+1);
+    if (item->text() != "1-0" && item->text() != "0-1") {
+        for (int i = 0; i < ui->notation->count(); i++) {
+            if (ui->notation->item(i) == item) {
+                newGame(game->getTurns()->at(i+1));
+                game->setActuallyDisplayedMove(i+1);
+                return;
+            }
         }
     }
 }
 
 void MainWindow::on_actionNew_triggered() {
-    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "New game", "Do you want to play a new game?<br>All unsaved changes to the actual game will be lost.");
+    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "New game", "Do you want to start a new game?<br>All unsaved changes to the actual game will be lost.");
     if (reply == QMessageBox::Yes) newGame();
 }
 
@@ -737,15 +744,12 @@ void MainWindow::on_actionSetupPosition_triggered() {
 }
 
 void MainWindow::on_actionLoad_triggered() {
-    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "New game", "Do you want to load another game?<br>All unsaved changes to the actual game will be lost.");
+    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "Load game", "Do you want to load another game?<br>All unsaved changes to the actual game will be lost.");
     if (reply == QMessageBox::Yes) loadGame();
 }
 
 void MainWindow::on_actionSave_triggered() {
-    // menubar option
-    bool success = false;
-    if (game->getOpenGameFileName() != "") success = saveGame(game->getOpenGameFileName());
-    else success = saveGameAs();
+    saveGame(game->getOpenGameFileName());
 }
 
 void MainWindow::on_actionStartingPosition_triggered() {
@@ -792,9 +796,7 @@ void MainWindow::on_actionRedEasy_triggered() {
 
 }
 
-void MainWindow::on_actionRedMedium_triggered() {
-
-}
+void MainWindow::on_actionRedMedium_triggered() {}
 
 void MainWindow::on_actionRedHard_triggered() {
 
@@ -837,12 +839,36 @@ void MainWindow::on_actionAxisLabeling_triggered() {
     if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
 }
 
+void MainWindow::on_actionTinyLayout_triggered() {
+    QMainWindow::showNormal();
+    ui->actionFullScreen->setChecked(false);
+    changeLayout(0.3);
+}
+
+void MainWindow::on_actionSmallLayout_triggered() {
+    QMainWindow::showNormal();
+    ui->actionFullScreen->setChecked(false);
+    changeLayout(0.5);
+}
+
+void MainWindow::on_actionNormalLayout_triggered() {
+    QMainWindow::showNormal();
+    ui->actionFullScreen->setChecked(false);
+    changeLayout(0.7);
+}
+
+void MainWindow::on_actionLargeLayout_triggered() {
+    QMainWindow::showNormal();
+    ui->actionFullScreen->setChecked(false);
+    changeLayout(0.9);
+}
+
 void MainWindow::on_actionFullScreen_triggered(){
     // menubar option
     if (ui->actionFullScreen->isChecked()) {
         ui->actionFullScreen->setChecked(true);
-        QMainWindow::showFullScreen();
         changeLayout(1.0);
+        QMainWindow::showFullScreen();
     } else {
         ui->actionFullScreen->setChecked(false);
         QMainWindow::showNormal();

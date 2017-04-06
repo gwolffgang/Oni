@@ -6,6 +6,10 @@
 extern Oni *game;
 
 Oni::Oni() {
+    // saves folder creation
+    QDir dir("saves");
+    if (!dir.exists()) dir.mkpath(".");
+
     // board settings
     board = new QList<QList<Field*>>;
     rows = 5;
@@ -27,6 +31,8 @@ Oni::Oni() {
     cardChoiceActive = false;
     pickedUpPiece = NULL;
     fieldOfOrigin = NULL;
+    playerNameBlue = "Blue";
+    playerNameRed = "Red";
     openGameFileName = "";
     actuallyDisplayedMove = 0;
 
@@ -38,6 +44,11 @@ Oni::Oni() {
     turns = new QList<QString>;
 }
 
+void Oni::setPlayerNames(QString nameRed, QString nameBlue) {
+    if (nameBlue != "") playerNameBlue = nameBlue;
+    if (nameRed != "") playerNameRed = nameRed;
+}
+
 QList<Card*> Oni::identifyCards(int owner) {
     QList<Card*> list;
     int slotsSize = slotsGrid->at(owner).size();
@@ -47,6 +58,14 @@ QList<Card*> Oni::identifyCards(int owner) {
     return list;
 }
 
+void Oni::switchCards(CardSlot *usedCardSlot) {
+    Card *temporary = NULL;
+    // switch cards
+    temporary = usedCardSlot->getCard();
+    usedCardSlot->setCard(game->getSlotsGrid()->at(0).at(0)->getCard());
+    game->getSlotsGrid()->at(0).at(0)->setCard(temporary);
+}
+
 void Oni::winGame(int winner) {
     gameResult = winner;
     QString victor;
@@ -54,12 +73,4 @@ void Oni::winGame(int winner) {
     else victor = "Blue";
     QMessageBox::StandardButton reply = QMessageBox::information(NULL, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
     if (reply == QMessageBox::Save) QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionSave_triggered()) );
-}
-
-void Oni::switchCards(CardSlot *usedCardSlot) {
-    Card *temporary = NULL;
-    // switch cards
-    temporary = usedCardSlot->getCard();
-    usedCardSlot->setCard(game->getSlotsGrid()->at(0).at(0)->getCard());
-    game->getSlotsGrid()->at(0).at(0)->setCard(temporary);
 }

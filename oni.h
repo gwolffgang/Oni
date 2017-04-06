@@ -20,7 +20,8 @@
 #include "mainwindow.h"
 #include "piece.h"
 
-class Oni {
+class Oni : public QObject {
+    Q_OBJECT
 
 private:
     //variables
@@ -30,7 +31,7 @@ private:
     QList<QList<CardSlot*>> *slotsGrid;
     QList<Card*> *cards;
     QList<QString> *turns;
-    QString openGameFileName;
+    QString playerNameRed, playerNameBlue, openGameFileName;
     Piece *pickedUpPiece;
     Field *fieldOfOrigin, *chosenField;
     int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove;
@@ -40,7 +41,7 @@ private:
     bool flippedBoard, cardChoiceActive;
 
 public:
-    //constructors
+    // constructors
     Oni();
 
     // getters
@@ -77,11 +78,12 @@ public:
     inline void setGameResult(int winner) { gameResult = winner; }
     inline void setOpenGameFileName(QString newString) { openGameFileName = newString; }
     inline void setPickedUpPiece(Piece *newPiece) { pickedUpPiece = newPiece; }
+    void setPlayerNames(QString nameRed = "Red", QString nameBlue = "Blue");
     inline void setRows(int newRows) { rows = newRows; }
 
     //functions
-    void switchCards(CardSlot *usedCardSlot);
     QList<Card*> identifyCards(int owner);
+    void switchCards(CardSlot *usedCardSlot);
     void winGame(int winner);
 };
 

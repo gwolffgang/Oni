@@ -76,14 +76,10 @@ void Field::captureOrChangePiece(Piece *target) {
     int targetOwner = 0;
     switch (target->getType()) {
     case 'S':
-        targetOwner = 1;
-        break;
     case 'M':
         targetOwner = 1;
         break;
     case 's':
-        targetOwner = 2;
-        break;
     case 'm':
         targetOwner = 2;
     }
@@ -117,7 +113,7 @@ void Field::dropPiece() {
 
     if (!game->getCardChoiceActive()) {
         if (game->getTurns()->size() > (game->getActuallyDisplayedMove()+1)) {
-            QMessageBox::StandardButton reply = QMessageBox::question(NULL, "New game", "Do you want to play a new game?<br>All unsaved changes to the actual game will be lost.");
+            QMessageBox::StandardButton reply = QMessageBox::question(NULL, "Change Move", "Do you really want to enter this new move?<br>The old move and all following ones will be deleted.");
             if (reply == QMessageBox::No) {
                 unmarkAllFields();
                 // put back picked up piece
@@ -150,10 +146,16 @@ void Field::dropPiece() {
         game->setPickedUpPiece(NULL);
 
         // winning conditions check
-        if (game->getBoard()->at(0).at(2)->getPieceType() == 'm') game->winGame(-1);
-        if (game->getBoard()->at(4).at(2)->getPieceType() == 'M') game->winGame(1);
-        if (game->getCapturedRed()->size() > 0 && game->getCapturedRed()->last()->getType() == 'M') game->winGame(-1);
-        if (game->getCapturedBlue()->size() > 0 && game->getCapturedBlue()->last()->getType() == 'm') game->winGame(1);
+        if (game->getGameResult() == 0) {
+            if ((game->getCapturedRed()->size() > 0 && game->getCapturedRed()->last()->getType() == 'M') ||
+                (game->getBoard()->at(0).at(2)->getPieceType() == 'm')) {
+                game->winGame(-1);
+            } else {
+                if ((game->getCapturedBlue()->size() > 0 && game->getCapturedBlue()->last()->getType() == 'm') ||
+                    (game->getBoard()->at(4).at(2)->getPieceType() == 'M'))
+                    game->winGame(1);
+            }
+        }
         if (game->getGameResult() != 0) {
             if (game->getGameResult() == 1) game->getWindow()->notateVictory("1-0");
             else game->getWindow()->notateVictory("0-1");

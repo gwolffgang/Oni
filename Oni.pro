@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Oni
 TEMPLATE = app
+ICON = pics/Oni.icns
 
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
@@ -28,22 +29,25 @@ SOURCES += main.cpp\
     oni.cpp \
     card.cpp \
     piece.cpp \
-    aboutwindow.cpp \
     button.cpp \
     field.cpp \
-    cardslot.cpp
+    cardslot.cpp \
+    dialogabout.cpp \
+    dialogsave.cpp
 
 HEADERS  += mainwindow.h \
     oni.h \
     card.h \
     piece.h \
-    aboutwindow.h \
     button.h \
     field.h \
-    cardslot.h
+    cardslot.h \
+    dialogabout.h \
+    dialogsave.h
 
 FORMS    += mainwindow.ui \
-    aboutwindow.ui
+    dialogabout.ui \
+    dialogsave.ui
 
 RESOURCES += \
     res.qrc

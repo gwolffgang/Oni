@@ -6,7 +6,8 @@
 #include <QListWidget>
 #include <QMainWindow>
 
-#include "aboutwindow.h"
+#include "dialogabout.h"
+#include "dialogsave.h"
 #include "button.h"
 #include "cardslot.h"
 
@@ -14,14 +15,14 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
 
 private:
     QScreen *screen;
     QGraphicsScene *scene;
-    AboutWindow *about;
+    DialogAbout *dialogAbout;
+    DialogSave *dialogSaveAs;
     QString windowTitle;
     Button *flipButton, *turnRed, *turnBlue;
     QList<QGraphicsTextItem*> *axisLabel;
@@ -41,6 +42,7 @@ public:
     bool getAxisLabeling();
     inline int getBorderX() { return borderX; }
     inline int getBorderY() { return borderY; }
+    inline DialogSave *getDialogSaveAs() { return dialogSaveAs; }
     inline double getFieldSize() { return fieldSize; }
     bool getFlipEveryMove();
     inline QGraphicsScene *getScene() { return scene; }
@@ -58,10 +60,9 @@ public:
     inline void setSlotSize(double newSlotSize) { slotSize = newSlotSize; }
 
     // functions
-    inline void aboutOni() { about->show(); }
+    inline void aboutOni() { dialogAbout->show(); }
     bool analyseSetupString(QString string);
     void changeLayout(double factor);
-    void createCardslots();
     void drawAxisLabeling();
     void drawBackGroundPicture();
     void drawBoard();
@@ -69,26 +70,25 @@ public:
     void drawSideBar();
     QString generateNotationString(QString lastTurn, QString thisTurn);
     QString generateSetupString();
-    void loadGame();
+    void loadGame(QString fileName = "");
     void newGame(QString setupString = "");
     void notateVictory(QString result);
     void positionNotation();
     void prepareGame();
     void refreshNotation();
     void resetLists();
-    bool saveGame(const QString &fileName);
-    bool saveGameAs();
+    void saveGame(const QString &fileName = "");
     void saveTurnInNotation();
 
 private slots:
-    void refreshWindow() { prepareGame(); }
+    inline void refreshWindow() { prepareGame(); }
     void showMove(QListWidgetItem *item = NULL);
     // Game
     void on_actionNew_triggered();
     void on_actionSetupPosition_triggered();
     void on_actionLoad_triggered();
     void on_actionSave_triggered();
-    void on_actionSaveAs_triggered() { saveGameAs(); }
+    inline void on_actionSaveAs_triggered() { saveGame(); }
     // Match
     void on_actionStartingPosition_triggered();
     void on_actionPreviousMove_triggered();
@@ -107,13 +107,13 @@ private slots:
     void on_actionHideNotation_triggered();
     void on_actionAxisLabeling_triggered();
     // Layout
-    void on_actionTinyLayout_triggered() { changeLayout(0.3); }
-    void on_actionSmallLayout_triggered() { changeLayout(0.5); }
-    void on_actionNormalLayout_triggered() { changeLayout(0.7); }
-    void on_actionLargeLayout_triggered() { changeLayout(0.9); }
+    void on_actionTinyLayout_triggered();
+    void on_actionSmallLayout_triggered();
+    void on_actionNormalLayout_triggered();
+    void on_actionLargeLayout_triggered();
     void on_actionFullScreen_triggered();
     // About
-    void on_actionAboutOni_triggered() { aboutOni(); }
+    inline void on_actionAboutOni_triggered() { aboutOni(); }
     void on_actionAboutQt_triggered();
 };
 
