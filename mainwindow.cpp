@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     screen(QGuiApplication::primaryScreen()), scene(NULL), dialogAbout(new DialogAbout(this)), dialogSaveAs(new DialogSave(this)),
     windowTitle("Oni - new unsaved game"), axisLabel(new QList<QGraphicsTextItem*>),
     windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
-    fieldSize(0), slotSize(0), sideBarSize(0), axisLabelSize(0) {
+    fieldSize(0), slotSize(0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
 
     // set up the UI
     ui->setupUi(this);
@@ -32,18 +32,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // presettings
     changeLayout();
     setWindowTitle(windowTitle);
-
-    // scene setup
-    scene = new QGraphicsScene(this);
-    scene->setBackgroundBrush(QBrush(QImage(":/pics/paper.png")));
-    scene->setSceneRect(0, 0, windowWidth, windowHeight);
-    fieldSize = (scene->sceneRect().height() - 2*borderY - sideBarSize - axisLabelSize) / 5;
-    slotSize = (scene->height() - 4*borderY -32) / 3;
-    ui->view->setScene(scene);
-    ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->view->setFixedSize(windowWidth+5, windowHeight+5);
-    ui->notation->setSelectionMode(QAbstractItemView::SingleSelection);
 
     // connects
     connect(ui->notation, SIGNAL(itemClicked(QListWidgetItem*)),
@@ -215,21 +203,29 @@ void MainWindow::changeLayout(double factor) {
     sideBarSize = 40 * factor;
     // setting window size in dependency of available screen
     windowHeight = desktop.height() * factor;
-    windowWidth = windowHeight + 3*borderX + 2*((windowHeight - 4*borderY) / 3);
+    windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*((windowHeight - 4*borderY - MSWindowsCorrection) / 3);
     while (windowWidth > desktop.width()-4) {
         windowHeight--;
         windowWidth = windowHeight + 3*borderX + 2*((windowHeight - 4*borderY) / 3);
     }
     setGeometry(windowPosX, windowPosY, windowWidth+5, windowHeight+5);
     setFixedSize(windowWidth+5, windowHeight+5);
-
-    if (scene != NULL) {
-        scene->setSceneRect(0, 0, windowWidth, windowHeight);
-        ui->view->setFixedSize(windowWidth+5, windowHeight+5);
-        fieldSize = ((scene->sceneRect().height() - 2*borderY - sideBarSize - axisLabelSize) / 5);
-        slotSize = (scene->height() - 4*borderY -32) / 3;
-        prepareGame();
+    bool sceneWasSetUp = true;
+    if (!scene) {
+        sceneWasSetUp = false;
+        // scene setup
+        scene = new QGraphicsScene(this);
+        scene->setBackgroundBrush(QBrush(QImage(":/pics/paper.png")));
+        ui->view->setScene(scene);
+        ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        ui->notation->setSelectionMode(QAbstractItemView::SingleSelection);
     }
+    ui->view->setFixedSize(windowWidth+5, windowHeight+5);
+    scene->setSceneRect(0, 0, windowWidth, windowHeight);
+    fieldSize = (scene->sceneRect().height() - MSWindowsCorrection - 2*borderY - sideBarSize - axisLabelSize) / 5;
+    slotSize = (scene->sceneRect().height() - MSWindowsCorrection - 4*borderY ) / 3;
+    if (sceneWasSetUp) prepareGame();
 }
 
 void MainWindow::drawAxisLabeling() {
@@ -291,7 +287,7 @@ void MainWindow::drawBoard() {
             game->getBoard()->append(fieldsRow);
         }
     } else {
-        for (int row = 0; row < game->getRows(); row++)
+        for (int row = 0; row < game->getRows(); row++) {
             for (int col = 0; col < game->getCols(); col++) {
                 Field *field = game->getBoard()->at(row).at(col);
                 if (!game->getFlippedBoard()) field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
@@ -307,6 +303,7 @@ void MainWindow::drawBoard() {
                 }
                 scene->addItem(field);
             }
+        }
     }
 }
 
@@ -333,14 +330,10 @@ void MainWindow::drawCardSlots() {
                 } else slot = game->getSlotsGrid()->at(player).at(number);
             }
             slot->setRect(0, 0, slotSize, slotSize);
-            double posX = scene->height() + number * slotSize + (number + 1) * borderX;
+            double posX = scene->height() - MSWindowsCorrection + number * slotSize + (number + 1) * borderX;
             double posY;
-            if (game->getFlippedBoard())
-                //  1->0, 0->1, 2->2
-                posY = ((1.5 * player - 2.5) * player + 1) * slotSize + ((1.5 * player - 2.5) * player + 2) * borderY;
-            else
-                //   2->0, 0->1, 1->2
-                posY = ((-1.5 * player + 2.5) * player + 1) * slotSize + ((-1.5 * player + 2.5) * player + 2) * borderY;
+            if (game->getFlippedBoard()) posY = ((1.5 * player - 2.5) * player + 1) * slotSize + ((1.5 * player - 2.5) * player + 2) * borderY;
+            else posY = ((-1.5 * player + 2.5) * player + 1) * slotSize + ((-1.5 * player + 2.5) * player + 2) * borderY;
 
             if (game->getCardChoiceActive()) {
                 if ((game->getFirstPlayersTurn() && player == 1) || (!game->getFirstPlayersTurn() && player == 2)) {
@@ -364,15 +357,15 @@ void MainWindow::drawCardSlots() {
 }
 
 void MainWindow::drawSideBar() {
-    double posXright = 0, posYbuttom = 0, posX = 0, posY = 0;
+    double posXright = 0, posYbuttom = 0, posY = 0;
     // drawing in-game sidebar "right"
-    posXright = this->height() - sideBarSize - borderX;
-    posYbuttom = this->height() - sideBarSize - axisLabelSize - borderY;
+    posXright = this->height() - MSWindowsCorrection - sideBarSize - borderX;
+    posYbuttom = this->height() - MSWindowsCorrection - sideBarSize - axisLabelSize - borderY;
 
     // FlipButton
     flipButton = new Button;
     flipButton->drawButton("flipButton", "right");
-    flipButton->setPos(posXright, (this->height() - sideBarSize - axisLabelSize - flipButton->pixmap().height() ) /2);
+    flipButton->setPos(posXright, (this->height() - MSWindowsCorrection - sideBarSize - axisLabelSize - flipButton->pixmap().height() ) /2);
     if (game->getFlippedBoard()) {
         flipButton->setTransformOriginPoint(flipButton->pixmap().width() / 2, flipButton->pixmap().height() / 2);
         flipButton->setRotation(180);
@@ -383,12 +376,12 @@ void MainWindow::drawSideBar() {
     turnRed = new Button;
     turnRed->drawButton("turnRed", "right");
     if (game->getFlippedBoard()) posY = borderY;
-    else posY = (this->height() - sideBarSize - axisLabelSize - borderY - turnRed->pixmap().height() );
+    else posY = (this->height() - MSWindowsCorrection - sideBarSize - axisLabelSize - borderY - turnRed->pixmap().height() );
     turnRed->setPos(posXright, posY);
 
     turnBlue = new Button;
     turnBlue->drawButton("turnBlue", "right");
-    if (game->getFlippedBoard()) posY = (this->height() - sideBarSize - axisLabelSize - borderY - turnBlue->pixmap().height() );
+    if (game->getFlippedBoard()) posY = (this->height() - MSWindowsCorrection - sideBarSize - axisLabelSize - borderY - turnBlue->pixmap().height() );
     else posY = borderY;
     turnBlue->setPos(posXright, posY);
 
@@ -399,9 +392,12 @@ void MainWindow::drawSideBar() {
     bool delItem = false;
     for (int i = 0; i < game->getCapturedBlue()->count(); i++) {
         Piece *victim = game->getCapturedBlue()->at(i);
+        victim->setPixmap(QPixmap(":/pics/pieces/scolar_blue.png"));
+        double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
+        double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
         if (victim->getType() == 's') {
-            victim->setPixmap(victim->pixmap().scaled(sideBarSize*2, sideBarSize*2 / victim->pixmap().width() * victim->pixmap().height()));
-            victim->setPos(posXright - 2*borderX, windowHeight - 2*borderY - turnRed->boundingRect().height() - sideBarSize - axisLabelSize - victim->pixmap().height()*(i+1));
+            victim->setPixmap(victim->pixmap().scaled(victimHeight, victimWidth));
+            victim->setPos(posXright - 2*borderX, windowHeight - MSWindowsCorrection - 2*borderY - turnRed->boundingRect().height() - sideBarSize - axisLabelSize - victim->pixmap().height()*(i+1));
             delItem = false;
             for (int k = 0; k < scene->items().size(); k++)
                 if (scene->items().at(k) == victim) delItem = true;
@@ -411,8 +407,11 @@ void MainWindow::drawSideBar() {
     }
     for (int i = 0; i < game->getCapturedRed()->count(); i++) {
         Piece *victim = game->getCapturedRed()->at(i);
+        victim->setPixmap(QPixmap(":/pics/pieces/scolar_red.png"));
+        double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
+        double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
         if (victim->getType() == 'S') {
-            victim->setPixmap(victim->pixmap().scaled(game->getWindow()->getSideBarSize()*2, game->getWindow()->getSideBarSize()*2 / victim->pixmap().width() * victim->pixmap().height()));
+            victim->setPixmap(victim->pixmap().scaled(victimHeight, victimWidth));
             victim->setPos(posXright - 2*borderX, 2*borderY + turnRed->boundingRect().height() + victim->pixmap().height()*i);
             delItem = false;
             for (int k = 0; k < scene->items().size(); k++)
@@ -583,8 +582,8 @@ void MainWindow::notateVictory(QString result) {
 }
 
 void MainWindow::positionNotation() {
-    double size = (scene->height() - 32 - 4*borderY) / 3;
-    double posX = scene->height() + size + 2*borderX;
+    double size = (scene->height() - MSWindowsCorrection - 4*borderY) / 3;
+    double posX = scene->height() - MSWindowsCorrection + size + 2*borderX;
     double posY = size + 2*borderY;
     ui->notation->scrollToBottom();
     ui->notation->setGeometry(posX, posY, size, size);
@@ -672,9 +671,9 @@ void MainWindow::saveTurnInNotation() {
 
 void MainWindow::moveEvent(QMoveEvent *event) {
    QMainWindow::moveEvent(event);
-   QRect r = geometry();
-   windowPosX = r.x();
-   windowPosY = r.y();
+   QRect geo = geometry();
+   windowPosX = geo.x();
+   windowPosY = geo.y();
 }
 
 void MainWindow::refreshNotation() {

@@ -16,7 +16,7 @@ void Button::drawButton(QString buttonType, QString buttonPos) {
         QPixmap img(":/pics/buttons/" + type + ".png");
         double width, height;
         if (pos == "right") {
-            width = game->getWindow()->getSideBarSize();
+            width = game->getWindow()->getSideBarSize() *0.9;
             height = width / img.width() * img.height();
         }
         if (pos == "bottom") {

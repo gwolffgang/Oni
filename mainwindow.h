@@ -79,7 +79,7 @@ private:
     QString windowTitle;
     Button *flipButton, *turnRed, *turnBlue;
     QList<QGraphicsTextItem*> *axisLabel;
-    double windowPosX, windowPosY, windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize, axisLabelSize;
+    double windowPosX, windowPosY, windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize, axisLabelSize, MSWindowsCorrection;
 
 protected:
     // events
