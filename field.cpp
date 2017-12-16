@@ -8,12 +8,7 @@
 
 extern Oni *game;
 
-Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
-    // presettings
-    row = -1;
-    col = -1;
-    pieceType = ' ';
-
+Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent), col(-1), row(-1), pieceType(' ') {
     //create a field to put to the scene
     float size = game->getWindow()->getFieldSize();
     QGraphicsRectItem *rect;
@@ -22,53 +17,6 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent) {
 
     //allow responding to hover events
     setAcceptHoverEvents(true);
-}
-
-void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    if (!game->getCardChoiceActive() && game->getGameResult() == 0) {
-        if ((game->getFirstPlayersTurn() && (this->getPieceType() == 'M' || this->getPieceType() == 'S')) ||
-            (!game->getFirstPlayersTurn() && (this->getPieceType() == 'm' || this->getPieceType() == 's'))) {
-            if (piece != game->getPickedUpPiece()) {
-                QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
-                setBrush(brush);
-            }
-        }
-        if (this->brush().style() != Qt::NoBrush) {
-            setCursor(Qt::PointingHandCursor);
-        }
-    }
-    event->ignore();
-}
-
-void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    if (this->brush().color() == game->getWindow()->colorHovered && !game->getCardChoiceActive()) {
-        QBrush brush(Qt::NoBrush);
-        setBrush(brush);
-        setCursor(Qt::ArrowCursor);
-        event->ignore();
-    }
-}
-
-void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    // identify possible piece from pieces list
-    if (this->brush().style() != Qt::NoBrush && !game->getCardChoiceActive() && game->getGameResult() == 0) {
-        int pieceNumber = identifyPiece();
-        if (pieceNumber == -1) {
-            // no piece on that field
-            if (game->getPickedUpPiece() != NULL)
-                // try to drop piece
-                dropPiece();
-        } else {
-            // existing piece on that field
-            if (game->getPickedUpPiece() != NULL)
-                // capture piece
-                captureOrChangePiece(game->getPieces()->at(pieceNumber));
-            else
-                // pick up piece
-                pickUpPiece(game->getPieces()->at(pieceNumber));
-        }
-    }
-    event->ignore();
 }
 
 void Field::captureOrChangePiece(Piece *target) {
@@ -293,3 +241,49 @@ void Field::unmarkAllFields() {
     }
 }
 
+void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+    if (!game->getCardChoiceActive() && game->getGameResult() == 0) {
+        if ((game->getFirstPlayersTurn() && (this->getPieceType() == 'M' || this->getPieceType() == 'S')) ||
+            (!game->getFirstPlayersTurn() && (this->getPieceType() == 'm' || this->getPieceType() == 's'))) {
+            if (piece != game->getPickedUpPiece()) {
+                QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
+                setBrush(brush);
+            }
+        }
+        if (this->brush().style() != Qt::NoBrush) {
+            setCursor(Qt::PointingHandCursor);
+        }
+    }
+    event->ignore();
+}
+
+void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+    if (this->brush().color() == game->getWindow()->colorHovered && !game->getCardChoiceActive()) {
+        QBrush brush(Qt::NoBrush);
+        setBrush(brush);
+        setCursor(Qt::ArrowCursor);
+        event->ignore();
+    }
+}
+
+void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+    // identify possible piece from pieces list
+    if (this->brush().style() != Qt::NoBrush && !game->getCardChoiceActive() && game->getGameResult() == 0) {
+        int pieceNumber = identifyPiece();
+        if (pieceNumber == -1) {
+            // no piece on that field
+            if (game->getPickedUpPiece() != NULL)
+                // try to drop piece
+                dropPiece();
+        } else {
+            // existing piece on that field
+            if (game->getPickedUpPiece() != NULL)
+                // capture piece
+                captureOrChangePiece(game->getPieces()->at(pieceNumber));
+            else
+                // pick up piece
+                pickUpPiece(game->getPieces()->at(pieceNumber));
+        }
+    }
+    event->ignore();
+}

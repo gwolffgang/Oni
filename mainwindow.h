@@ -5,6 +5,7 @@
 #include <QGraphicsScene>
 #include <QListWidget>
 #include <QMainWindow>
+#include <QMoveEvent>
 
 #include "dialogabout.h"
 #include "dialogsave.h"
@@ -17,16 +18,6 @@ class MainWindow;
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
-
-private:
-    QScreen *screen;
-    QGraphicsScene *scene;
-    DialogAbout *dialogAbout;
-    DialogSave *dialogSaveAs;
-    QString windowTitle;
-    Button *flipButton, *turnRed, *turnBlue;
-    QList<QGraphicsTextItem*> *axisLabel;
-    double windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize, axisLabelSize;
 
 public:
     Ui::MainWindow *ui;
@@ -59,10 +50,10 @@ public:
     inline void setFieldSize(double newFieldSize) { fieldSize = newFieldSize; }
     inline void setSlotSize(double newSlotSize) { slotSize = newSlotSize; }
 
-    // functions
+    // methods
     inline void aboutOni() { dialogAbout->show(); }
     bool analyseSetupString(QString string);
-    void changeLayout(double factor);
+    void changeLayout(double factor = 0.7);
     void drawAxisLabeling();
     void drawBackGroundPicture();
     void drawBoard();
@@ -79,6 +70,20 @@ public:
     void resetLists();
     void saveGame(const QString &fileName = "");
     void saveTurnInNotation();
+
+private:
+    QScreen *screen;
+    QGraphicsScene *scene;
+    DialogAbout *dialogAbout;
+    DialogSave *dialogSaveAs;
+    QString windowTitle;
+    Button *flipButton, *turnRed, *turnBlue;
+    QList<QGraphicsTextItem*> *axisLabel;
+    double windowPosX, windowPosY, windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize, axisLabelSize;
+
+protected:
+    // events
+    void moveEvent(QMoveEvent *event) override;
 
 private slots:
     inline void refreshWindow() { prepareGame(); }

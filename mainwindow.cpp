@@ -19,22 +19,19 @@ bool fileExists(QString path) {
     return check_file.exists() && check_file.isFile();
 }
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow) {
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), colorHovered(Qt::gray), colorSelected(Qt::darkCyan),
+    colorChooseableCard1(Qt::yellow), colorChooseableCard2(Qt::blue), colorChooseableBoth(Qt::green),
+    screen(QGuiApplication::primaryScreen()), scene(NULL), dialogAbout(new DialogAbout(this)), dialogSaveAs(new DialogSave(this)),
+    windowTitle("Oni - new unsaved game"), axisLabel(new QList<QGraphicsTextItem*>),
+    windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
+    fieldSize(0), slotSize(0), sideBarSize(0), axisLabelSize(0) {
+
     // set up the UI
     ui->setupUi(this);
-    scene = NULL;
 
     // presettings
-    changeLayout(0.70);
-    windowTitle = "Oni - new unsaved game";
+    changeLayout();
     setWindowTitle(windowTitle);
-
-    // setup brushcolors
-    colorHovered         = Qt::gray;
-    colorSelected        = Qt::darkCyan;
-    colorChooseableCard1 = Qt::yellow;
-    colorChooseableCard2 = Qt::blue;
-    colorChooseableBoth  = Qt::green;
 
     // scene setup
     scene = new QGraphicsScene(this);
@@ -47,11 +44,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     ui->view->setFixedSize(windowWidth+5, windowHeight+5);
     ui->notation->setSelectionMode(QAbstractItemView::SingleSelection);
-    axisLabel = new QList<QGraphicsTextItem*>;
-
-    // dialog windows
-    dialogAbout = new DialogAbout(this);
-    dialogSaveAs = new DialogSave(this);
 
     // connects
     connect(ui->notation, SIGNAL(itemClicked(QListWidgetItem*)),
@@ -191,29 +183,28 @@ bool MainWindow::analyseSetupString(QString string) {
 void MainWindow::changeLayout(double factor) {
     // Change menu checkings
     if (!ui->actionFullScreen->isChecked()) {
-        if (factor == 0.3) {
+        if (factor <= 0.3) {
             ui->actionTinyLayout->setChecked(true);
             ui->actionSmallLayout->setChecked(false);
             ui->actionNormalLayout->setChecked(false);
             ui->actionLargeLayout->setChecked(false);
-        } else if (factor == 0.5) {
+        } else if (factor <= 0.5) {
             ui->actionTinyLayout->setChecked(false);
             ui->actionSmallLayout->setChecked(true);
             ui->actionNormalLayout->setChecked(false);
             ui->actionLargeLayout->setChecked(false);
-        } else if (factor == 0.7) {
+        } else if (factor <= 0.7) {
             ui->actionTinyLayout->setChecked(false);
             ui->actionSmallLayout->setChecked(false);
             ui->actionNormalLayout->setChecked(true);
             ui->actionLargeLayout->setChecked(false);
-        } else if (factor == 0.9) {
+        } else if (factor <= 0.9) {
             ui->actionTinyLayout->setChecked(false);
             ui->actionSmallLayout->setChecked(false);
             ui->actionNormalLayout->setChecked(false);
             ui->actionLargeLayout->setChecked(true);
         }
     }
-    screen = QGuiApplication::primaryScreen();
     // measure and fill available screen
     QRect desktop = screen->availableGeometry();
     // default factor: 0.70
@@ -229,7 +220,7 @@ void MainWindow::changeLayout(double factor) {
         windowHeight--;
         windowWidth = windowHeight + 3*borderX + 2*((windowHeight - 4*borderY) / 3);
     }
-    setGeometry(0,0,windowWidth+5,windowHeight+5);
+    setGeometry(windowPosX, windowPosY, windowWidth+5, windowHeight+5);
     setFixedSize(windowWidth+5, windowHeight+5);
 
     if (scene != NULL) {
@@ -430,7 +421,6 @@ void MainWindow::drawSideBar() {
             scene->addItem(victim);
         }
     }
-
 }
 
 QString MainWindow::generateNotationString(QString lastTurn, QString thisTurn) {
@@ -678,6 +668,13 @@ void MainWindow::saveTurnInNotation() {
         item->setTextAlignment(Qt::AlignRight);
     }
     ui->notation->addItem(item);
+}
+
+void MainWindow::moveEvent(QMoveEvent *event) {
+   QMainWindow::moveEvent(event);
+   QRect r = geometry();
+   windowPosX = r.x();
+   windowPosY = r.y();
 }
 
 void MainWindow::refreshNotation() {

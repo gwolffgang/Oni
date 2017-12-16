@@ -10,7 +10,7 @@ public:
     // constructors
     Button(QGraphicsItem *parent = NULL);
 
-    // functions
+    // methods
     void drawButton(QString buttonType = "", QString buttonPos = "right");
 
 protected:

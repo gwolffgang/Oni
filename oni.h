@@ -23,23 +23,6 @@
 class Oni : public QObject {
     Q_OBJECT
 
-private:
-    //variables
-    MainWindow *window;
-    QList<QList<Field*>> *board;
-    QList<Piece*> *pieces, *capturedBlue, *capturedRed;
-    QList<QList<CardSlot*>> *slotsGrid;
-    QList<Card*> *cards;
-    QList<QString> *turns;
-    QString playerNameRed, playerNameBlue, openGameFileName;
-    Piece *pickedUpPiece;
-    Field *fieldOfOrigin, *chosenField;
-    int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove;
-
-    int gameResult;        // game_result: 0 = ongoing game; 1 = player 1 has won; -1 = player 2 has won
-    bool firstPlayersTurn;  // firstPlayersTurn: true = turn of player 1, false = turn of player 2
-    bool flippedBoard, cardChoiceActive;
-
 public:
     // constructors
     Oni();
@@ -81,10 +64,27 @@ public:
     void setPlayerNames(QString nameRed = "Red", QString nameBlue = "Blue");
     inline void setRows(int newRows) { rows = newRows; }
 
-    //functions
+    // methods
     QList<Card*> identifyCards(int owner);
     void switchCards(CardSlot *usedCardSlot);
     void winGame(int winner);
+
+private:
+    // variables
+    MainWindow *window;
+    QList<QList<Field*>> *board;
+    QList<Piece*> *pieces, *capturedBlue, *capturedRed;
+    QList<QList<CardSlot*>> *slotsGrid;
+    QList<Card*> *cards;
+    QList<QString> *turns;
+    QString playerNameRed, playerNameBlue, openGameFileName;
+    Piece *pickedUpPiece;
+    Field *fieldOfOrigin, *chosenField;
+    int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove;
+
+    int gameResult;        // gameResult: 0 = ongoing game; 1 = player 1 has won; -1 = player 2 has won
+    bool firstPlayersTurn; // firstPlayersTurn: true = turn of player 1, false = turn of player 2
+    bool flippedBoard, cardChoiceActive;
 };
 
 #endif // ONI_H

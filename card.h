@@ -9,11 +9,6 @@
 class Card : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
-private:
-    // variables
-    QString name;
-    int choice[4][2], id;
-
 public:
     // constructors
     Card(QGraphicsItem *parent = NULL);
@@ -30,9 +25,14 @@ public:
     // setters
     inline void setName(QString newName) { if (name != "") name = newName; }
 
-    //functions
+    // methods
     void setCardValues(int cardID);
     void drawCard(int player);
+
+private:
+    // variables
+    QString name;
+    int choice[4][2], id;
 };
 
 #endif // CARD_H

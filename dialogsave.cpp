@@ -4,9 +4,6 @@
 
 extern Oni *game;
 
-void DialogSave::on_buttonBoxSave_accepted() {
-}
-
 DialogSave::DialogSave(QWidget *parent) : QDialog(parent), ui(new Ui::DialogSave) {
     ui->setupUi(this);
 }

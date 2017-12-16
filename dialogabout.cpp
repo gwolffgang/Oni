@@ -1,14 +1,6 @@
 #include "dialogabout.h"
 #include "ui_dialogabout.h"
 
-void DialogAbout::on_aboutQt_clicked() {
-    QApplication::aboutQt();
-}
-
-void DialogAbout::on_close_clicked() {
-    this->close();
-}
-
 DialogAbout::DialogAbout(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::DialogAbout) {
@@ -22,4 +14,12 @@ DialogAbout::DialogAbout(QWidget *parent) :
 
 DialogAbout::~DialogAbout() {
     delete ui;
+}
+
+void DialogAbout::on_aboutQt_clicked() {
+    QApplication::aboutQt();
+}
+
+void DialogAbout::on_close_clicked() {
+    this->close();
 }

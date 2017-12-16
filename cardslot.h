@@ -9,17 +9,6 @@
 class CardSlot : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 
-private:
-    //variables
-    Card *card;
-    int owner;          // 0 = neutral, 1 = player white, 2 = player black
-
-protected:
-    //events
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-
 public:
     //constructors
     CardSlot(double size, QGraphicsItem *parent = NULL);
@@ -32,9 +21,20 @@ public:
     void setOwner(int newOwner);
     void setCard(Card *newCard) { card = newCard; }
 
-    //functions
+    // methods
     void assignCard(int player, int number);
     void colorizePlayersSlots(int player, int number);
+
+protected:
+    //events
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
+private:
+    //variables
+    Card *card;
+    int owner;          // 0 = neutral, 1 = player white, 2 = player black
 };
 
 #endif // CARDSLOT_H

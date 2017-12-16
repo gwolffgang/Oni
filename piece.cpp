@@ -3,9 +3,7 @@
 
 extern Oni *game;
 
-Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
-    // presettings
-    row = col = -1;
+Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent), row(-1), col(-1) {
 }
 
 int Piece::getOwner() {

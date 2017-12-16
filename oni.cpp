@@ -5,43 +5,17 @@
 
 extern Oni *game;
 
-Oni::Oni() {
-    // saves folder creation
+Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
+    pieces(new QList<Piece*>), capturedBlue(new QList<Piece*>), capturedRed(new QList<Piece*>),
+    slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>), turns(new QList<QString>),
+    playerNameRed("Red"), playerNameBlue("Blue"), openGameFileName(""), pickedUpPiece(NULL), fieldOfOrigin(NULL), rows(5), cols(5),
+    cardsPerPlayer(2), neutralCardsPerGame(1), actuallyDisplayedMove(0), gameResult(0),
+    firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false) {
+
     QDir dir("saves");
     if (!dir.exists()) dir.mkpath(".");
 
-    // board settings
-    board = new QList<QList<Field*>>;
-    rows = 5;
-    cols = 5;
-    flippedBoard = false;
-
-    // card settings
-    slotsGrid = new QList<QList<CardSlot*>>;
-    cardsPerPlayer = 2;
-    neutralCardsPerGame = 1;
-
-    // window settings
-    window = new MainWindow;
     window->show();
-
-    // game settings
-    gameResult = 0;
-    firstPlayersTurn = true;
-    cardChoiceActive = false;
-    pickedUpPiece = NULL;
-    fieldOfOrigin = NULL;
-    playerNameBlue = "Blue";
-    playerNameRed = "Red";
-    openGameFileName = "";
-    actuallyDisplayedMove = 0;
-
-    // initiate lists
-    pieces = new QList<Piece*>;
-    capturedBlue = new QList<Piece*>;
-    capturedRed = new QList<Piece*>;
-    cards = new QList<Card*>;
-    turns = new QList<QString>;
 }
 
 void Oni::setPlayerNames(QString nameRed, QString nameBlue) {

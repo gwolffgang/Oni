@@ -3,10 +3,7 @@
 
 extern Oni *game;
 
-CardSlot::CardSlot(double size, QGraphicsItem *parent) : QGraphicsRectItem(parent) {
-    // presettings
-    owner = 0;
-
+CardSlot::CardSlot(double size, QGraphicsItem *parent) : QGraphicsRectItem(parent), owner(0) {
     //create a slot to put to the scene
     QGraphicsRectItem *rect;
     rect = new QGraphicsRectItem;

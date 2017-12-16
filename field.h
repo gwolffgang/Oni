@@ -11,18 +11,6 @@
 class Field : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 
-private:
-    // variables
-    int col, row;
-    char pieceType;
-    Piece *piece;
-
-protected:
-    // events
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-
 public:
     // constructors
     Field(QGraphicsItem *parent = NULL);
@@ -42,7 +30,7 @@ public:
     inline void setPieceType(char newPieceType) { pieceType = newPieceType; }
     inline void setRow(int newRow) { if (newRow > -1) row = newRow; }
 
-    // functions
+    // methods
     void captureOrChangePiece(Piece *target);
     void dropPiece();
     void exchangeCards();
@@ -50,6 +38,18 @@ public:
     void linkPiece(Piece *linkedPiece);
     void pickUpPiece(Piece *piece);
     void unmarkAllFields();
+
+protected:
+    // events
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+private:
+    // variables
+    int col, row;
+    char pieceType;
+    Piece *piece;
 };
 
 #endif // FIELD_H

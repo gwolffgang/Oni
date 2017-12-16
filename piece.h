@@ -5,11 +5,6 @@
 
 class Piece : public QGraphicsPixmapItem {
 
-private:
-    // variables
-    int row, col;
-    char type = ' ';
-
 public:
     // constructors
     Piece(QGraphicsItem *parent=NULL);
@@ -25,8 +20,13 @@ public:
     void setRow(int newRow) { if (newRow > -1) row = newRow; }
     void setType(char newType) { type = newType; }
 
-    //functions
+    // methods
     void drawPiece();
+
+private:
+    // variables
+    int row, col;
+    char type = ' ';
 };
 
 #endif // PIECE_H
