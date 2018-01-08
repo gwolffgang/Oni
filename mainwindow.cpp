@@ -146,9 +146,11 @@ bool MainWindow::analyseSetupString(QString string) {
             // clear cards list
             game->getCards()->clear();
             // determine random, unique cards
-            int intArray[16] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16};
+            int intArray[34] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, // Basis Game
+                                17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, // "Sensei's Path" Expansion
+                                33, 34}; // "Goat & Sheep" Expansion
             srand(unsigned((NULL)));
-            std::random_shuffle(&intArray[0], &intArray[16], myrandom);
+            std::random_shuffle(&intArray[0], &intArray[34], myrandom);
             for (int i = 0; i < 5; i++) {
                 Card *card = new Card;
                 card->setCardValues(intArray[i]);
@@ -582,11 +584,10 @@ void MainWindow::notateVictory(QString result) {
 }
 
 void MainWindow::positionNotation() {
-    double size = (scene->height() - MSWindowsCorrection - 4*borderY) / 3;
-    double posX = scene->height() - MSWindowsCorrection + size + 2*borderX;
-    double posY = size + 2*borderY;
+    double posX = scene->height() - MSWindowsCorrection + slotSize + 2*borderX + 2.5;
+    double posY = slotSize + 2*borderY + 2.5;
     ui->notation->scrollToBottom();
-    ui->notation->setGeometry(posX, posY, size, size);
+    ui->notation->setGeometry(posX, posY, slotSize, slotSize);
 }
 
 void MainWindow::prepareGame() {

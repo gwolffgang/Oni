@@ -2,7 +2,7 @@
 #define CARD_H
 
 #include <QGraphicsPixmapItem>
-#include <string.h>
+#include <QString>
 #include <time.h>
 #include <stdlib.h>
 
@@ -28,11 +28,13 @@ public:
     // methods
     void setCardValues(int cardID);
     void drawCard(int player);
+    void drawYinYang(QPainter *painter, int x, int y);
 
 private:
     // variables
     QString name;
     int choice[4][2], id;
+    QPixmap card;
 };
 
 #endif // CARD_H

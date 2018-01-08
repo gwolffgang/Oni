@@ -80,11 +80,8 @@ private:
     QString playerNameRed, playerNameBlue, openGameFileName;
     Piece *pickedUpPiece;
     Field *fieldOfOrigin, *chosenField;
-    int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove;
-
-    int gameResult;        // gameResult: 0 = ongoing game; 1 = player 1 has won; -1 = player 2 has won
-    bool firstPlayersTurn; // firstPlayersTurn: true = turn of player 1, false = turn of player 2
-    bool flippedBoard, cardChoiceActive;
+    int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove, gameResult;
+    bool firstPlayersTurn, flippedBoard, cardChoiceActive;
 };
 
 #endif // ONI_H

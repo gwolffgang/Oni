@@ -1,9 +1,7 @@
 #include "dialogabout.h"
 #include "ui_dialogabout.h"
 
-DialogAbout::DialogAbout(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::DialogAbout) {
+DialogAbout::DialogAbout(QWidget *parent) : QDialog(parent), ui(new Ui::DialogAbout) {
     ui->setupUi(this);
     // hyperlinks (About Oni; Licenses)
     ui->aboutLabel->setOpenExternalLinks(true);

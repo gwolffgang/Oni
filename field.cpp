@@ -77,7 +77,6 @@ void Field::dropPiece() {
         game->getWindow()->saveTurnInNotation();
         game->getFieldOfOrigin()->setPieceType(' ');
 
-
         // set turnmarker
         if (game->getFirstPlayersTurn()) {
             game->getWindow()->getScene()->addItem(game->getWindow()->getTurnRed());

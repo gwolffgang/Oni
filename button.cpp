@@ -4,8 +4,7 @@
 
 extern Oni *game;
 
-Button::Button(QGraphicsItem *parent) : QGraphicsPixmapItem(parent) {
-    //allow responding to hover events
+Button::Button(QGraphicsItem *parent) : QGraphicsPixmapItem(parent), type(""), pos("") {
     setAcceptHoverEvents(true);
 }
     //button drawing
