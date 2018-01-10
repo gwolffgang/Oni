@@ -31,8 +31,8 @@ public:
 
     // getter
     bool getAxisLabeling();
-    inline int getBorderX() { return borderX; }
-    inline int getBorderY() { return borderY; }
+    inline double getBorderX() { return borderX; }
+    inline double getBorderY() { return borderY; }
     inline DialogSave *getDialogSaveAs() { return dialogSaveAs; }
     inline double getFieldSize() { return fieldSize; }
     bool getFlipEveryMove();

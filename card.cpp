@@ -264,16 +264,16 @@ void Card::setCardValues(int cardID) {
 }
 
 void Card::drawCard(int player) {
-    int borderX = game->getWindow()->getBorderX();
-    int borderY = game->getWindow()->getBorderY();
-    int slotHeight = game->getWindow()->getSlotHeight();
-    int slotWidth = game->getWindow()->getSlotWidth();
+    double borderX = game->getWindow()->getBorderX();
+    double borderY = game->getWindow()->getBorderY();
+    double slotHeight = game->getWindow()->getSlotHeight();
+    double slotWidth = game->getWindow()->getSlotWidth();
     bool firstPlayersTurn = game->getFirstPlayersTurn();
     bool flippedBoard = game->getFlippedBoard();
 
     // drawing the card
-    int width = slotWidth - 2*borderX -1;
-    int height = (slotHeight - 2*borderY)*5/6 -5/6;
+    double width = slotWidth - 2*borderX -1;
+    double height = (slotHeight - 2*borderY)*5/6 -5/6;
     card = QPixmap(width +1, height/5*6 +1);
     setPos(borderX, borderY);
     QBrush lightGrayBrush = QBrush(Qt::lightGray, Qt::SolidPattern);
