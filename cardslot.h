@@ -11,15 +11,15 @@ class CardSlot : public QObject, public QGraphicsRectItem {
 
 public:
     //constructors
-    CardSlot(double size, QGraphicsItem *parent = NULL);
+    CardSlot(QGraphicsItem *parent = NULL);
 
     // getter
     inline int getOwner() { return owner; }
     inline Card *getCard() { return card; }
 
     // setter
-    void setOwner(int newOwner);
-    void setCard(Card *newCard) { card = newCard; }
+    inline void setOwner(int newOwner) { if (newOwner < 3 && newOwner > -1) owner = newOwner; }
+    inline void setCard(Card *newCard) { card = newCard; }
 
     // methods
     void assignCard(int player, int number);

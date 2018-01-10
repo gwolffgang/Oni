@@ -266,27 +266,35 @@ void Card::setCardValues(int cardID) {
 void Card::drawCard(int player) {
     int borderX = game->getWindow()->getBorderX();
     int borderY = game->getWindow()->getBorderY();
-    int slotSize = game->getWindow()->getSlotSize();
+    int slotHeight = game->getWindow()->getSlotHeight();
+    int slotWidth = game->getWindow()->getSlotWidth();
     bool firstPlayersTurn = game->getFirstPlayersTurn();
     bool flippedBoard = game->getFlippedBoard();
 
     // drawing the card
-    int width = slotSize - 2*borderX -1;
-    int height = slotSize - 2*borderY -1;
-    card = QPixmap(width +1, height +1);
+    int width = slotWidth - 2*borderX -1;
+    int height = (slotHeight - 2*borderY)*5/6 -5/6;
+    card = QPixmap(width +1, height/5*6 +1);
     setPos(borderX, borderY);
     QBrush lightGrayBrush = QBrush(Qt::lightGray, Qt::SolidPattern);
+    QBrush grayBrush = QBrush(Qt::white, Qt::SolidPattern);
     QBrush noBrush = QBrush(Qt::NoBrush);
     QPen blackPen = QPen(Qt::black);
+    QFont namesFont = QFont("Amburegul");
+    namesFont.setPixelSize(height*0.1);
     QPainter painter(&card);
+        painter.setFont(namesFont);
         painter.setBrush(lightGrayBrush);
-        painter.drawRect(0, 0, width, height);
         painter.setPen(blackPen);
+        painter.drawRect(0, 0, width, height);
         painter.setBrush(noBrush);
         painter.drawRect(0.2*width, 0, 0.6*width, height);
         painter.drawRect(0, 0.2*height, width, 0.6*height);
         painter.drawRect(0.4*width, 0, 0.2*width, height);
         painter.drawRect(0, 0.4*height, width, 0.2*height);
+        painter.setBrush(grayBrush);
+        painter.drawRect(0, height, width, 0.2*height);
+        painter.drawText(QRectF(0, 1.01*height, width, 0.2*height), Qt::AlignCenter, this->getName());
         drawYinYang(&painter, choice[0][0], choice[0][1]);
         drawYinYang(&painter, choice[1][0], choice[1][1]);
         drawYinYang(&painter, choice[2][0], choice[2][1]);
@@ -309,11 +317,12 @@ void Card::drawCard(int player) {
 }
 
 void Card::drawYinYang(QPainter *painter, int x, int y) {
-    int borderX = game->getWindow()->getBorderX();
-    int borderY = game->getWindow()->getBorderY();
-    int slotSize = game->getWindow()->getSlotSize();
-    int width = slotSize - 2*borderX -1;
-    int height = slotSize - 2*borderY -1;
+    double borderX = game->getWindow()->getBorderX();
+    double borderY = game->getWindow()->getBorderY();
+    double slotHeight = game->getWindow()->getSlotHeight();
+    double slotWidth = game->getWindow()->getSlotWidth();
+    double width = slotWidth - 2*borderX -1;
+    double height = (slotHeight - 2*borderY)*5/6 - 5/6;
     QBrush colorBrush = QBrush(Qt::darkRed, Qt::SolidPattern);
     QPen colorPen = QPen(Qt::darkRed);
     if (x == 0 && y == 0) {

@@ -24,7 +24,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     screen(QGuiApplication::primaryScreen()), scene(NULL), dialogAbout(new DialogAbout(this)), dialogSaveAs(new DialogSave(this)),
     windowTitle("Oni - new unsaved game"), axisLabel(new QList<QGraphicsTextItem*>),
     windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
-    fieldSize(0), slotSize(0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
+    fieldSize(0), slotHeight(0.0), slotWidth(0.0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
 
     // set up the UI
     ui->setupUi(this);
@@ -51,6 +51,9 @@ bool MainWindow::getFlipEveryMove() {
 }
 
 bool MainWindow::analyseSetupString(QString string) {
+    QList<Card*> *cards = game->getCards();
+    QList<Piece*> *pieces = game->getPieces();
+
     // seperate pieces and cards
     QStringList part = string.split("|");
 
@@ -82,24 +85,24 @@ bool MainWindow::analyseSetupString(QString string) {
 
         // add piece to pieces list
         bool nope = false;
-        for (int k = 0; k < game->getPieces()->size(); k++)
-            if (piece->getCol() == game->getPieces()->at(k)->getCol() && piece->getRow() == game->getPieces()->at(k)->getRow()) {
+        for (int k = 0; k < pieces->size(); k++)
+            if (piece->getCol() == pieces->at(k)->getCol() && piece->getRow() == pieces->at(k)->getRow()) {
                 nope = true;
                 continue;
             }
         if (!nope) {
             if (piece->getType() == 'S' && count_S < 4) {
                 count_S++;
-                game->getPieces()->append(piece);
+                pieces->append(piece);
             } else if (piece->getType() == 's' && count_s < 4) {
                 count_s++;
-                game->getPieces()->append(piece);
+                pieces->append(piece);
             } else if (piece->getType() == 'M' && count_M < 1) {
                 count_M++;
-                game->getPieces()->append(piece);
+                pieces->append(piece);
             } else if (piece->getType() == 'm' && count_m < 1) {
                 count_m++;
-                game->getPieces()->append(piece);
+                pieces->append(piece);
             }
         }
     }
@@ -125,8 +128,7 @@ bool MainWindow::analyseSetupString(QString string) {
     }
 
     // get cards
-    // clear cards list
-    game->getCards()->clear();
+    cards->clear();
     if (part.size() > 1) {
         elem = part.at(1).split(",");
         bool nope = false;
@@ -134,28 +136,39 @@ bool MainWindow::analyseSetupString(QString string) {
             Card *card = new Card;
             card->setCardValues(elem.at(i).toInt());
             nope = false;
-            for (int k = 0; k < game->getCards()->size(); k++)
-                if (card->getID() == game->getCards()->at(k)->getID()) {
+            for (int k = 0; k < cards->size(); k++)
+                if (card->getID() == cards->at(k)->getID()) {
                     nope = true;
                     continue;
                 }
-            if (!nope) game->getCards()->append(card);
+            if (!nope) cards->append(card);
         }
     }
-        if (game->getCards()->size() != 5) {
-            // clear cards list
-            game->getCards()->clear();
-            // determine random, unique cards
-            int intArray[34] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, // Basis Game
-                                17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, // "Sensei's Path" Expansion
-                                33, 34}; // "Goat & Sheep" Expansion
-            srand(unsigned((NULL)));
-            std::random_shuffle(&intArray[0], &intArray[34], myrandom);
-            for (int i = 0; i < 5; i++) {
-                Card *card = new Card;
-                card->setCardValues(intArray[i]);
-                game->getCards()->append(card);
+        if (cards->size() != 5) {
+            cards->clear();
+            QList<Card*> availableCards;
+            if (ui->actionBasisGame->isChecked()) {
+                for (int k = 1; k <= 16; k++) {
+                    Card *card = new Card;
+                    card->setCardValues(k);
+                    availableCards.append(card);
+                }
             }
+            if (ui->actionSenseisPath->isChecked()) {
+                for (int k = 17; k <= 32; k++) {
+                    Card *card = new Card;
+                    card->setCardValues(k);
+                    availableCards.append(card);
+                }
+            }
+            if (ui->actionGoatSheep->isChecked()) {
+                for (int k = 33; k <= 34; k++) {
+                    Card *card = new Card;
+                    card->setCardValues(k);
+                    availableCards.append(card);
+                }
+            }
+            for (int i = 0; i < 5; i++) cards->append(availableCards.takeAt(rand() % availableCards.size()));
         }
     // get game settings
     if (part.size() >2) {
@@ -204,12 +217,11 @@ void MainWindow::changeLayout(double factor) {
     borderY = 10 * factor;
     sideBarSize = 40 * factor;
     // setting window size in dependency of available screen
-    windowHeight = desktop.height() * factor;
-    windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*((windowHeight - 4*borderY - MSWindowsCorrection) / 3);
-    while (windowWidth > desktop.width()-4) {
+    windowHeight = factor * desktop.height() +1;
+    do {
         windowHeight--;
-        windowWidth = windowHeight + 3*borderX + 2*((windowHeight - 4*borderY) / 3);
-    }
+        windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*((windowHeight - 4*borderY - MSWindowsCorrection) / 18 *5);
+    } while (windowWidth > desktop.width()-4);
     setGeometry(windowPosX, windowPosY, windowWidth+5, windowHeight+5);
     setFixedSize(windowWidth+5, windowHeight+5);
     bool sceneWasSetUp = true;
@@ -226,7 +238,8 @@ void MainWindow::changeLayout(double factor) {
     ui->view->setFixedSize(windowWidth+5, windowHeight+5);
     scene->setSceneRect(0, 0, windowWidth, windowHeight);
     fieldSize = (scene->sceneRect().height() - MSWindowsCorrection - 2*borderY - sideBarSize - axisLabelSize) / 5;
-    slotSize = (scene->sceneRect().height() - MSWindowsCorrection - 4*borderY ) / 3;
+    slotHeight = (scene->sceneRect().height() - MSWindowsCorrection - 4*borderY ) / 3;
+    slotWidth = slotHeight/6*5;
     if (sceneWasSetUp) prepareGame();
 }
 
@@ -321,25 +334,25 @@ void MainWindow::drawCardSlots() {
         // draw cardslots
         for (int number = 0; number < maxSlots; number++) {
             if (game->getSlotsGrid()->size() < 3) {
-                slot = new CardSlot(slotSize);
+                slot = new CardSlot;
                 slot->setOwner(player);
                 slot->assignCard(player, number);
             } else {
                 if (game->getSlotsGrid()->at(2).size() < 2) {
-                    slot = new CardSlot(slotSize);
+                    slot = new CardSlot;
                     slot->setOwner(player);
                     slot->assignCard(player, number);
                 } else slot = game->getSlotsGrid()->at(player).at(number);
             }
-            slot->setRect(0, 0, slotSize, slotSize);
-            double posX = scene->height() - MSWindowsCorrection + number * slotSize + (number + 1) * borderX;
+            slot->setRect(0, 0, slotWidth, slotHeight);
+            double posX = scene->height() - MSWindowsCorrection + number * slotWidth + (number + 1) * borderX;
             double posY;
-            if (game->getFlippedBoard()) posY = ((1.5 * player - 2.5) * player + 1) * slotSize + ((1.5 * player - 2.5) * player + 2) * borderY;
-            else posY = ((-1.5 * player + 2.5) * player + 1) * slotSize + ((-1.5 * player + 2.5) * player + 2) * borderY;
+            if (game->getFlippedBoard()) posY = ((1.5 * player - 2.5) * player + 1) * slotHeight + ((1.5 * player - 2.5) * player + 2) * borderY;
+            else posY = ((-1.5 * player + 2.5) * player + 1) * slotHeight + ((-1.5 * player + 2.5) * player + 2) * borderY;
 
             if (game->getCardChoiceActive()) {
                 if ((game->getFirstPlayersTurn() && player == 1) || (!game->getFirstPlayersTurn() && player == 2)) {
-                    posX = 0.1*windowWidth + 1.1*number*slotSize;
+                    posX = 0.1*windowWidth + 1.1*number*slotWidth;
                     posY = 0.2*windowHeight;
                 }
             }
@@ -584,10 +597,10 @@ void MainWindow::notateVictory(QString result) {
 }
 
 void MainWindow::positionNotation() {
-    double posX = scene->height() - MSWindowsCorrection + slotSize + 2*borderX + 2.5;
-    double posY = slotSize + 2*borderY + 2.5;
+    double posX = scene->height() - MSWindowsCorrection + slotWidth + 2*borderX + 2.5;
+    double posY = slotHeight + 2*borderY + 2.5;
     ui->notation->scrollToBottom();
-    ui->notation->setGeometry(posX, posY, slotSize, slotSize);
+    ui->notation->setGeometry(posX, posY, slotWidth, slotHeight);
 }
 
 void MainWindow::prepareGame() {
@@ -811,6 +824,17 @@ void MainWindow::on_actionBlueHard_triggered() {
 
 }
 
+void MainWindow::on_actionBasisGame_triggered() {
+    if (!ui->actionSenseisPath->isChecked()) ui->actionBasisGame->setChecked(true);
+}
+
+void MainWindow::on_actionSenseisPath_triggered() {
+    if (!ui->actionBasisGame->isChecked()) ui->actionSenseisPath->setChecked(true);
+}
+
+void MainWindow::on_actionGoatSheep_triggered() {
+}
+
 void MainWindow::on_actionFlipOnce_triggered() {
     // menubar option
     game->setFlippedBoard(!game->getFlippedBoard());
@@ -831,9 +855,9 @@ void MainWindow::on_actionHideNotation_triggered() {
 void MainWindow::on_actionAxisLabeling_triggered() {
     // menubar option
     if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
-    if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
-    if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
-    if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
+    else if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
+    else if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
+    else if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
 }
 
 void MainWindow::on_actionTinyLayout_triggered() {
@@ -870,9 +894,9 @@ void MainWindow::on_actionFullScreen_triggered(){
         ui->actionFullScreen->setChecked(false);
         QMainWindow::showNormal();
         if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
-        if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
-        if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
-        if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
+        else if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
+        else if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
+        else if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
     }
 }
 

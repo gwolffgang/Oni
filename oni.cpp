@@ -1,5 +1,6 @@
 #include <QMessageBox>
 #include <QTimer>
+#include <QFontDatabase>
 
 #include "oni.h"
 
@@ -14,6 +15,11 @@ Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
 
     QDir dir("saves");
     if (!dir.exists()) dir.mkpath(".");
+
+    // seed up randomizer
+    srand(unsigned(time(NULL)));
+
+    QFontDatabase::addApplicationFont(":/pics/Amburegul.ttf");
 
     window->show();
 }

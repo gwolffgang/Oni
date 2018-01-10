@@ -37,7 +37,8 @@ public:
     inline double getFieldSize() { return fieldSize; }
     bool getFlipEveryMove();
     inline QGraphicsScene *getScene() { return scene; }
-    inline double getSlotSize() { return slotSize; }
+    inline double getSlotHeight() { return slotHeight; }
+    inline double getSlotWidth() {return slotWidth;}
     inline double getSideBarSize() { return sideBarSize; }
     inline Button *getTurnBlue() { return turnBlue; }
     inline Button *getTurnRed() { return turnRed; }
@@ -48,7 +49,6 @@ public:
     inline void setBorderX(int newX) { borderX = newX; }
     inline void setBorderY(int newY) { borderY = newY; }
     inline void setFieldSize(double newFieldSize) { fieldSize = newFieldSize; }
-    inline void setSlotSize(double newSlotSize) { slotSize = newSlotSize; }
 
     // methods
     inline void aboutOni() { dialogAbout->show(); }
@@ -79,7 +79,7 @@ private:
     QString windowTitle;
     Button *flipButton, *turnRed, *turnBlue;
     QList<QGraphicsTextItem*> *axisLabel;
-    double windowPosX, windowPosY, windowHeight, windowWidth, borderX, borderY, fieldSize, slotSize, sideBarSize, axisLabelSize, MSWindowsCorrection;
+    double windowPosX, windowPosY, windowHeight, windowWidth, borderX, borderY, fieldSize, slotHeight, slotWidth, sideBarSize, axisLabelSize, MSWindowsCorrection;
 
 protected:
     // events
@@ -107,6 +107,10 @@ private slots:
     void on_actionBlueEasy_triggered();
     void on_actionBlueMedium_triggered();
     void on_actionBlueHard_triggered();
+    // Cards
+    void on_actionBasisGame_triggered();
+    void on_actionSenseisPath_triggered();
+    void on_actionGoatSheep_triggered();
     // Settings
     void on_actionFlipOnce_triggered();
     void on_actionHideNotation_triggered();
