@@ -151,16 +151,16 @@ void Card::setCardValues(int cardID) {
         break;
     case 19: // "Sensei's Path" Expansion
         name = "FOX";
-        choice[0][0] = -2;  choice[0][1] = 1;
-        choice[1][0] = 2;   choice[1][1] = 1;
-        choice[2][0] = 0;   choice[2][1] = -1;
+        choice[0][0] = 1;  choice[0][1] = 1;
+        choice[1][0] = 1;   choice[1][1] = 0;
+        choice[2][0] = 1;   choice[2][1] = -1;
         choice[3][0] = 0;   choice[3][1] = 0;
         break;
     case 20: // "Sensei's Path" Expansion
         name = "GIRAFFE";
-        choice[0][0] = 0;   choice[0][1] = 1;
-        choice[1][0] = -1;  choice[1][1] = -1;
-        choice[2][0] = 1;   choice[2][1] = -1;
+        choice[0][0] = -2;  choice[0][1] = 1;
+        choice[1][0] = 2;   choice[1][1] = 1;
+        choice[2][0] = 0;   choice[2][1] = -1;
         choice[3][0] = 0;   choice[3][1] = 0;
         break;
     case 21: // "Sensei's Path" Expansion
@@ -188,7 +188,7 @@ void Card::setCardValues(int cardID) {
         name = "OTTER";
         choice[0][0] = -1;  choice[0][1] = 1;
         choice[1][0] = 2;   choice[1][1] = 0;
-        choice[2][0] = -1;  choice[2][1] = -1;
+        choice[2][0] = 1;   choice[2][1] = -1;
         choice[3][0] = 0;   choice[3][1] = 0;
         break;
     case 25: // "Sensei's Path" Expansion
@@ -200,17 +200,17 @@ void Card::setCardValues(int cardID) {
         break;
     case 26: // "Sensei's Path" Expansion
         name = "PHOENIX";
-        choice[0][0] = 0;   choice[0][1] = 1;
-        choice[1][0] = 1;   choice[1][1] = 0;
-        choice[2][0] = 0;   choice[2][1] = -1;
-        choice[3][0] = 0;   choice[3][1] = 0;
-        break;
-    case 27: // "Sensei's Path" Expansion
-        name = "RAT";
         choice[0][0] = -1;  choice[0][1] = 1;
         choice[1][0] = 1;   choice[1][1] = 1;
         choice[2][0] = -2;  choice[2][1] = 0;
         choice[3][0] = 2;   choice[3][1] = 0;
+        break;
+    case 27: // "Sensei's Path" Expansion
+        name = "RAT";
+        choice[0][0] = 0;   choice[0][1] = 1;
+        choice[1][0] = -1;  choice[1][1] = 0;
+        choice[2][0] = 1;   choice[2][1] = -1;
+        choice[3][0] = 0;   choice[3][1] = 0;
         break;
     case 28: // "Sensei's Path" Expansion
         name = "SABLE";

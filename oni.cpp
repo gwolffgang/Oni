@@ -13,8 +13,9 @@ Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
     cardsPerPlayer(2), neutralCardsPerGame(1), actuallyDisplayedMove(0), gameResult(0),
     firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false) {
 
-    QDir dir("saves");
-    if (!dir.exists()) dir.mkpath(".");
+    // create AppData folder, if not done yet
+    QDir appDataFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (!appDataFolder.exists()) appDataFolder.mkpath("./saves");
 
     // seed up randomizer
     srand(unsigned(time(NULL)));
@@ -49,8 +50,8 @@ void Oni::switchCards(CardSlot *usedCardSlot) {
 void Oni::winGame(int winner) {
     gameResult = winner;
     QString victor;
-    if (winner == 1) victor = "Red";
-    else victor = "Blue";
+    if (winner == 1) victor = game->getPlayerNameRed();
+    else victor = game->getPlayerNameBlue();
     QMessageBox::StandardButton reply = QMessageBox::information(NULL, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
     if (reply == QMessageBox::Save) QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionSave_triggered()) );
 }

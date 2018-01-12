@@ -519,7 +519,7 @@ QString MainWindow::generateSetupString() {
 
 void MainWindow::loadGame(QString fileName) {
     // load previously saved game
-    if (fileName == "") fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), QDir::currentPath()+"/saves", "Oni Savegames (*.oni)");
+    if (fileName == "") fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), QStandardPaths::writableLocation(QStandardPaths::AppDataLocation), "Oni Savegames (*.oni)");
     if (!fileName.isEmpty()) {
         QFile file(fileName);
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -541,10 +541,11 @@ void MainWindow::loadGame(QString fileName) {
             QApplication::restoreOverrideCursor();
         #endif
 
-        game->setOpenGameFileName(fileName);
         if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1")
             newGame(game->getTurns()->at( game->getTurns()->size()-2) );
         else newGame(game->getTurns()->last());
+        game->setActuallyDisplayedMove(game->getTurns()->size());
+        game->setOpenGameFileName(fileName);
 
         // set window title
         QStringList elem = fileName.split("/");
@@ -581,9 +582,6 @@ void MainWindow::newGame(QString setupString) {
     }
     if (game->getTurns()->size() == 0) game->getTurns()->append(generateSetupString());
 
-    // fill notation window
-    refreshNotation();
-
     // prepare the game
     prepareGame();
 }
@@ -594,13 +592,6 @@ void MainWindow::notateVictory(QString result) {
     game->getTurns()->append(result);
     if (result == "1-0") game->setGameResult(1);
     else game->setGameResult(-1);
-}
-
-void MainWindow::positionNotation() {
-    double posX = scene->height() - MSWindowsCorrection + slotWidth + 2*borderX + 2.5;
-    double posY = slotHeight + 2*borderY + 2.5;
-    ui->notation->scrollToBottom();
-    ui->notation->setGeometry(posX, posY, slotWidth, slotHeight);
 }
 
 void MainWindow::prepareGame() {
@@ -614,34 +605,33 @@ void MainWindow::prepareGame() {
     drawSideBar();
     drawAxisLabeling();
     drawCardSlots();
-    positionNotation();
+    setupNotation();
 }
 
-void MainWindow::saveGame(const QString &fileName) {
-    QString newFileName = fileName;
-    if (newFileName == "") {
+void MainWindow::saveGame(QString fileName) {
+    if (fileName == "") {
         if (game->getWindow()->getDialogSaveAs()->exec() == QDialog::Accepted) {
             QList<QString> names = game->getWindow()->getDialogSaveAs()->getValues();
-            game->setPlayerNames(names.at(0),names.at(1));
+            game->setPlayerNames(names.at(0), names.at(1));
 
             int i = 0;
             QString number = "";
             do {
                 if (++i > 1) number = " " + QString::number(i);
-                newFileName = "saves/" + names.at(0) + "-" + names.at(1) + " (" + QDate::currentDate().toString("yyyy-MM-dd") + ")"+ number +".oni";
-            } while (fileExists(newFileName));
+                fileName = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/saves/" + names.at(0) + "-" + names.at(1) + " (" + QDate::currentDate().toString("yyyy-MM-dd") + ")"+ number +".oni";
+            } while (fileExists(fileName));
 
             // set window title
-            QStringList elem = newFileName.split("/");
+            QStringList elem = fileName.split("/");
             QStringList name = elem.last().split(".");
             windowTitle = "Oni - " + name.first();
             setWindowTitle(windowTitle);
-            game->setOpenGameFileName(newFileName);
+            game->setOpenGameFileName(fileName);
         }
     }
-    if (newFileName != "") {
+    if (fileName != "") {
         // (over)write current savegame
-        QFile file(newFileName);
+        QFile file(fileName);
         if (!file.open(QFile::WriteOnly | QFile::Text))
             QMessageBox::warning(this, tr("Application"), tr("Cannot write file %1:\n%2.").arg(QDir::toNativeSeparators(fileName),file.errorString()));
         QTextStream out(&file);
@@ -659,28 +649,49 @@ void MainWindow::saveGame(const QString &fileName) {
 void MainWindow::saveTurnInNotation() {
     // refreshing of the notation if jumped back
     QString lastMove, thisMove;
-    if (game->getTurns()->size() > (game->getActuallyDisplayedMove()+1)) {
-         for(int i = game->getTurns()->size(); i > game->getActuallyDisplayedMove()+1; i--)
-             game->getTurns()->removeLast();
-         game->getWindow()->refreshNotation();
-    }
-
+    QList<QString> *turns = game->getTurns();
+    int actuallyDisplayedMove = game->getActuallyDisplayedMove();
+    if (turns->size() > (actuallyDisplayedMove+1))
+         for(int i = turns->size(); i > actuallyDisplayedMove+1; i--) turns->removeLast();
     thisMove = generateSetupString();
-    lastMove = game->getTurns()->last();
-    game->getTurns()->append(thisMove);
-    game->setActuallyDisplayedMove(game->getActuallyDisplayedMove()+1);
+    lastMove = turns->last();
+    turns->append(thisMove);
+    game->setActuallyDisplayedMove(actuallyDisplayedMove+1);
+    setupNotation();
+}
 
-    // building notation entry
-    QListWidgetItem *item;
-    if (!game->getFirstPlayersTurn()) {
-        item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". " + generateNotationString(lastMove, thisMove));
-        item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
-    } else {
-        item = new QListWidgetItem(generateNotationString(lastMove, thisMove));
-        item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
-        item->setTextAlignment(Qt::AlignRight);
+void MainWindow::setupNotation() {
+    QList<QString> *turns = game->getTurns();
+    QString lastTurn = turns->last();
+    double posX = scene->height() - MSWindowsCorrection + slotWidth + 2*borderX + 2.5;
+    double posY = slotHeight + 2*borderY + 2.5;
+    ui->notation->scrollToBottom();
+    ui->notation->setGeometry(posX, posY, slotWidth, slotHeight);
+    ui->notation->clear();
+    int maxLines = turns->size();
+    if (turns->size() > 1 && (lastTurn == "1-0" || lastTurn == "0-1")) maxLines--;
+    for (int i = 1; i < maxLines; i++) {
+        QListWidgetItem *item;
+        if (i%2 == 1) {
+            item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". "
+                                       + generateNotationString(turns->at(i-1), turns->at(i)));
+            item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
+            if (ui->actionTinyLayout->isChecked()) item->setFont(QFont("Arial", 6));
+            else if (ui->actionSmallLayout->isChecked()) item->setFont(QFont("Arial", 9));
+                 else if (ui->actionNormalLayout->isChecked()) item->setFont(QFont("Arial", 12));
+                      else item->setFont(QFont("Arial", 15));
+        } else {
+            item = new QListWidgetItem(generateNotationString(turns->at(i-1), turns->at(i)));
+            item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
+            item->setTextAlignment(Qt::AlignRight);
+            if (ui->actionTinyLayout->isChecked()) item->setFont(QFont("Arial", 6));
+            else if (ui->actionSmallLayout->isChecked()) item->setFont(QFont("Arial", 9));
+                 else if (ui->actionNormalLayout->isChecked()) item->setFont(QFont("Arial", 12));
+                      else item->setFont(QFont("Arial", 15));
+        }
+        ui->notation->addItem(item);
     }
-    ui->notation->addItem(item);
+    if (lastTurn == "1-0" || lastTurn == "0-1") ui->notation->addItem(lastTurn);
 }
 
 void MainWindow::moveEvent(QMoveEvent *event) {
@@ -688,26 +699,6 @@ void MainWindow::moveEvent(QMoveEvent *event) {
    QRect geo = geometry();
    windowPosX = geo.x();
    windowPosY = geo.y();
-}
-
-void MainWindow::refreshNotation() {
-    ui->notation->clear();
-    int maxLines = game->getTurns()->size();
-    if (game->getTurns()->size() > 1 && (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1")) maxLines--;
-    for (int i = 1; i < maxLines; i++) {
-        QListWidgetItem *item;
-        if (i%2 == 1) {
-            item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". "
-                                       + generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
-            item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
-        } else {
-            item = new QListWidgetItem(generateNotationString(game->getTurns()->at(i-1), game->getTurns()->at(i)));
-            item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
-            item->setTextAlignment(Qt::AlignRight);
-        }
-        ui->notation->addItem(item);
-    }
-    if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") ui->notation->addItem(game->getTurns()->last());
 }
 
 void MainWindow::resetLists() {

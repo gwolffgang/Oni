@@ -45,6 +45,8 @@ public:
     inline int getNeutralCardsPerGame() { return neutralCardsPerGame; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
     inline QList<Piece*> *getPieces() { return pieces; }
+    inline QString getPlayerNameBlue() { return playerNameBlue; }
+    inline QString getPlayerNameRed() { return playerNameRed; }
     inline int getRows() { return rows; }
     inline QList<QList<CardSlot*>> *getSlotsGrid() { return slotsGrid; }
     inline QList<QString> *getTurns() { return turns; }

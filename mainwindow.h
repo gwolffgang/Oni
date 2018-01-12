@@ -64,12 +64,11 @@ public:
     void loadGame(QString fileName = "");
     void newGame(QString setupString = "");
     void notateVictory(QString result);
-    void positionNotation();
     void prepareGame();
-    void refreshNotation();
     void resetLists();
-    void saveGame(const QString &fileName = "");
+    void saveGame(QString fileName = "");
     void saveTurnInNotation();
+    void setupNotation();
 
 private:
     QScreen *screen;
