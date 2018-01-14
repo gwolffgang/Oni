@@ -35,21 +35,22 @@ void CardSlot::assignCard(int player, int number) {
 
 void CardSlot::colorizePlayersSlots(int player, int number) {
     QBrush brush(Qt::SolidPattern);
+    MainWindow *window = game->getWindow();
     switch (player) {
         case 0:
-            brush.setColor(game->getWindow()->colorHovered);
+            brush.setColor(window->colorHovered);
             break;
         case 1:
             if (game->getFirstPlayersTurn()) {
-                if (number == 0) brush.setColor(game->getWindow()->colorChooseableCard1);
-                else brush.setColor(game->getWindow()->colorChooseableCard2);
-            } else brush.setColor(game->getWindow()->colorHovered);
+                if (number == 0) brush.setColor(window->colorChooseableCard1);
+                else brush.setColor(window->colorChooseableCard2);
+            } else brush.setColor(window->colorHovered);
             break;
         case 2:
             if (!game->getFirstPlayersTurn()) {
-                if (number == 0) brush.setColor(game->getWindow()->colorChooseableCard1);
-                else brush.setColor(game->getWindow()->colorChooseableCard2);
-            } else brush.setColor(game->getWindow()->colorHovered);
+                if (number == 0) brush.setColor(window->colorChooseableCard1);
+                else brush.setColor(window->colorChooseableCard2);
+            } else brush.setColor(window->colorHovered);
     }
     setBrush(brush);
 }

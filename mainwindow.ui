@@ -60,12 +60,26 @@
     <property name="title">
      <string>&amp;Layout</string>
     </property>
-    <addaction name="actionTinyLayout"/>
-    <addaction name="actionSmallLayout"/>
-    <addaction name="actionNormalLayout"/>
-    <addaction name="actionLargeLayout"/>
-    <addaction name="separator"/>
-    <addaction name="actionFullScreen"/>
+    <widget class="QMenu" name="menuWindow">
+     <property name="title">
+      <string>Window</string>
+     </property>
+     <addaction name="actionTinyWindow"/>
+     <addaction name="actionSmallWindow"/>
+     <addaction name="actionNormalWindow"/>
+     <addaction name="actionLargeWindow"/>
+     <addaction name="separator"/>
+     <addaction name="actionFullScreen"/>
+    </widget>
+    <widget class="QMenu" name="menuPieceset">
+     <property name="title">
+      <string>Pieceset</string>
+     </property>
+     <addaction name="actionPiecesComicStyle"/>
+     <addaction name="actionPiecesHanzi"/>
+    </widget>
+    <addaction name="menuPieceset"/>
+    <addaction name="menuWindow"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="locale">
@@ -197,7 +211,7 @@
     <string>Ctrl+Alt+L</string>
    </property>
   </action>
-  <action name="actionFullScreen">
+  <action name="actionFullScreen_2">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -452,6 +466,89 @@
    </property>
    <property name="text">
     <string>&amp;Customize</string>
+   </property>
+  </action>
+  <action name="actionTinyWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Tiny</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+T</string>
+   </property>
+  </action>
+  <action name="actionSmallWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Small</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionNormalWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Normal</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+N</string>
+   </property>
+  </action>
+  <action name="actionLargeWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Large</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+L</string>
+   </property>
+  </action>
+  <action name="actionFullScreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Full Screen</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Return</string>
+   </property>
+  </action>
+  <action name="actionPiecesComicStyle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Comic Style</string>
+   </property>
+  </action>
+  <action name="actionPiecesHanzi">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Hànzì</string>
+   </property>
+   <property name="toolTip">
+    <string>Hànzì</string>
    </property>
   </action>
  </widget>

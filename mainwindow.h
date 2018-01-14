@@ -115,10 +115,12 @@ private slots:
     void on_actionHideNotation_triggered();
     void on_actionAxisLabeling_triggered();
     // Layout
-    void on_actionTinyLayout_triggered();
-    void on_actionSmallLayout_triggered();
-    void on_actionNormalLayout_triggered();
-    void on_actionLargeLayout_triggered();
+    void on_actionPiecesComicStyle_triggered();
+    void on_actionPiecesHanzi_triggered();
+    void on_actionTinyWindow_triggered();
+    void on_actionSmallWindow_triggered();
+    void on_actionNormalWindow_triggered();
+    void on_actionLargeWindow_triggered();
     void on_actionFullScreen_triggered();
     // About
     inline void on_actionAboutOni_triggered() { aboutOni(); }

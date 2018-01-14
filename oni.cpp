@@ -11,7 +11,7 @@ Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
     slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>), turns(new QList<QString>),
     playerNameRed("Red"), playerNameBlue("Blue"), openGameFileName(""), pickedUpPiece(NULL), fieldOfOrigin(NULL), rows(5), cols(5),
     cardsPerPlayer(2), neutralCardsPerGame(1), actuallyDisplayedMove(0), gameResult(0),
-    firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false) {
+    firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false), piecesSet("ComicStyle") {
 
     // create AppData folder, if not done yet
     QDir appDataFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
@@ -20,7 +20,8 @@ Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
     // seed up randomizer
     srand(unsigned(time(NULL)));
 
-    QFontDatabase::addApplicationFont(":/pics/Amburegul.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Amburegul.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/wts11.ttf");
 
     window->show();
 }

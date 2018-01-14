@@ -12,6 +12,7 @@ public:
     // getters
     inline int getCol() { return col; }
     int getOwner();
+    inline QPixmap getPiece() { return piece; }
     inline int getRow() { return row; }
     inline char getType() { return type; }
 
@@ -27,6 +28,7 @@ private:
     // variables
     int row, col;
     char type = ' ';
+    QPixmap piece;
 };
 
 #endif // PIECE_H

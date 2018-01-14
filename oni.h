@@ -45,6 +45,7 @@ public:
     inline int getNeutralCardsPerGame() { return neutralCardsPerGame; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
     inline QList<Piece*> *getPieces() { return pieces; }
+    inline QString getPieceSet() { return piecesSet; }
     inline QString getPlayerNameBlue() { return playerNameBlue; }
     inline QString getPlayerNameRed() { return playerNameRed; }
     inline int getRows() { return rows; }
@@ -63,6 +64,7 @@ public:
     inline void setGameResult(int winner) { gameResult = winner; }
     inline void setOpenGameFileName(QString newString) { openGameFileName = newString; }
     inline void setPickedUpPiece(Piece *newPiece) { pickedUpPiece = newPiece; }
+    inline void setPiecesSet(QString newString) { piecesSet = newString; }
     void setPlayerNames(QString nameRed = "Red", QString nameBlue = "Blue");
     inline void setRows(int newRows) { rows = newRows; }
 
@@ -84,6 +86,7 @@ private:
     Field *fieldOfOrigin, *chosenField;
     int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove, gameResult;
     bool firstPlayersTurn, flippedBoard, cardChoiceActive;
+    QString piecesSet;
 };
 
 #endif // ONI_H

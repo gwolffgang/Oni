@@ -187,25 +187,25 @@ void MainWindow::changeLayout(double factor) {
     // Change menu checkings
     if (!ui->actionFullScreen->isChecked()) {
         if (factor <= 0.3) {
-            ui->actionTinyLayout->setChecked(true);
-            ui->actionSmallLayout->setChecked(false);
-            ui->actionNormalLayout->setChecked(false);
-            ui->actionLargeLayout->setChecked(false);
+            ui->actionTinyWindow->setChecked(true);
+            ui->actionSmallWindow->setChecked(false);
+            ui->actionNormalWindow->setChecked(false);
+            ui->actionLargeWindow->setChecked(false);
         } else if (factor <= 0.5) {
-            ui->actionTinyLayout->setChecked(false);
-            ui->actionSmallLayout->setChecked(true);
-            ui->actionNormalLayout->setChecked(false);
-            ui->actionLargeLayout->setChecked(false);
+            ui->actionTinyWindow->setChecked(false);
+            ui->actionSmallWindow->setChecked(true);
+            ui->actionNormalWindow->setChecked(false);
+            ui->actionLargeWindow->setChecked(false);
         } else if (factor <= 0.7) {
-            ui->actionTinyLayout->setChecked(false);
-            ui->actionSmallLayout->setChecked(false);
-            ui->actionNormalLayout->setChecked(true);
-            ui->actionLargeLayout->setChecked(false);
+            ui->actionTinyWindow->setChecked(false);
+            ui->actionSmallWindow->setChecked(false);
+            ui->actionNormalWindow->setChecked(true);
+            ui->actionLargeWindow->setChecked(false);
         } else if (factor <= 0.9) {
-            ui->actionTinyLayout->setChecked(false);
-            ui->actionSmallLayout->setChecked(false);
-            ui->actionNormalLayout->setChecked(false);
-            ui->actionLargeLayout->setChecked(true);
+            ui->actionTinyWindow->setChecked(false);
+            ui->actionSmallWindow->setChecked(false);
+            ui->actionNormalWindow->setChecked(false);
+            ui->actionLargeWindow->setChecked(true);
         }
     }
     // measure and fill available screen
@@ -249,7 +249,7 @@ void MainWindow::drawAxisLabeling() {
             QGraphicsTextItem *label = new QGraphicsTextItem;
             if (game->getFlippedBoard()) label->setPlainText(QString::number(row+1));
             else label->setPlainText(QString::number(5-row)); 
-            if (ui->actionTinyLayout->isChecked() == false)
+            if (ui->actionTinyWindow->isChecked() == false)
                 label->setPos(borderX, borderY + fieldSize/2 + fieldSize*row - label->boundingRect().height()/2);
             else
                 label->setPos(-2*borderX, borderY + fieldSize/2 + fieldSize*row - label->boundingRect().height()/2);
@@ -407,12 +407,12 @@ void MainWindow::drawSideBar() {
     bool delItem = false;
     for (int i = 0; i < game->getCapturedBlue()->count(); i++) {
         Piece *victim = game->getCapturedBlue()->at(i);
-        victim->setPixmap(QPixmap(":/pics/pieces/scolar_blue.png"));
+        victim->drawPiece();
         double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
         double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
         if (victim->getType() == 's') {
             victim->setPixmap(victim->pixmap().scaled(victimHeight, victimWidth));
-            victim->setPos(posXright - 2*borderX, windowHeight - MSWindowsCorrection - 2*borderY - turnRed->boundingRect().height() - sideBarSize - axisLabelSize - victim->pixmap().height()*(i+1));
+            victim->setPos(posXright - 1.5 * borderX, windowHeight - MSWindowsCorrection - 2*borderY - turnRed->boundingRect().height() - sideBarSize - axisLabelSize - victim->pixmap().height()*(i+1));
             delItem = false;
             for (int k = 0; k < scene->items().size(); k++)
                 if (scene->items().at(k) == victim) delItem = true;
@@ -422,12 +422,12 @@ void MainWindow::drawSideBar() {
     }
     for (int i = 0; i < game->getCapturedRed()->count(); i++) {
         Piece *victim = game->getCapturedRed()->at(i);
-        victim->setPixmap(QPixmap(":/pics/pieces/scolar_red.png"));
+        victim->drawPiece();
         double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
         double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
         if (victim->getType() == 'S') {
             victim->setPixmap(victim->pixmap().scaled(victimHeight, victimWidth));
-            victim->setPos(posXright - 2*borderX, 2*borderY + turnRed->boundingRect().height() + victim->pixmap().height()*i);
+            victim->setPos(posXright - 1.5 * borderX, 2*borderY + turnRed->boundingRect().height() + victim->pixmap().height()*i);
             delItem = false;
             for (int k = 0; k < scene->items().size(); k++)
                 if (scene->items().at(k) == victim) delItem = true;
@@ -676,17 +676,17 @@ void MainWindow::setupNotation() {
             item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". "
                                        + generateNotationString(turns->at(i-1), turns->at(i)));
             item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
-            if (ui->actionTinyLayout->isChecked()) item->setFont(QFont("Arial", 6));
-            else if (ui->actionSmallLayout->isChecked()) item->setFont(QFont("Arial", 9));
-                 else if (ui->actionNormalLayout->isChecked()) item->setFont(QFont("Arial", 12));
+            if (ui->actionTinyWindow->isChecked()) item->setFont(QFont("Arial", 6));
+            else if (ui->actionSmallWindow->isChecked()) item->setFont(QFont("Arial", 9));
+                 else if (ui->actionNormalWindow->isChecked()) item->setFont(QFont("Arial", 12));
                       else item->setFont(QFont("Arial", 15));
         } else {
             item = new QListWidgetItem(generateNotationString(turns->at(i-1), turns->at(i)));
             item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
             item->setTextAlignment(Qt::AlignRight);
-            if (ui->actionTinyLayout->isChecked()) item->setFont(QFont("Arial", 6));
-            else if (ui->actionSmallLayout->isChecked()) item->setFont(QFont("Arial", 9));
-                 else if (ui->actionNormalLayout->isChecked()) item->setFont(QFont("Arial", 12));
+            if (ui->actionTinyWindow->isChecked()) item->setFont(QFont("Arial", 6));
+            else if (ui->actionSmallWindow->isChecked()) item->setFont(QFont("Arial", 9));
+                 else if (ui->actionNormalWindow->isChecked()) item->setFont(QFont("Arial", 12));
                       else item->setFont(QFont("Arial", 15));
         }
         ui->notation->addItem(item);
@@ -845,31 +845,43 @@ void MainWindow::on_actionHideNotation_triggered() {
 
 void MainWindow::on_actionAxisLabeling_triggered() {
     // menubar option
-    if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
-    else if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
-    else if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
-    else if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
+    if (ui->actionTinyWindow->isChecked()) changeLayout(0.30);
+    else if (ui->actionSmallWindow->isChecked()) changeLayout(0.50);
+    else if (ui->actionNormalWindow->isChecked()) changeLayout(0.70);
+    else if (ui->actionLargeWindow->isChecked()) changeLayout(0.90);
 }
 
-void MainWindow::on_actionTinyLayout_triggered() {
+void MainWindow::on_actionPiecesComicStyle_triggered() {
+    if (ui->actionPiecesHanzi->isChecked()) ui->actionPiecesHanzi->setChecked(false);
+    game->setPiecesSet("ComicStyle");
+    prepareGame();
+}
+
+void MainWindow::on_actionPiecesHanzi_triggered() {
+    if (ui->actionPiecesComicStyle->isChecked()) ui->actionPiecesComicStyle->setChecked(false);
+    game->setPiecesSet("Hanzi");
+    prepareGame();
+}
+
+void MainWindow::on_actionTinyWindow_triggered() {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
     changeLayout(0.3);
 }
 
-void MainWindow::on_actionSmallLayout_triggered() {
+void MainWindow::on_actionSmallWindow_triggered() {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
     changeLayout(0.5);
 }
 
-void MainWindow::on_actionNormalLayout_triggered() {
+void MainWindow::on_actionNormalWindow_triggered() {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
     changeLayout(0.7);
 }
 
-void MainWindow::on_actionLargeLayout_triggered() {
+void MainWindow::on_actionLargeWindow_triggered() {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
     changeLayout(0.9);
@@ -884,10 +896,10 @@ void MainWindow::on_actionFullScreen_triggered(){
     } else {
         ui->actionFullScreen->setChecked(false);
         QMainWindow::showNormal();
-        if (ui->actionTinyLayout->isChecked()) changeLayout(0.30);
-        else if (ui->actionSmallLayout->isChecked()) changeLayout(0.50);
-        else if (ui->actionNormalLayout->isChecked()) changeLayout(0.70);
-        else if (ui->actionLargeLayout->isChecked()) changeLayout(0.90);
+        if (ui->actionTinyWindow->isChecked()) changeLayout(0.30);
+        else if (ui->actionSmallWindow->isChecked()) changeLayout(0.50);
+        else if (ui->actionNormalWindow->isChecked()) changeLayout(0.70);
+        else if (ui->actionLargeWindow->isChecked()) changeLayout(0.90);
     }
 }
 

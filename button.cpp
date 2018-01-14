@@ -11,19 +11,21 @@ Button::Button(QGraphicsItem *parent) : QGraphicsPixmapItem(parent), type(""), p
 void Button::drawButton(QString buttonType, QString buttonPos) {
     type = buttonType;
     pos = buttonPos;
+    double sideBarSize = game->getWindow()->getSideBarSize();
+
     if (type != "") {
-        QPixmap img(":/pics/buttons/" + type + ".png");
-        double width, height;
+        QPixmap button(":/pics/buttons/" + type + ".png");
+        double width = 0;
+        double height = 0;
         if (pos == "right") {
-            width = game->getWindow()->getSideBarSize() *0.9;
-            height = width / img.width() * img.height();
+            width = sideBarSize;
+            height = width / button.width() * button.height();
+        } else if (pos == "bottom") {
+            height = sideBarSize;
+            width = height / button.height() * button.width();
         }
-        if (pos == "bottom") {
-            height = game->getWindow()->getSideBarSize();
-            width = height / img.height() * img.width();
-        }
-        img = img.scaled(width, height);
-        setPixmap(img);
+        button = button.scaled(width, height);
+        setPixmap(button);
     }
 }
 
