@@ -44,6 +44,8 @@ bool Oni::readConfig() {
         flippedBoard = json["flippedBoard"].toBool();
     if (json.contains("firstPlayersTurn") && json["firstPlayersTurn"].isBool())
         firstPlayersTurn = json["firstPlayersTurn"].toBool();
+    if (json.contains("openGameFileName") && json["openGameFileName"].isString())
+        openGameFileName = json["openGameFileName"].toString();
     if (json.contains("piecesSet") && json["piecesSet"].isString())
         playerNameBlue = json["piecesSet"].toString();
     if (json.contains("playerNameBlue") && json["playerNameBlue"].isString())
@@ -92,6 +94,7 @@ bool Oni::writeConfig() const {
         json["actuallyDisplayedMove"] = actuallyDisplayedMove;
         json["flippedBoard"] = flippedBoard;
         json["firstPlayersTurn"] = firstPlayersTurn;
+        json["openGameFileName"] = openGameFileName;
         json["piecesSet"] = piecesSet;
         json["playerNameBlue"] = playerNameBlue;
         json["playerNameRed"] = playerNameRed;

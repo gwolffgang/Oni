@@ -22,9 +22,6 @@ public:
     inline int getColFromChoice(const int number) { return choice[number][0]; }
     inline int getRowFromChoice(const int number) { return choice[number][1]; }
 
-    // setters
-    inline void setName(QString newName) { if (name != "") name = newName; }
-
     // methods
     void setCardValues(int cardID);
     void drawCard(int player);

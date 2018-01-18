@@ -687,6 +687,8 @@ void MainWindow::setupNotation() {
         ui->notation->addItem(item);
     }
     if (lastTurn == "1-0" || lastTurn == "0-1") ui->notation->addItem(lastTurn);
+    if (ui->actionHideNotation->isChecked()) ui->notation->setVisible(false);
+    else ui->notation->setVisible(true);
 }
 
 void MainWindow::updateLayout() {
@@ -833,13 +835,16 @@ void MainWindow::on_actionBlueHard_triggered() {
 
 void MainWindow::on_actionBasisGame_triggered() {
     if (!ui->actionSenseisPath->isChecked()) ui->actionBasisGame->setChecked(true);
+    game->writeConfig();
 }
 
 void MainWindow::on_actionSenseisPath_triggered() {
     if (!ui->actionBasisGame->isChecked()) ui->actionSenseisPath->setChecked(true);
+    game->writeConfig();
 }
 
 void MainWindow::on_actionGoatSheep_triggered() {
+    game->writeConfig();
 }
 
 void MainWindow::on_actionFlipOnce_triggered() {
@@ -855,6 +860,7 @@ void MainWindow::on_actionHideNotation_triggered() {
         ui->notation->setVisible(true);
         ui->actionHideNotation->setChecked(false);
     }
+    game->writeConfig();
 }
 
 void MainWindow::on_actionAxisLabeling_triggered() {
