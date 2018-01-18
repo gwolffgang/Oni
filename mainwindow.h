@@ -30,7 +30,6 @@ public:
     ~MainWindow();
 
     // getter
-    bool getAxisLabeling();
     inline double getBorderX() { return borderX; }
     inline double getBorderY() { return borderY; }
     inline DialogSave *getDialogSaveAs() { return dialogSaveAs; }
@@ -53,7 +52,6 @@ public:
     // methods
     inline void aboutOni() { dialogAbout->show(); }
     bool analyseSetupString(QString string);
-    void changeLayout(double factor = 0.7);
     void drawAxisLabeling();
     void drawBackGroundPicture();
     void drawBoard();
@@ -65,17 +63,19 @@ public:
     void newGame(QString setupString = "");
     void notateVictory(QString result);
     void prepareGame();
+    void readWindowConfig(QJsonObject &json);
     void resetLists();
     void saveGame(QString fileName = "");
     void saveTurnInNotation();
+    void saveWindowConfig(QJsonObject &json) const;
     void setupNotation();
+    void updateLayout();
 
 private:
     QScreen *screen;
     QGraphicsScene *scene;
     DialogAbout *dialogAbout;
     DialogSave *dialogSaveAs;
-    QString windowTitle;
     Button *flipButton, *turnRed, *turnBlue;
     QList<QGraphicsTextItem*> *axisLabel;
     double windowPosX, windowPosY, windowHeight, windowWidth, borderX, borderY, fieldSize, slotHeight, slotWidth, sideBarSize, axisLabelSize, MSWindowsCorrection;

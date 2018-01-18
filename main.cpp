@@ -11,6 +11,6 @@ int main(int argc, char *argv[]) {
     app.setWindowIcon(QIcon(":/pics/Oni.icns"));
 
     game = new Oni;
-    game->getWindow()->newGame();
+    game->getWindow()->newGame(game->getTurns()->last());
     return app.exec();
 }

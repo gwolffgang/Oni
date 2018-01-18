@@ -6,6 +6,9 @@
 #include <QFileDialog>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QListWidget>
@@ -13,7 +16,6 @@
 #include <QScreen>
 #include <QTextStream>
 #include <QtPrintSupport/QPrinter>
-
 #include "card.h"
 #include "cardslot.h"
 #include "field.h"
@@ -69,9 +71,11 @@ public:
     inline void setRows(int newRows) { rows = newRows; }
 
     // methods
+    bool readConfig();
     QList<Card*> identifyCards(int owner);
     void switchCards(CardSlot *usedCardSlot);
     void winGame(int winner);
+    bool writeConfig() const;
 
 private:
     // variables
@@ -87,6 +91,7 @@ private:
     int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove, gameResult;
     bool firstPlayersTurn, flippedBoard, cardChoiceActive;
     QString piecesSet;
+    QFile configFile;
 };
 
 #endif // ONI_H

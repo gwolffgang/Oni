@@ -22,16 +22,15 @@ bool fileExists(QString path) {
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), colorHovered(Qt::gray), colorSelected(Qt::darkCyan),
     colorChooseableCard1(Qt::yellow), colorChooseableCard2(Qt::blue), colorChooseableBoth(Qt::green),
     screen(QGuiApplication::primaryScreen()), scene(NULL), dialogAbout(new DialogAbout(this)), dialogSaveAs(new DialogSave(this)),
-    windowTitle("Oni - new unsaved game"), axisLabel(new QList<QGraphicsTextItem*>),
-    windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
+    axisLabel(new QList<QGraphicsTextItem*>), windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
     fieldSize(0), slotHeight(0.0), slotWidth(0.0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
 
     // set up the UI
     ui->setupUi(this);
 
     // presettings
-    changeLayout();
-    setWindowTitle(windowTitle);
+    setWindowTitle("Oni - new unsaved game");
+    updateLayout();
 
     // connects
     connect(ui->notation, SIGNAL(itemClicked(QListWidgetItem*)),
@@ -40,10 +39,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
 MainWindow::~MainWindow() {
     delete ui;
-}
-
-bool MainWindow::getAxisLabeling() {
-    return ui->actionAxisLabeling->isChecked();
 }
 
 bool MainWindow::getFlipEveryMove() {
@@ -110,6 +105,7 @@ bool MainWindow::analyseSetupString(QString string) {
     if (count_M != 1 || count_m != 1) return false;
 
     // take care of missing pieces
+    game->getCapturedRed()->clear();
     for (int i = count_S+1; i < 5; i++) {
         Piece *victim = new Piece;
         victim->setRow(-1);
@@ -118,6 +114,7 @@ bool MainWindow::analyseSetupString(QString string) {
         game->getCapturedRed()->append(victim);
         victim->drawPiece();
     }
+    game->getCapturedBlue()->clear();
     for (int i = count_s+1; i < 5; i++) {
         Piece *victim = new Piece;
         victim->setRow(-1);
@@ -175,79 +172,16 @@ bool MainWindow::analyseSetupString(QString string) {
         elem = part.at(2).split(",");
         if (elem.at(0) == "true") game->setFirstPlayersTurn(true);
         else game->setFirstPlayersTurn(false);
-        if (elem.at(1) == "true") game->setFlippedBoard(true);
-        else game->setFlippedBoard(false);
-        if (elem.at(2) == "true") ui->actionFlipEveryMove->setChecked(true);
-        else ui->actionFlipEveryMove->setChecked(false);
     }
     return true;
 }
 
-void MainWindow::changeLayout(double factor) {
-    // Change menu checkings
-    if (!ui->actionFullScreen->isChecked()) {
-        if (factor <= 0.3) {
-            ui->actionTinyWindow->setChecked(true);
-            ui->actionSmallWindow->setChecked(false);
-            ui->actionNormalWindow->setChecked(false);
-            ui->actionLargeWindow->setChecked(false);
-        } else if (factor <= 0.5) {
-            ui->actionTinyWindow->setChecked(false);
-            ui->actionSmallWindow->setChecked(true);
-            ui->actionNormalWindow->setChecked(false);
-            ui->actionLargeWindow->setChecked(false);
-        } else if (factor <= 0.7) {
-            ui->actionTinyWindow->setChecked(false);
-            ui->actionSmallWindow->setChecked(false);
-            ui->actionNormalWindow->setChecked(true);
-            ui->actionLargeWindow->setChecked(false);
-        } else if (factor <= 0.9) {
-            ui->actionTinyWindow->setChecked(false);
-            ui->actionSmallWindow->setChecked(false);
-            ui->actionNormalWindow->setChecked(false);
-            ui->actionLargeWindow->setChecked(true);
-        }
-    }
-    // measure and fill available screen
-    QRect desktop = screen->availableGeometry();
-    // default factor: 0.70
-    if (getAxisLabeling() == true) axisLabelSize = 30 * factor;
-    else axisLabelSize = 0;
-    borderX = 10 * factor;
-    borderY = 10 * factor;
-    sideBarSize = 40 * factor;
-    // setting window size in dependency of available screen
-    windowHeight = factor * desktop.height() +1;
-    do {
-        windowHeight--;
-        windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*((windowHeight - 4*borderY - MSWindowsCorrection) / 18 *5);
-    } while (windowWidth > desktop.width()-4);
-    setGeometry(windowPosX, windowPosY, windowWidth+5, windowHeight+5);
-    setFixedSize(windowWidth+5, windowHeight+5);
-    bool sceneWasSetUp = true;
-    if (!scene) {
-        sceneWasSetUp = false;
-        // scene setup
-        scene = new QGraphicsScene(this);
-        scene->setBackgroundBrush(QBrush(QImage(":/pics/paper.png")));
-        ui->view->setScene(scene);
-        ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        ui->notation->setSelectionMode(QAbstractItemView::SingleSelection);
-    }
-    ui->view->setFixedSize(windowWidth+5, windowHeight+5);
-    scene->setSceneRect(0, 0, windowWidth, windowHeight);
-    fieldSize = (scene->sceneRect().height() - MSWindowsCorrection - 2*borderY - sideBarSize - axisLabelSize) / 5;
-    slotHeight = (scene->sceneRect().height() - MSWindowsCorrection - 4*borderY ) / 3;
-    slotWidth = slotHeight/6*5;
-    if (sceneWasSetUp) prepareGame();
-}
-
 void MainWindow::drawAxisLabeling() {
-    if (getAxisLabeling()) {
+    if (ui->actionAxisLabeling->isChecked()) {
+        bool flippedBoard = game->getFlippedBoard();
         for (int row = 0; row < 5; row++) {
             QGraphicsTextItem *label = new QGraphicsTextItem;
-            if (game->getFlippedBoard()) label->setPlainText(QString::number(row+1));
+            if (flippedBoard) label->setPlainText(QString::number(row+1));
             else label->setPlainText(QString::number(5-row)); 
             if (ui->actionTinyWindow->isChecked() == false)
                 label->setPos(borderX, borderY + fieldSize/2 + fieldSize*row - label->boundingRect().height()/2);
@@ -258,7 +192,7 @@ void MainWindow::drawAxisLabeling() {
         }
         for (int col = 0; col < 5; col++) {
             QGraphicsTextItem *label = new QGraphicsTextItem;
-            if (game->getFlippedBoard()) label->setPlainText(QString('e'-col));
+            if (flippedBoard) label->setPlainText(QString('e'-col));
             else label->setPlainText(QString('a'+col));
             label->setPos(borderX + axisLabelSize + fieldSize/2 + fieldSize*col - label->boundingRect().width()/2, 2*borderY + 5*fieldSize);
             axisLabel->append(label);
@@ -511,9 +445,7 @@ QString MainWindow::generateSetupString() {
         }
     saveString += "|";
     // set game settings
-    saveString += QString(game->getFirstPlayersTurn() ? "true" : "false") + ",";
-    saveString += QString(game->getFlippedBoard() ? "true" : "false") + ",";
-    saveString += QString(ui->actionFlipEveryMove->isChecked() ? "true" : "false");
+    saveString += QString(game->getFirstPlayersTurn() ? "true" : "false");
     return saveString;
 }
 
@@ -550,35 +482,31 @@ void MainWindow::loadGame(QString fileName) {
         // set window title
         QStringList elem = fileName.split("/");
         QStringList name = elem.last().split(".");
-        windowTitle = "Oni - " + name.first();
-        setWindowTitle(windowTitle);
+        setWindowTitle("Oni - " + name.first());
     }
 }
 
 void MainWindow::newGame(QString setupString) {
-    // reset settings
-    game->setGameResult(0);
-    game->setFirstPlayersTurn(true);
-    game->setFlippedBoard(false);
-    game->getCapturedBlue()->clear();
-    game->getCapturedRed()->clear();
     game->setCardChoiceActive(false);
-    windowTitle = "Oni - new unsaved game";
-    setWindowTitle(windowTitle);
-    game->setOpenGameFileName("");
+    game->setGameResult(0);
+    if (setupString == "") {
+        // reset settings
+        game->setFirstPlayersTurn(true);
+        setWindowTitle("Oni - new unsaved game");
+        game->setOpenGameFileName("");
+        if (game->getTurns()) game->getTurns()->clear();
+    }
 
     // reset lists
-    if (setupString == "") game->getTurns()->clear();
     resetLists();
 
     // setup string
     QString defaultString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
     if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = defaultString;
-    bool success = analyseSetupString(setupString);
-    if (!success) {
+    if (!analyseSetupString(setupString)) {
         setupString = defaultString;
         resetLists();
-        success = analyseSetupString(setupString);
+        analyseSetupString(setupString);
     }
     if (game->getTurns()->size() == 0) game->getTurns()->append(generateSetupString());
 
@@ -606,6 +534,58 @@ void MainWindow::prepareGame() {
     drawAxisLabeling();
     drawCardSlots();
     setupNotation();
+    game->writeConfig();
+}
+
+void MainWindow::readWindowConfig(QJsonObject &json) {
+    if (json.contains("actionFlipEveryMove") && json["actionFlipEveryMove"].isBool())
+        ui->actionFlipEveryMove->setChecked(json["actionFlipEveryMove"].toBool());
+    if (json.contains("actionBasisGame") && json["actionBasisGame"].isBool())
+        ui->actionBasisGame->setChecked(json["actionBasisGame"].toBool());
+    if (json.contains("actionSenseisPath") && json["actionSenseisPath"].isBool())
+        ui->actionSenseisPath->setChecked(json["actionSenseisPath"].toBool());
+    if (json.contains("actionGoatSheep") && json["actionGoatSheep"].isBool())
+        ui->actionGoatSheep->setChecked(json["actionGoatSheep"].toBool());
+    if (json.contains("actionHideNotation") && json["actionHideNotation"].isBool())
+        ui->actionHideNotation->setChecked(json["actionHideNotation"].toBool());
+    if (json.contains("actionAxisLabeling") && json["actionAxisLabeling"].isBool())
+        ui->actionAxisLabeling->setChecked(json["actionAxisLabeling"].toBool());
+    if (json.contains("actionPiecesComicStyle") && json["actionPiecesComicStyle"].isBool())
+        ui->actionPiecesComicStyle->setChecked(json["actionPiecesComicStyle"].toBool());
+    if (json.contains("actionPiecesHanzi") && json["actionPiecesHanzi"].isBool())
+        ui->actionPiecesHanzi->setChecked(json["actionPiecesHanzi"].toBool());
+    if (json.contains("actionTinyWindow") && json["actionTinyWindow"].isBool())
+        ui->actionTinyWindow->setChecked(json["actionTinyWindow"].toBool());
+    if (json.contains("actionSmallWindow") && json["actionSmallWindow"].isBool())
+        ui->actionSmallWindow->setChecked(json["actionSmallWindow"].toBool());
+    if (json.contains("actionNormalWindow") && json["actionNormalWindow"].isBool())
+        ui->actionNormalWindow->setChecked(json["actionNormalWindow"].toBool());
+    if (json.contains("actionLargeWindow") && json["actionLargeWindow"].isBool())
+        ui->actionLargeWindow->setChecked(json["actionLargeWindow"].toBool());
+    if (json.contains("windowTitle") && json["windowTitle"].isString())
+        setWindowTitle(json["windowTitle"].toString());
+}
+
+void MainWindow::resetLists() {
+    ui->notation->clear();
+    if (game->getBoard()) game->getBoard()->clear();
+    if (game->getCards()) game->getCards()->clear();
+    if (game->getPieces()) game->getPieces()->clear();
+    if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
+    for (int k = 0; k < game->getCapturedBlue()->size(); k++) {
+        Piece *victim = game->getCapturedBlue()->at(k);
+        bool delItem = false;
+        for (int k = 0; k < scene->items().size(); k++)
+            if (scene->items().at(k) == victim) delItem = true;
+        if (delItem) scene->removeItem(victim);
+    }
+    for (int k = 0; k < game->getCapturedRed()->size(); k++) {
+        Piece *victim = game->getCapturedRed()->at(k);
+        bool delItem = false;
+        for (int k = 0; k < scene->items().size(); k++)
+            if (scene->items().at(k) == victim) delItem = true;
+        if (delItem) scene->removeItem(victim);
+    }
 }
 
 void MainWindow::saveGame(QString fileName) {
@@ -624,8 +604,7 @@ void MainWindow::saveGame(QString fileName) {
             // set window title
             QStringList elem = fileName.split("/");
             QStringList name = elem.last().split(".");
-            windowTitle = "Oni - " + name.first();
-            setWindowTitle(windowTitle);
+            setWindowTitle("Oni - " + name.first());
             game->setOpenGameFileName(fileName);
         }
     }
@@ -658,6 +637,22 @@ void MainWindow::saveTurnInNotation() {
     turns->append(thisMove);
     game->setActuallyDisplayedMove(actuallyDisplayedMove+1);
     setupNotation();
+}
+
+void MainWindow::saveWindowConfig(QJsonObject &json) const {
+    json["windowTitle"] = this->windowTitle();
+    json["actionFlipEveryMove"] = ui->actionFlipEveryMove->isChecked();
+    json["actionBasisGame"] = ui->actionBasisGame->isChecked();
+    json["actionSenseisPath"] = ui->actionSenseisPath->isChecked();
+    json["actionGoatSheep"] = ui->actionGoatSheep->isChecked();
+    json["actionHideNotation"] = ui->actionHideNotation->isChecked();
+    json["actionAxisLabeling"] = ui->actionAxisLabeling->isChecked();
+    json["actionPiecesComicStyle"] = ui->actionPiecesComicStyle->isChecked();
+    json["actionPiecesHanzi"] = ui->actionPiecesHanzi->isChecked();
+    json["actionTinyWindow"] = ui->actionTinyWindow->isChecked();
+    json["actionSmallWindow"] = ui->actionSmallWindow->isChecked();
+    json["actionNormalWindow"] = ui->actionNormalWindow->isChecked();
+    json["actionLargeWindow"] = ui->actionLargeWindow->isChecked();
 }
 
 void MainWindow::setupNotation() {
@@ -694,33 +689,54 @@ void MainWindow::setupNotation() {
     if (lastTurn == "1-0" || lastTurn == "0-1") ui->notation->addItem(lastTurn);
 }
 
+void MainWindow::updateLayout() {
+    // Change menu checkings
+    double factor = 0.0;
+    if (ui->actionFullScreen->isChecked()) factor = 1.0;
+    else if (ui->actionTinyWindow->isChecked()) factor = 0.3;
+    else if (ui->actionSmallWindow->isChecked()) factor = 0.5;
+    else if (ui->actionNormalWindow->isChecked()) factor = 0.7;
+    else factor = 0.9;
+
+    // measure and fill available screen
+    QRect desktop = screen->availableGeometry();
+    if (scene && ui->actionAxisLabeling->isChecked()) axisLabelSize = 30 * factor;
+    else axisLabelSize = 0;
+    borderX = 10 * factor;
+    borderY = 10 * factor;
+    sideBarSize = 40 * factor;
+    // setting window size in dependency of available screen
+    windowHeight = factor * desktop.height() +1;
+    do {
+        windowHeight--;
+        windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*((windowHeight - 4*borderY - MSWindowsCorrection) / 18 *5);
+    } while (windowWidth > desktop.width()-4);
+    setGeometry(windowPosX, windowPosY, windowWidth+5, windowHeight+5);
+    setFixedSize(windowWidth+5, windowHeight+5);
+    bool sceneWasSetUp = true;
+    if (!scene) {
+        sceneWasSetUp = false;
+        // scene setup
+        scene = new QGraphicsScene(this);
+        scene->setBackgroundBrush(QBrush(QImage(":/pics/paper.png")));
+        ui->view->setScene(scene);
+        ui->view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        ui->notation->setSelectionMode(QAbstractItemView::SingleSelection);
+    }
+    ui->view->setFixedSize(windowWidth+5, windowHeight+5);
+    scene->setSceneRect(0, 0, windowWidth, windowHeight);
+    fieldSize = (scene->sceneRect().height() - MSWindowsCorrection - 2*borderY - sideBarSize - axisLabelSize) / 5;
+    slotHeight = (scene->sceneRect().height() - MSWindowsCorrection - 4*borderY ) / 3;
+    slotWidth = slotHeight/6*5;
+    if (sceneWasSetUp) prepareGame();
+}
+
 void MainWindow::moveEvent(QMoveEvent *event) {
    QMainWindow::moveEvent(event);
    QRect geo = geometry();
    windowPosX = geo.x();
    windowPosY = geo.y();
-}
-
-void MainWindow::resetLists() {
-    ui->notation->clear();
-    if (game->getPieces()) game->getPieces()->clear();
-    if (game->getCards()) game->getCards()->clear();
-    if (game->getBoard()) game->getBoard()->clear();
-    if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
-    for (int k = 0; k < game->getCapturedBlue()->size(); k++) {
-        Piece *victim = game->getCapturedBlue()->at(k);
-        bool delItem = false;
-        for (int k = 0; k < scene->items().size(); k++)
-            if (scene->items().at(k) == victim) delItem = true;
-        if (delItem) scene->removeItem(victim);
-    }
-    for (int k = 0; k < game->getCapturedRed()->size(); k++) {
-        Piece *victim = game->getCapturedRed()->at(k);
-        bool delItem = false;
-        for (int k = 0; k < scene->items().size(); k++)
-            if (scene->items().at(k) == victim) delItem = true;
-        if (delItem) scene->removeItem(victim);
-    }
 }
 
 void MainWindow::showMove(QListWidgetItem *item) {
@@ -827,7 +843,6 @@ void MainWindow::on_actionGoatSheep_triggered() {
 }
 
 void MainWindow::on_actionFlipOnce_triggered() {
-    // menubar option
     game->setFlippedBoard(!game->getFlippedBoard());
     prepareGame();
 }
@@ -836,19 +851,14 @@ void MainWindow::on_actionHideNotation_triggered() {
     if (ui->notation->isVisible()) {
         ui->notation->setVisible(false);
         ui->actionHideNotation->setChecked(true);
-    }
-    else {
+    } else {
         ui->notation->setVisible(true);
         ui->actionHideNotation->setChecked(false);
     }
 }
 
 void MainWindow::on_actionAxisLabeling_triggered() {
-    // menubar option
-    if (ui->actionTinyWindow->isChecked()) changeLayout(0.30);
-    else if (ui->actionSmallWindow->isChecked()) changeLayout(0.50);
-    else if (ui->actionNormalWindow->isChecked()) changeLayout(0.70);
-    else if (ui->actionLargeWindow->isChecked()) changeLayout(0.90);
+    updateLayout();
 }
 
 void MainWindow::on_actionPiecesComicStyle_triggered() {
@@ -866,44 +876,49 @@ void MainWindow::on_actionPiecesHanzi_triggered() {
 void MainWindow::on_actionTinyWindow_triggered() {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
-    changeLayout(0.3);
+    ui->actionTinyWindow->setChecked(true);
+    ui->actionSmallWindow->setChecked(false);
+    ui->actionNormalWindow->setChecked(false);
+    ui->actionLargeWindow->setChecked(false);
+    updateLayout();
 }
 
 void MainWindow::on_actionSmallWindow_triggered() {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
-    changeLayout(0.5);
+    ui->actionTinyWindow->setChecked(false);
+    ui->actionSmallWindow->setChecked(true);
+    ui->actionNormalWindow->setChecked(false);
+    ui->actionLargeWindow->setChecked(false);
+    updateLayout();
 }
 
 void MainWindow::on_actionNormalWindow_triggered() {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
-    changeLayout(0.7);
+    ui->actionTinyWindow->setChecked(false);
+    ui->actionSmallWindow->setChecked(false);
+    ui->actionNormalWindow->setChecked(true);
+    ui->actionLargeWindow->setChecked(false);
+    updateLayout();
 }
 
 void MainWindow::on_actionLargeWindow_triggered() {
     QMainWindow::showNormal();
     ui->actionFullScreen->setChecked(false);
-    changeLayout(0.9);
+    ui->actionTinyWindow->setChecked(false);
+    ui->actionSmallWindow->setChecked(false);
+    ui->actionNormalWindow->setChecked(false);
+    ui->actionLargeWindow->setChecked(true);
+    updateLayout();
 }
 
 void MainWindow::on_actionFullScreen_triggered(){
-    // menubar option
-    if (ui->actionFullScreen->isChecked()) {
-        ui->actionFullScreen->setChecked(true);
-        changeLayout(1.0);
-        QMainWindow::showFullScreen();
-    } else {
-        ui->actionFullScreen->setChecked(false);
-        QMainWindow::showNormal();
-        if (ui->actionTinyWindow->isChecked()) changeLayout(0.30);
-        else if (ui->actionSmallWindow->isChecked()) changeLayout(0.50);
-        else if (ui->actionNormalWindow->isChecked()) changeLayout(0.70);
-        else if (ui->actionLargeWindow->isChecked()) changeLayout(0.90);
-    }
+    if (ui->actionFullScreen->isChecked()) QMainWindow::showFullScreen();
+    else QMainWindow::showNormal();
+    updateLayout();
 }
 
 void MainWindow::on_actionAboutQt_triggered() {
-    // menubar option
     QApplication::aboutQt();
 }
