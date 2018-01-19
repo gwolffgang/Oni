@@ -34,30 +34,38 @@ void Oni::setPlayerNames(QString nameRed, QString nameBlue) {
 
 bool Oni::readConfig() {
     QFile configFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_cfg.json"));
-    if (!configFile.open(QIODevice::ReadOnly)) { qWarning("Couldn't open config file."); return false; }
-    QByteArray saveData = configFile.readAll();
-    QJsonDocument jsonDoc(QJsonDocument::fromJson(saveData));
-    QJsonObject json = jsonDoc.object();
-    if (json.contains("actuallyDisplayedMove") && json["actuallyDisplayedMove"].isDouble())
-        actuallyDisplayedMove = json["actuallyDisplayedMove"].toInt();
-    if (json.contains("flippedBoard") && json["flippedBoard"].isBool())
-        flippedBoard = json["flippedBoard"].toBool();
-    if (json.contains("firstPlayersTurn") && json["firstPlayersTurn"].isBool())
-        firstPlayersTurn = json["firstPlayersTurn"].toBool();
-    if (json.contains("openGameFileName") && json["openGameFileName"].isString())
-        openGameFileName = json["openGameFileName"].toString();
-    if (json.contains("piecesSet") && json["piecesSet"].isString())
-        playerNameBlue = json["piecesSet"].toString();
-    if (json.contains("playerNameBlue") && json["playerNameBlue"].isString())
-        playerNameBlue = json["playerNameBlue"].toString();
-    if (json.contains("playerNameRed") && json["playerNameRed"].isString())
-        playerNameRed = json["playerNameRed"].toString();
-    if (json.contains("turns") && json["turns"].isArray()) {
-            QJsonArray turnsArray = json["turns"].toArray();
-            turns->clear();
-            for (int k = 0; k < turnsArray.size(); k++) turns->append(turnsArray[k].toString());
-        }
-    window->readWindowConfig(json);
+    if (!configFile.open(QIODevice::ReadOnly)) { qWarning("Couldn't open config file (yet)."); return false; }
+    QJsonDocument configDoc(QJsonDocument::fromJson(configFile.readAll()));
+    QJsonObject configData = configDoc.object();
+    if (configData.contains("flippedBoard") && configData["flippedBoard"].isBool())
+        flippedBoard = configData["flippedBoard"].toBool();
+    if (configData.contains("piecesSet") && configData["piecesSet"].isString())
+        piecesSet = configData["piecesSet"].toString();
+    window->readWindowConfig(configData);
+
+    QFile databaseFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_save.json"));
+    if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("Couldn't open database file (yet)."); return false; }
+    QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
+    QJsonObject databaseData = databaseDoc.object();
+    QJsonObject gameData;
+    if (databaseData.contains("tempGame") && databaseData["tempGame"].isObject()) {
+        gameData = databaseData["tempGame"].toObject();
+        if (gameData.contains("actuallyDisplayedMove") && gameData["actuallyDisplayedMove"].isDouble())
+            actuallyDisplayedMove = gameData["actuallyDisplayedMove"].toInt();
+        if (gameData.contains("firstPlayersTurn") && gameData["firstPlayersTurn"].isBool())
+            firstPlayersTurn = gameData["firstPlayersTurn"].toBool();
+        if (gameData.contains("openGameFileName") && gameData["openGameFileName"].isString())
+            openGameFileName = gameData["openGameFileName"].toString();
+        if (gameData.contains("playerNameBlue") && gameData["playerNameBlue"].isString())
+            playerNameBlue = gameData["playerNameBlue"].toString();
+        if (gameData.contains("playerNameRed") && gameData["playerNameRed"].isString())
+            playerNameRed = gameData["playerNameRed"].toString();
+        if (gameData.contains("turns") && gameData["turns"].isArray()) {
+                QJsonArray turnsArray = gameData["turns"].toArray();
+                turns->clear();
+                for (int k = 0; k < turnsArray.size(); k++) turns->append(turnsArray[k].toString());
+            }
+    }
     return true;
 }
 
@@ -90,19 +98,36 @@ void Oni::winGame(int winner) {
 bool Oni::writeConfig() const {
     QFile configFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_cfg.json"));
     if (!configFile.open(QIODevice::WriteOnly)) { qWarning("Couldn't open config file."); return false; }
-    QJsonObject json;
-        json["actuallyDisplayedMove"] = actuallyDisplayedMove;
-        json["flippedBoard"] = flippedBoard;
-        json["firstPlayersTurn"] = firstPlayersTurn;
-        json["openGameFileName"] = openGameFileName;
-        json["piecesSet"] = piecesSet;
-        json["playerNameBlue"] = playerNameBlue;
-        json["playerNameRed"] = playerNameRed;
-        QJsonArray turnsArray;
-        for (auto & turn : *turns) turnsArray.append(turn);
-        json["turns"] = turnsArray;
-        window->saveWindowConfig(json);
-    QJsonDocument configDoc(json);
+    QJsonObject jsonConfig;
+        jsonConfig["flippedBoard"] = flippedBoard;
+        jsonConfig["piecesSet"] = piecesSet;
+        window->saveWindowConfig(jsonConfig);
+    QJsonDocument configDoc(jsonConfig);
     configFile.write(configDoc.toJson());
+
+    QFile databaseFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_save.json"));
+    if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("Couldn't open config file."); return false; }
+    QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
+    QJsonObject databaseData = databaseDoc.object();
+    QJsonArray gamesDatabase;
+        if (databaseData.contains("Games") && databaseData["Games"].isArray())
+            gamesDatabase = databaseData["Games"].toArray();
+    databaseFile.close();
+    if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("Couldn't open config file."); return false; }
+    QJsonObject tempGame;
+        tempGame["actuallyDisplayedMove"] = actuallyDisplayedMove;
+        tempGame["firstPlayersTurn"] = firstPlayersTurn;
+        tempGame["openGameFileName"] = openGameFileName;
+        tempGame["playerNameBlue"] = playerNameBlue;
+        tempGame["playerNameRed"] = playerNameRed;
+        QJsonArray turnsArray;
+            for (auto & turn : *turns) turnsArray.append(turn);
+        tempGame["turns"] = turnsArray;
+    QJsonObject newDatabaseData;
+    newDatabaseData["Games"] = gamesDatabase;
+    newDatabaseData["tempGame"] = tempGame;
+    QJsonDocument newDatabaseDoc(newDatabaseData);
+    databaseFile.write(newDatabaseDoc.toJson());
+
     return true;
 }

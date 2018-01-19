@@ -66,6 +66,7 @@ public:
     void readWindowConfig(QJsonObject &json);
     void resetLists();
     void saveGame(QString fileName = "");
+    bool saveGameInDatabase() const;
     void saveTurnInNotation();
     void saveWindowConfig(QJsonObject &json) const;
     void setupNotation();

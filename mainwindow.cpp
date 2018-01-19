@@ -623,7 +623,36 @@ void MainWindow::saveGame(QString fileName) {
             QApplication::restoreOverrideCursor();
         #endif
     }
+    saveGameInDatabase();
 }
+
+bool MainWindow::saveGameInDatabase() const {
+    QFile databaseFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_save.json"));
+    if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("Couldn't open config file."); return false; }
+    QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
+    QJsonObject databaseData = databaseDoc.object();
+    QJsonObject tempGame;
+        if (databaseData.contains("tempGame") && databaseData["tempGame"].isObject())
+            tempGame = databaseData["tempGame"].toObject();
+    databaseFile.close();
+    if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("Couldn't open config file."); return false; }
+    QJsonArray gamesDatabase;
+        QJsonObject match;
+            match["playerNameRed"] = game->getPlayerNameRed();
+            match["playerNameBlue"] = game->getPlayerNameBlue();
+            match["firstPlayersTurn"] = game->getFirstPlayersTurn();
+            QJsonArray turnsArray;
+                for (auto & turn : *game->getTurns()) turnsArray.append(turn);
+            match["turns"] = turnsArray;
+        gamesDatabase.append(match);
+    QJsonObject newDatabaseData;
+    newDatabaseData["Games"] = gamesDatabase;
+    newDatabaseData["tempGame"] = tempGame;
+    QJsonDocument newDatabaseDoc(newDatabaseData);
+    databaseFile.write(newDatabaseDoc.toJson());
+    return true;
+}
+
 
 void MainWindow::saveTurnInNotation() {
     // refreshing of the notation if jumped back
@@ -784,9 +813,10 @@ void MainWindow::on_actionPreviousMove_triggered() {
 }
 
 void MainWindow::on_actionNextMove_triggered() {
-    if (game->getTurns()->size() > 1 && game->getActuallyDisplayedMove() < game->getTurns()->size()-1) {
-        game->setActuallyDisplayedMove(game->getActuallyDisplayedMove()+1);
-        newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
+    int actuallyDisplayedMove = game->getActuallyDisplayedMove();
+    if (game->getTurns()->size() > 1 && actuallyDisplayedMove < game->getTurns()->size()-1) {
+        game->setActuallyDisplayedMove(actuallyDisplayedMove+1);
+        newGame(game->getTurns()->at(actuallyDisplayedMove));
     }
 }
 

@@ -91,7 +91,6 @@ private:
     int rows, cols, cardsPerPlayer, neutralCardsPerGame, actuallyDisplayedMove, gameResult;
     bool firstPlayersTurn, flippedBoard, cardChoiceActive;
     QString piecesSet;
-    QFile configFile;
 };
 
 #endif // ONI_H
