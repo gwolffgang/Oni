@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     app.setOrganizationName("Wolffgang");
     app.setApplicationName("Oni");
     app.setApplicationDisplayName("Oni");
-    app.setApplicationVersion("1.1");
+    app.setApplicationVersion("1.0");
     app.setWindowIcon(QIcon(":/pics/Oni.icns"));
 
     game = new Oni;

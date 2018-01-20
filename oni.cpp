@@ -7,10 +7,14 @@ extern Oni *game;
 
 Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
     pieces(new QList<Piece*>), capturedBlue(new QList<Piece*>), capturedRed(new QList<Piece*>),
-    slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>), turns(new QList<QString>),
-    playerNameRed("Red"), playerNameBlue("Blue"), openGameFileName(""), pickedUpPiece(NULL), fieldOfOrigin(NULL), rows(5), cols(5),
-    cardsPerPlayer(2), neutralCardsPerGame(1), actuallyDisplayedMove(0), gameResult(0),
-    firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false), piecesSet("ComicStyle") {
+    slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>),
+    openGameFileName(""), piecesSet("ComicStyle"), pickedUpPiece(NULL), fieldOfOrigin(NULL),
+    actuallyDisplayedMove(0), firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false) {
+
+    match.playerNameBlue = "Blue";
+    match.playerNameRed = "Red";
+    match.turns = new QList<QString>;
+    match.gameResult = 0;
 
     readConfig();
 
@@ -25,11 +29,6 @@ Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
     QFontDatabase::addApplicationFont(":/fonts/wts11.ttf");
 
     window->show();
-}
-
-void Oni::setPlayerNames(QString nameRed, QString nameBlue) {
-    if (nameBlue != "") playerNameBlue = nameBlue;
-    if (nameRed != "") playerNameRed = nameRed;
 }
 
 bool Oni::readConfig() {
@@ -57,13 +56,13 @@ bool Oni::readConfig() {
         if (gameData.contains("openGameFileName") && gameData["openGameFileName"].isString())
             openGameFileName = gameData["openGameFileName"].toString();
         if (gameData.contains("playerNameBlue") && gameData["playerNameBlue"].isString())
-            playerNameBlue = gameData["playerNameBlue"].toString();
+            match.playerNameBlue = gameData["playerNameBlue"].toString();
         if (gameData.contains("playerNameRed") && gameData["playerNameRed"].isString())
-            playerNameRed = gameData["playerNameRed"].toString();
+            match.playerNameRed = gameData["playerNameRed"].toString();
         if (gameData.contains("turns") && gameData["turns"].isArray()) {
                 QJsonArray turnsArray = gameData["turns"].toArray();
-                turns->clear();
-                for (int k = 0; k < turnsArray.size(); k++) turns->append(turnsArray[k].toString());
+                match.turns->clear();
+                for (int k = 0; k < turnsArray.size(); k++) match.turns->append(turnsArray[k].toString());
             }
     }
     return true;
@@ -87,7 +86,7 @@ void Oni::switchCards(CardSlot *usedCardSlot) {
 }
 
 void Oni::winGame(int winner) {
-    gameResult = winner;
+    match.gameResult = winner;
     QString victor;
     if (winner == 1) victor = game->getPlayerNameRed();
     else victor = game->getPlayerNameBlue();
@@ -118,10 +117,10 @@ bool Oni::writeConfig() const {
         tempGame["actuallyDisplayedMove"] = actuallyDisplayedMove;
         tempGame["firstPlayersTurn"] = firstPlayersTurn;
         tempGame["openGameFileName"] = openGameFileName;
-        tempGame["playerNameBlue"] = playerNameBlue;
-        tempGame["playerNameRed"] = playerNameRed;
+        tempGame["playerNameBlue"] = match.playerNameBlue;
+        tempGame["playerNameRed"] = match.playerNameRed;
         QJsonArray turnsArray;
-            for (auto & turn : *turns) turnsArray.append(turn);
+            for (auto & turn : *match.turns) turnsArray.append(turn);
         tempGame["turns"] = turnsArray;
     QJsonObject newDatabaseData;
     newDatabaseData["Games"] = gamesDatabase;

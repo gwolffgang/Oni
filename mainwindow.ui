@@ -172,67 +172,6 @@
     <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionSmallLayout">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Small</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+S</string>
-   </property>
-  </action>
-  <action name="actionNormalLayout">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Normal</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+N</string>
-   </property>
-  </action>
-  <action name="actionLargeLayout">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Large</string>
-   </property>
-   <property name="toolTip">
-    <string>Large</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+L</string>
-   </property>
-  </action>
-  <action name="actionFullScreen_2">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;FullScreen</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+Return</string>
-   </property>
-  </action>
-  <action name="actionTinyLayout">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Tiny</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+T</string>
-   </property>
-  </action>
   <action name="actionAboutOni">
    <property name="text">
     <string>&amp;About Oni</string>

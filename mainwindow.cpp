@@ -202,8 +202,9 @@ void MainWindow::drawAxisLabeling() {
 }
 
 void MainWindow::drawBackGroundPicture() {
+    double size = fieldSize * 5;
     QGraphicsPixmapItem *back = new QGraphicsPixmapItem(QPixmap(":/pics/back.png"));
-        back->setPixmap(back->pixmap().scaled(fieldSize*5, fieldSize*5));
+        back->setPixmap(back->pixmap().scaled(size, size));
         back->setPos(borderX + axisLabelSize, borderY);
         scene->addItem(back);
     }
@@ -212,14 +213,13 @@ void MainWindow::drawBoard() {
     // drawing the board
     if (game->getBoard()->size() == 0) {
         QList<Field*> fieldsRow;
-        for (int row = 0; row < game->getRows(); row++) {
+        for (int row = 0; row < 5; row++) {
             fieldsRow.clear();
-            for (int col = 0; col < game->getCols(); col++) {
+            for (int col = 0; col < 5; col++) {
                 // create field
                 Field *field = new Field;
-                field->setRow(row);
                 field->setCol(col);
-                field->setPieceType(' ');
+                field->setRow(row);
                 if (!game->getFlippedBoard()) field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
                 else field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
                 // add piece to field
@@ -236,12 +236,12 @@ void MainWindow::drawBoard() {
             game->getBoard()->append(fieldsRow);
         }
     } else {
-        for (int row = 0; row < game->getRows(); row++) {
-            for (int col = 0; col < game->getCols(); col++) {
+        for (int row = 0; row < 5; row++) {
+            for (int col = 0; col < 5; col++) {
                 Field *field = game->getBoard()->at(row).at(col);
                 if (!game->getFlippedBoard()) field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
                 else field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
-                float size = game->getWindow()->getFieldSize();
+                double size = game->getWindow()->getFieldSize();
                 field->setRect(0, 0, size, size);
 
                 // add piece to field
@@ -263,8 +263,8 @@ void MainWindow::drawCardSlots() {
     for (int player = 0; player < 3; player++) {
         slotsRow.clear();
         // determite number of needed cardslots
-        int maxSlots = game->getCardsPerPlayer();
-        if (player == 0) maxSlots = game->getNeutralCardsPerGame();
+        int maxSlots = 2;
+        if (player == 0) maxSlots = 1;
         // draw cardslots
         for (int number = 0; number < maxSlots; number++) {
             if (game->getSlotsGrid()->size() < 3) {
@@ -510,8 +510,7 @@ void MainWindow::newGame(QString setupString) {
     }
     if (game->getTurns()->size() == 0) game->getTurns()->append(generateSetupString());
 
-    // prepare the game
-    prepareGame();
+    updateLayout();
 }
 
 void MainWindow::notateVictory(QString result) {
@@ -740,10 +739,13 @@ void MainWindow::updateLayout() {
     windowHeight = factor * desktop.height() +1;
     do {
         windowHeight--;
-        windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*((windowHeight - 4*borderY - MSWindowsCorrection) / 18 *5);
-    } while (windowWidth > desktop.width()-4);
+        slotWidth = (windowHeight - 4*borderY - MSWindowsCorrection)/3 * 5/6;
+        windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*slotWidth;
+    } while (windowWidth > desktop.width()-4 || windowHeight > desktop.height()-4);
     setGeometry(windowPosX, windowPosY, windowWidth+5, windowHeight+5);
     setFixedSize(windowWidth+5, windowHeight+5);
+    slotHeight = slotWidth * 6/5;
+    fieldSize = (windowHeight - MSWindowsCorrection - 2*borderY - sideBarSize - axisLabelSize) / 5;
     bool sceneWasSetUp = true;
     if (!scene) {
         sceneWasSetUp = false;
@@ -757,17 +759,13 @@ void MainWindow::updateLayout() {
     }
     ui->view->setFixedSize(windowWidth+5, windowHeight+5);
     scene->setSceneRect(0, 0, windowWidth, windowHeight);
-    fieldSize = (scene->sceneRect().height() - MSWindowsCorrection - 2*borderY - sideBarSize - axisLabelSize) / 5;
-    slotHeight = (scene->sceneRect().height() - MSWindowsCorrection - 4*borderY ) / 3;
-    slotWidth = slotHeight/6*5;
     if (sceneWasSetUp) prepareGame();
 }
 
 void MainWindow::moveEvent(QMoveEvent *event) {
    QMainWindow::moveEvent(event);
-   QRect geo = geometry();
-   windowPosX = geo.x();
-   windowPosY = geo.y();
+   windowPosX = geometry().x();
+   windowPosY = geometry().y();
 }
 
 void MainWindow::showMove(QListWidgetItem *item) {
