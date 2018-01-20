@@ -34,7 +34,7 @@ SOURCES += main.cpp\
     cardslot.cpp \
     dialogabout.cpp \
     dialogsave.cpp \
-    dialogdatabase.cpp
+    windowdatabase.cpp
 
 HEADERS  += mainwindow.h \
     oni.h \
@@ -45,12 +45,12 @@ HEADERS  += mainwindow.h \
     cardslot.h \
     dialogabout.h \
     dialogsave.h \
-    dialogdatabase.h
+    windowdatabase.h
 
 FORMS    += mainwindow.ui \
     dialogabout.ui \
     dialogsave.ui \
-    dialogdatabase.ui
+    windowdatabase.ui
 
 RESOURCES += \
     res.qrc

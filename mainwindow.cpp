@@ -19,9 +19,10 @@ bool fileExists(QString path) {
     return check_file.exists() && check_file.isFile();
 }
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), colorHovered(Qt::gray), colorSelected(Qt::darkCyan),
-    colorChooseableCard1(Qt::yellow), colorChooseableCard2(Qt::blue), colorChooseableBoth(Qt::green),
-    screen(QGuiApplication::primaryScreen()), scene(NULL), dialogAbout(new DialogAbout(this)), dialogSaveAs(new DialogSave(this)),
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),
+    colorHovered(Qt::gray), colorSelected(Qt::darkCyan), colorChooseableCard1(Qt::yellow),
+    colorChooseableCard2(Qt::blue), colorChooseableBoth(Qt::green), screen(QGuiApplication::primaryScreen()), scene(NULL),
+    dialogAbout(new DialogAbout(this)), windowDatabase(new WindowDatabase(this)), dialogSave(new DialogSave(this)),
     axisLabel(new QList<QGraphicsTextItem*>), windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
     fieldSize(0), slotHeight(0.0), slotWidth(0.0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
 
@@ -33,8 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     updateLayout();
 
     // connects
-    connect(ui->notation, SIGNAL(itemClicked(QListWidgetItem*)),
-                this, SLOT(showMove(QListWidgetItem*)));
+    connect(ui->notation, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(showMove(QListWidgetItem*)));
 }
 
 MainWindow::~MainWindow() {
@@ -483,6 +483,7 @@ void MainWindow::loadGame(QString fileName) {
         QStringList elem = fileName.split("/");
         QStringList name = elem.last().split(".");
         setWindowTitle("Oni - " + name.first());
+        openDatabase();
     }
 }
 
@@ -589,8 +590,8 @@ void MainWindow::resetLists() {
 
 void MainWindow::saveGame(QString fileName) {
     if (fileName == "") {
-        if (game->getWindow()->getDialogSaveAs()->exec() == QDialog::Accepted) {
-            QList<QString> names = game->getWindow()->getDialogSaveAs()->getValues();
+        if (dialogSave->exec() == QDialog::Accepted) {
+            QList<QString> names = dialogSave->getValues();
             game->setPlayerNames(names.at(0), names.at(1));
 
             int i = 0;
@@ -601,8 +602,8 @@ void MainWindow::saveGame(QString fileName) {
             } while (fileExists(fileName));
 
             // set window title
-            QStringList elem = fileName.split("/");
-            QStringList name = elem.last().split(".");
+            QStringList elements = fileName.split("/");
+            QStringList name = elements.last().split(".");
             setWindowTitle("Oni - " + name.first());
             game->setOpenGameFileName(fileName);
         }

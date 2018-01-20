@@ -20,6 +20,7 @@
 #include "cardslot.h"
 #include "field.h"
 #include "mainwindow.h"
+#include "windowdatabase.h"
 #include "piece.h"
 
 struct Match {

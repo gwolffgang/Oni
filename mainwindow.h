@@ -8,6 +8,7 @@
 #include <QMoveEvent>
 
 #include "dialogabout.h"
+#include "windowdatabase.h"
 #include "dialogsave.h"
 #include "button.h"
 #include "cardslot.h"
@@ -32,7 +33,6 @@ public:
     // getter
     inline double getBorderX() { return borderX; }
     inline double getBorderY() { return borderY; }
-    inline DialogSave *getDialogSaveAs() { return dialogSaveAs; }
     inline double getFieldSize() { return fieldSize; }
     bool getFlipEveryMove();
     inline QGraphicsScene *getScene() { return scene; }
@@ -76,7 +76,8 @@ private:
     QScreen *screen;
     QGraphicsScene *scene;
     DialogAbout *dialogAbout;
-    DialogSave *dialogSaveAs;
+    WindowDatabase *windowDatabase;
+    DialogSave *dialogSave;
     Button *flipButton, *turnRed, *turnBlue;
     QList<QGraphicsTextItem*> *axisLabel;
     double windowPosX, windowPosY, windowHeight, windowWidth, borderX, borderY, fieldSize, slotHeight, slotWidth, sideBarSize, axisLabelSize, MSWindowsCorrection;
@@ -86,6 +87,7 @@ protected:
     void moveEvent(QMoveEvent *event) override;
 
 private slots:
+    inline void openDatabase() { windowDatabase = new WindowDatabase; windowDatabase->show(); }
     inline void refreshWindow() { prepareGame(); }
     void showMove(QListWidgetItem *item = NULL);
     // Game

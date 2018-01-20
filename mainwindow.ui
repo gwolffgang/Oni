@@ -33,6 +33,9 @@
       <height>161</height>
      </rect>
     </property>
+    <property name="mouseTracking">
+     <bool>false</bool>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
