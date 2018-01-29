@@ -19,7 +19,7 @@ private:
 
 private slots:
     void on_aboutQt_clicked();
-    void on_close_clicked();
+    inline void on_close_clicked() { close(); }
 };
 
 #endif // DIALOGABOUT_H

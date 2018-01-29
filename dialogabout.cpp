@@ -17,7 +17,3 @@ DialogAbout::~DialogAbout() {
 void DialogAbout::on_aboutQt_clicked() {
     QApplication::aboutQt();
 }
-
-void DialogAbout::on_close_clicked() {
-    this->close();
-}

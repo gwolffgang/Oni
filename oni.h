@@ -55,7 +55,8 @@ public:
     inline bool getFirstPlayersTurn() { return firstPlayersTurn; }
     inline bool getFlippedBoard() { return flippedBoard; }
     inline int getGameResult() { return match.gameResult; }
-    inline QString getOpenGameFileName() { return openGameFileName; }
+    inline Match getMatch() { return match; }
+    inline int getOpenDatabaseGameNumber() { return openDatabaseGameNumber; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
     inline QList<Piece*> *getPieces() { return pieces; }
     inline QString getPieceSet() { return piecesSet; }
@@ -64,6 +65,7 @@ public:
     inline QList<QList<CardSlot*>> *getSlotsGrid() { return slotsGrid; }
     inline QList<QString> *getTurns() { return match.turns; }
     inline MainWindow *getWindow() { return window; }
+    inline WindowDatabase *getWindowDatabase() { return windowDatabase; }
 
     // setters
     inline void setActuallyDisplayedMove(int newMove) { actuallyDisplayedMove = newMove; }
@@ -73,12 +75,11 @@ public:
     inline void setFirstPlayersTurn(bool state) { firstPlayersTurn = state; }
     inline void setFieldOfOrigin(Field *origin) { fieldOfOrigin = origin; }
     inline void setGameResult(int winner) { match.gameResult = winner; }
-    inline void setOpenGameFileName(QString newString) { openGameFileName = newString; }
+    inline void setOpenDatabaseGameNumber(int newNumber) { openDatabaseGameNumber = newNumber; }
     inline void setPickedUpPiece(Piece *newPiece) { pickedUpPiece = newPiece; }
     inline void setPiecesSet(QString newString) { piecesSet = newString; }
     inline void setPlayerNames(QString nameRed = "Red", QString nameBlue = "Blue") {if (nameBlue != "") match.playerNameBlue = nameBlue;
                                                                                     if (nameRed != "") match.playerNameRed = nameRed;}
-
     // methods
     bool readConfig();
     QList<Card*> identifyCards(int owner);
@@ -89,14 +90,15 @@ public:
 private:
     // variables
     MainWindow *window;
+    WindowDatabase *windowDatabase;
     QList<QList<Field*>> *board;
     QList<Piece*> *pieces, *capturedBlue, *capturedRed;
     QList<QList<CardSlot*>> *slotsGrid;
     QList<Card*> *cards;
-    QString openGameFileName, piecesSet;
+    QString piecesSet;
     Piece *pickedUpPiece;
     Field *fieldOfOrigin, *chosenField;
-    int actuallyDisplayedMove;
+    int actuallyDisplayedMove, openDatabaseGameNumber;
     bool firstPlayersTurn, flippedBoard, cardChoiceActive;
     Match match;
 };

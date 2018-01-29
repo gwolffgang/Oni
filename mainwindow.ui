@@ -51,38 +51,58 @@
     <property name="title">
      <string>&amp;Game</string>
     </property>
-    <addaction name="actionNew"/>
+    <widget class="QMenu" name="menuCards">
+     <property name="title">
+      <string>&amp;Cards</string>
+     </property>
+     <addaction name="actionBasisGame"/>
+     <addaction name="actionSenseisPath"/>
+     <addaction name="actionGoatSheep"/>
+     <addaction name="separator"/>
+     <addaction name="actionCustomize"/>
+    </widget>
+    <widget class="QMenu" name="menuLayout">
+     <property name="title">
+      <string>Layout</string>
+     </property>
+     <widget class="QMenu" name="menuFlipBoard">
+      <property name="title">
+       <string>Flip Board</string>
+      </property>
+      <addaction name="actionFlipOnce"/>
+      <addaction name="actionFlipEveryMove"/>
+     </widget>
+     <widget class="QMenu" name="menuPieceSet">
+      <property name="title">
+       <string>PieceSet</string>
+      </property>
+      <addaction name="actionPiecesComicStyle"/>
+      <addaction name="actionPiecesHanzi"/>
+     </widget>
+     <widget class="QMenu" name="menuWindow">
+      <property name="title">
+       <string>Window</string>
+      </property>
+      <addaction name="actionTinyWindow"/>
+      <addaction name="actionSmallWindow"/>
+      <addaction name="actionNormalWindow"/>
+      <addaction name="actionLargeWindow"/>
+      <addaction name="separator"/>
+      <addaction name="actionFullScreen"/>
+     </widget>
+     <addaction name="menuPieceSet"/>
+     <addaction name="menuWindow"/>
+     <addaction name="separator"/>
+     <addaction name="menuFlipBoard"/>
+     <addaction name="actionAxisLabeling"/>
+     <addaction name="actionHideNotation"/>
+    </widget>
+    <addaction name="menuCards"/>
+    <addaction name="actionDatabase"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSaveAs"/>
+    <addaction name="menuLayout"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuLayout">
-    <property name="title">
-     <string>&amp;Layout</string>
-    </property>
-    <widget class="QMenu" name="menuWindow">
-     <property name="title">
-      <string>Window</string>
-     </property>
-     <addaction name="actionTinyWindow"/>
-     <addaction name="actionSmallWindow"/>
-     <addaction name="actionNormalWindow"/>
-     <addaction name="actionLargeWindow"/>
-     <addaction name="separator"/>
-     <addaction name="actionFullScreen"/>
-    </widget>
-    <widget class="QMenu" name="menuPieceset">
-     <property name="title">
-      <string>Pieceset</string>
-     </property>
-     <addaction name="actionPiecesComicStyle"/>
-     <addaction name="actionPiecesHanzi"/>
-    </widget>
-    <addaction name="menuPieceset"/>
-    <addaction name="menuWindow"/>
    </widget>
    <widget class="QMenu" name="menuAbout">
     <property name="locale">
@@ -94,21 +114,6 @@
     <addaction name="separator"/>
     <addaction name="actionAboutOni"/>
     <addaction name="actionAboutQt"/>
-   </widget>
-   <widget class="QMenu" name="menuSettings">
-    <property name="title">
-     <string>Settings</string>
-    </property>
-    <widget class="QMenu" name="menuFlipBoard">
-     <property name="title">
-      <string>&amp;Flip board</string>
-     </property>
-     <addaction name="actionFlipOnce"/>
-     <addaction name="actionFlipEveryMove"/>
-    </widget>
-    <addaction name="menuFlipBoard"/>
-    <addaction name="actionHideNotation"/>
-    <addaction name="actionAxisLabeling"/>
    </widget>
    <widget class="QMenu" name="menuMatch">
     <property name="title">
@@ -124,23 +129,15 @@
      <addaction name="actionLastMove"/>
     </widget>
     <addaction name="menuGoTo"/>
-    <addaction name="actionResign"/>
-   </widget>
-   <widget class="QMenu" name="menuCards">
-    <property name="title">
-     <string>Cards</string>
-    </property>
-    <addaction name="actionBasisGame"/>
-    <addaction name="actionSenseisPath"/>
-    <addaction name="actionGoatSheep"/>
     <addaction name="separator"/>
-    <addaction name="actionCustomize"/>
+    <addaction name="actionNew"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionResign"/>
    </widget>
    <addaction name="menuGame"/>
    <addaction name="menuMatch"/>
-   <addaction name="menuCards"/>
-   <addaction name="menuSettings"/>
-   <addaction name="menuLayout"/>
    <addaction name="menuAbout"/>
   </widget>
   <action name="actionNew">
@@ -159,12 +156,12 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionLoad">
+  <action name="actionDatabase">
    <property name="text">
-    <string>&amp;Load</string>
+    <string>&amp;Database</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+L</string>
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="actionExit">
@@ -237,20 +234,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
-   </property>
-  </action>
-  <action name="actionAxisLabeling">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Axis labeling</string>
-   </property>
-   <property name="shortcut">
-    <string>F3</string>
    </property>
   </action>
   <action name="actionRedEasy">
@@ -410,64 +393,6 @@
     <string>&amp;Customize</string>
    </property>
   </action>
-  <action name="actionTinyWindow">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Tiny</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+T</string>
-   </property>
-  </action>
-  <action name="actionSmallWindow">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Small</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
-   </property>
-  </action>
-  <action name="actionNormalWindow">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Normal</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+N</string>
-   </property>
-  </action>
-  <action name="actionLargeWindow">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Large</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+L</string>
-   </property>
-  </action>
-  <action name="actionFullScreen">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Full Screen</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+Return</string>
-   </property>
-  </action>
   <action name="actionPiecesComicStyle">
    <property name="checkable">
     <bool>true</bool>
@@ -491,6 +416,78 @@
    </property>
    <property name="toolTip">
     <string>Hànzì</string>
+   </property>
+  </action>
+  <action name="actionLargeWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Large Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+L</string>
+   </property>
+  </action>
+  <action name="actionTinyWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Tiny Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+T</string>
+   </property>
+  </action>
+  <action name="actionSmallWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Small Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="actionNormalWindow">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Normal Window</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+N</string>
+   </property>
+  </action>
+  <action name="actionFullScreen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Full Screen</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Return</string>
+   </property>
+  </action>
+  <action name="actionAxisLabeling">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Axis Labeling</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
    </property>
   </action>
  </widget>

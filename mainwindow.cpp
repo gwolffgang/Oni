@@ -26,11 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     axisLabel(new QList<QGraphicsTextItem*>), windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
     fieldSize(0), slotHeight(0.0), slotWidth(0.0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
 
-    // set up the UI
     ui->setupUi(this);
-
-    // presettings
-    setWindowTitle("Oni - new unsaved game");
     updateLayout();
 
     // connects
@@ -449,52 +445,15 @@ QString MainWindow::generateSetupString() {
     return saveString;
 }
 
-void MainWindow::loadGame(QString fileName) {
-    // load previously saved game
-    if (fileName == "") fileName = QFileDialog::getOpenFileName(this, tr("Open savegame"), QStandardPaths::writableLocation(QStandardPaths::AppDataLocation), "Oni Savegames (*.oni)");
-    if (!fileName.isEmpty()) {
-        QFile file(fileName);
-        if (!file.open(QFile::ReadOnly | QFile::Text)) {
-            QMessageBox::warning(this, tr("Application"), tr("Cannot read file %1:\n%2.")
-                        .arg(QDir::toNativeSeparators(fileName), file.errorString()));
-                return;
-            }
-        QTextStream in(&file);
-        #ifndef QT_NO_CURSOR
-            QApplication::setOverrideCursor(Qt::WaitCursor);
-        #endif
-            QString line = "";
-            game->getTurns()->clear();
-            while (!in.atEnd()) {
-                line = in.readLine();
-                game->getTurns()->append(line);
-            }
-        #ifndef QT_NO_CURSOR
-            QApplication::restoreOverrideCursor();
-        #endif
-
-        if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1")
-            newGame(game->getTurns()->at( game->getTurns()->size()-2) );
-        else newGame(game->getTurns()->last());
-        game->setActuallyDisplayedMove(game->getTurns()->size());
-        game->setOpenGameFileName(fileName);
-
-        // set window title
-        QStringList elem = fileName.split("/");
-        QStringList name = elem.last().split(".");
-        setWindowTitle("Oni - " + name.first());
-        openDatabase();
-    }
-}
-
 void MainWindow::newGame(QString setupString) {
     game->setCardChoiceActive(false);
     game->setGameResult(0);
     if (setupString == "") {
         // reset settings
         game->setFirstPlayersTurn(true);
+        game->setPlayerNames("Red", "Blue");
         setWindowTitle("Oni - new unsaved game");
-        game->setOpenGameFileName("");
+        game->setOpenDatabaseGameNumber(-1);
         if (game->getTurns()) game->getTurns()->clear();
     }
 
@@ -502,7 +461,7 @@ void MainWindow::newGame(QString setupString) {
     resetLists();
 
     // setup string
-    QString defaultString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
+    const QString defaultString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
     if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = defaultString;
     if (!analyseSetupString(setupString)) {
         setupString = defaultString;
@@ -605,7 +564,6 @@ void MainWindow::saveGame(QString fileName) {
             QStringList elements = fileName.split("/");
             QStringList name = elements.last().split(".");
             setWindowTitle("Oni - " + name.first());
-            game->setOpenGameFileName(fileName);
         }
     }
     if (fileName != "") {
@@ -623,36 +581,7 @@ void MainWindow::saveGame(QString fileName) {
             QApplication::restoreOverrideCursor();
         #endif
     }
-    saveGameInDatabase();
 }
-
-bool MainWindow::saveGameInDatabase() const {
-    QFile databaseFile(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_save.json"));
-    if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("Couldn't open config file."); return false; }
-    QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
-    QJsonObject databaseData = databaseDoc.object();
-    QJsonObject tempGame;
-        if (databaseData.contains("tempGame") && databaseData["tempGame"].isObject())
-            tempGame = databaseData["tempGame"].toObject();
-    databaseFile.close();
-    if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("Couldn't open config file."); return false; }
-    QJsonArray gamesDatabase;
-        QJsonObject match;
-            match["playerNameRed"] = game->getPlayerNameRed();
-            match["playerNameBlue"] = game->getPlayerNameBlue();
-            match["firstPlayersTurn"] = game->getFirstPlayersTurn();
-            QJsonArray turnsArray;
-                for (auto & turn : *game->getTurns()) turnsArray.append(turn);
-            match["turns"] = turnsArray;
-        gamesDatabase.append(match);
-    QJsonObject newDatabaseData;
-    newDatabaseData["Games"] = gamesDatabase;
-    newDatabaseData["tempGame"] = tempGame;
-    QJsonDocument newDatabaseDoc(newDatabaseData);
-    databaseFile.write(newDatabaseDoc.toJson());
-    return true;
-}
-
 
 void MainWindow::saveTurnInNotation() {
     // refreshing of the notation if jumped back
@@ -689,7 +618,6 @@ void MainWindow::setupNotation() {
     QString lastTurn = turns->last();
     double posX = scene->height() - MSWindowsCorrection + slotWidth + 2*borderX + 2.5;
     double posY = slotHeight + 2*borderY + 2.5;
-    ui->notation->scrollToBottom();
     ui->notation->setGeometry(posX, posY, slotWidth, slotHeight);
     ui->notation->clear();
     int maxLines = turns->size();
@@ -718,9 +646,13 @@ void MainWindow::setupNotation() {
     if (lastTurn == "1-0" || lastTurn == "0-1") ui->notation->addItem(lastTurn);
     if (ui->actionHideNotation->isChecked()) ui->notation->setVisible(false);
     else ui->notation->setVisible(true);
+    ui->notation->scrollToBottom();
 }
 
 void MainWindow::updateLayout() {
+    if (!scene || game->getOpenDatabaseGameNumber() == -1) setWindowTitle("Oni - new unsaved game");
+    else setWindowTitle("Oni - " + game->getPlayerNameRed() + " vs. " + game->getPlayerNameBlue());
+
     // Change menu checkings
     double factor = 0.0;
     if (ui->actionFullScreen->isChecked()) factor = 1.0;
@@ -790,13 +722,8 @@ void MainWindow::on_actionSetupPosition_triggered() {
 
 }
 
-void MainWindow::on_actionLoad_triggered() {
-    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "Load game", "Do you want to load another game?<br>All unsaved changes to the actual game will be lost.");
-    if (reply == QMessageBox::Yes) loadGame();
-}
-
-void MainWindow::on_actionSave_triggered() {
-    saveGame(game->getOpenGameFileName());
+void MainWindow::on_actionDatabase_triggered() {
+        openDatabase();
 }
 
 void MainWindow::on_actionStartingPosition_triggered() {

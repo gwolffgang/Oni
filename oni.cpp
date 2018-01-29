@@ -8,8 +8,8 @@ extern Oni *game;
 Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
     pieces(new QList<Piece*>), capturedBlue(new QList<Piece*>), capturedRed(new QList<Piece*>),
     slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>),
-    openGameFileName(""), piecesSet("ComicStyle"), pickedUpPiece(NULL), fieldOfOrigin(NULL),
-    actuallyDisplayedMove(0), firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false) {
+    piecesSet("ComicStyle"), pickedUpPiece(NULL), fieldOfOrigin(NULL), actuallyDisplayedMove(0),
+    openDatabaseGameNumber(-1), firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false) {
 
     match.playerNameBlue = "Blue";
     match.playerNameRed = "Red";
@@ -20,7 +20,7 @@ Oni::Oni() : window(new MainWindow), board(new QList<QList<Field*>>),
 
     // create AppData folder, if not done yet
     QDir appDataFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    if (!appDataFolder.exists()) appDataFolder.mkpath("./saves");
+    if (!appDataFolder.exists()) appDataFolder.mkpath(".");
 
     // seed up randomizer
     srand(unsigned(time(NULL)));
@@ -53,12 +53,14 @@ bool Oni::readConfig() {
             actuallyDisplayedMove = gameData["actuallyDisplayedMove"].toInt();
         if (gameData.contains("firstPlayersTurn") && gameData["firstPlayersTurn"].isBool())
             firstPlayersTurn = gameData["firstPlayersTurn"].toBool();
-        if (gameData.contains("openGameFileName") && gameData["openGameFileName"].isString())
-            openGameFileName = gameData["openGameFileName"].toString();
+        if (gameData.contains("openDatabaseGameNumber") && gameData["openDatabaseGameNumber"].isDouble())
+            openDatabaseGameNumber = gameData["openDatabaseGameNumber"].toInt();
         if (gameData.contains("playerNameBlue") && gameData["playerNameBlue"].isString())
             match.playerNameBlue = gameData["playerNameBlue"].toString();
         if (gameData.contains("playerNameRed") && gameData["playerNameRed"].isString())
             match.playerNameRed = gameData["playerNameRed"].toString();
+        if (gameData.contains("gameResult") && gameData["gameResult"].isDouble())
+            match.gameResult = gameData["gameResult"].toInt();
         if (gameData.contains("turns") && gameData["turns"].isArray()) {
                 QJsonArray turnsArray = gameData["turns"].toArray();
                 match.turns->clear();
@@ -109,21 +111,22 @@ bool Oni::writeConfig() const {
     QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
     QJsonObject databaseData = databaseDoc.object();
     QJsonArray gamesDatabase;
-        if (databaseData.contains("Games") && databaseData["Games"].isArray())
-            gamesDatabase = databaseData["Games"].toArray();
+        if (databaseData.contains("games") && databaseData["games"].isArray())
+            gamesDatabase = databaseData["games"].toArray();
     databaseFile.close();
     if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("Couldn't open config file."); return false; }
     QJsonObject tempGame;
         tempGame["actuallyDisplayedMove"] = actuallyDisplayedMove;
         tempGame["firstPlayersTurn"] = firstPlayersTurn;
-        tempGame["openGameFileName"] = openGameFileName;
+        tempGame["openDatabaseGameNumber"] = openDatabaseGameNumber;
         tempGame["playerNameBlue"] = match.playerNameBlue;
         tempGame["playerNameRed"] = match.playerNameRed;
+        tempGame["gameResult"] = match.gameResult;
         QJsonArray turnsArray;
             for (auto & turn : *match.turns) turnsArray.append(turn);
         tempGame["turns"] = turnsArray;
     QJsonObject newDatabaseData;
-    newDatabaseData["Games"] = gamesDatabase;
+    newDatabaseData["games"] = gamesDatabase;
     newDatabaseData["tempGame"] = tempGame;
     QJsonDocument newDatabaseDoc(newDatabaseData);
     databaseFile.write(newDatabaseDoc.toJson());
