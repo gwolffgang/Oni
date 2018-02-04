@@ -9,7 +9,6 @@
 
 #include "dialogabout.h"
 #include "windowdatabase.h"
-#include "dialogsave.h"
 #include "button.h"
 #include "cardslot.h"
 
@@ -67,7 +66,6 @@ public:
     void prepareGame();
     void readWindowConfig(QJsonObject &json);
     void resetLists();
-    void saveGame(QString fileName = "");
     void saveTurnInNotation();
     void saveWindowConfig(QJsonObject &json) const;
     void setupNotation();
@@ -78,7 +76,6 @@ private:
     QGraphicsScene *scene;
     DialogAbout *dialogAbout;
     WindowDatabase *windowDatabase;
-    DialogSave *dialogSave;
     Button *flipButton, *turnRed, *turnBlue;
     QList<QGraphicsTextItem*> *axisLabel;
     double windowPosX, windowPosY, windowHeight, windowWidth, borderX, borderY, fieldSize, slotHeight, slotWidth, sideBarSize, axisLabelSize, MSWindowsCorrection;
@@ -119,7 +116,7 @@ private slots:
     void on_actionNew_triggered();
     void on_actionSetupPosition_triggered();
     inline void on_actionSave_triggered() { windowDatabase->saveGameInDatabase(); }
-    inline void on_actionSaveAs_triggered() { windowDatabase->saveGameInDatabase(); }
+    inline void on_actionSaveAs_triggered() { windowDatabase->saveGameInDatabase(true); }
     void on_actionResign_triggered();
     // Sensei
     void on_actionRedEasy_triggered();

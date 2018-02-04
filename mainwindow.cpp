@@ -13,17 +13,11 @@ extern Oni *game;
 
 int myrandom(int i) { srand(unsigned(time(NULL))); return std::rand()%i; }
 
-bool fileExists(QString path) {
-    QFileInfo check_file(path);
-    // check if file exists and if yes: Is it really a file and no directory?
-    return check_file.exists() && check_file.isFile();
-}
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),
     colorHovered(Qt::gray), colorSelected(Qt::darkCyan), colorChooseableCard1(Qt::yellow),
     colorChooseableCard2(Qt::blue), colorChooseableBoth(Qt::green), screen(QGuiApplication::primaryScreen()), scene(NULL),
-    dialogAbout(new DialogAbout(this)), windowDatabase(new WindowDatabase(this)), dialogSave(new DialogSave(this)),
-    axisLabel(new QList<QGraphicsTextItem*>), windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
+    dialogAbout(new DialogAbout(this)), windowDatabase(new WindowDatabase(this)), axisLabel(new QList<QGraphicsTextItem*>),
+    windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
     fieldSize(0), slotHeight(0.0), slotWidth(0.0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
 
     ui->setupUi(this);
@@ -447,12 +441,17 @@ QString MainWindow::generateSetupString() {
 
 void MainWindow::newGame(QString setupString) {
     game->setCardChoiceActive(false);
-    game->setGameResult(0);
+    game->setActuallyDisplayedMove(0);
     if (setupString == "") {
         // reset settings
+        game->setGameResult(0);
         game->setFirstPlayersTurn(true);
         game->setPlayerNames("Red", "Blue");
-        setWindowTitle("Oni - new unsaved game");
+        game->setEvent("");
+        game->setCity("");
+        game->setRound(0);
+        game->setDate(QDate::currentDate());
+        setWindowTitle("Oni - Red vs. Blue - new unsaved game");
         game->setOpenDatabaseGameNumber(-1);
         if (game->getTurns()) game->getTurns()->clear();
     }
@@ -464,6 +463,7 @@ void MainWindow::newGame(QString setupString) {
     const QString defaultString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
     if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = defaultString;
     if (!analyseSetupString(setupString)) {
+        game->setGameResult(0);
         setupString = defaultString;
         resetLists();
         analyseSetupString(setupString);
@@ -476,9 +476,16 @@ void MainWindow::newGame(QString setupString) {
 void MainWindow::notateVictory(QString result) {
     ui->notation->addItem(result);
     ui->notation->scrollToBottom();
-    game->getTurns()->append(result);
-    if (result == "1-0") game->setGameResult(1);
-    else game->setGameResult(-1);
+    QList<QString> *turns = game->getTurns();
+    if (turns->last() == "1-0" || turns->last() == "0-1")
+        turns->removeAt(turns->size()-1);
+    if (result == "1-0" || result == "1") {
+        game->setGameResult(1);
+        turns->append("1-0");
+    } else if (result == "0-1" || result == "-1") {
+        game->setGameResult(-1);
+        turns->append("0-1");
+    } else game->setGameResult(0);
 }
 
 void MainWindow::prepareGame() {
@@ -547,7 +554,7 @@ void MainWindow::resetLists() {
     }
 }
 
-void MainWindow::saveGame(QString fileName) {
+/* void MainWindow::saveGame(QString fileName) {
     if (fileName == "") {
         if (dialogSave->exec() == QDialog::Accepted) {
             QList<QString> names = dialogSave->getValues();
@@ -581,7 +588,7 @@ void MainWindow::saveGame(QString fileName) {
             QApplication::restoreOverrideCursor();
         #endif
     }
-}
+} */
 
 void MainWindow::saveTurnInNotation() {
     // refreshing of the notation if jumped back
@@ -650,7 +657,7 @@ void MainWindow::setupNotation() {
 }
 
 void MainWindow::updateLayout() {
-    if (!scene || game->getOpenDatabaseGameNumber() == -1) setWindowTitle("Oni - new unsaved game");
+    if (!scene || game->getOpenDatabaseGameNumber() == -1) setWindowTitle("Oni - Red vs. Blue - new unsaved game");
     else setWindowTitle("Oni - " + game->getPlayerNameRed() + " vs. " + game->getPlayerNameBlue());
 
     // Change menu checkings
@@ -722,10 +729,6 @@ void MainWindow::on_actionSetupPosition_triggered() {
 
 }
 
-void MainWindow::on_actionDatabase_triggered() {
-        openDatabase();
-}
-
 void MainWindow::on_actionStartingPosition_triggered() {
     game->setActuallyDisplayedMove(0);
     newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
@@ -763,6 +766,7 @@ void MainWindow::on_actionResign_triggered() {
                 game->setGameResult(1);
                 game->getWindow()->notateVictory("1-0");
             }
+            prepareGame();
         }
     }
 }
@@ -801,6 +805,14 @@ void MainWindow::on_actionSenseisPath_triggered() {
 
 void MainWindow::on_actionGoatSheep_triggered() {
     game->writeConfig();
+}
+
+void MainWindow::on_actionDatabase_triggered() {
+    QFile databaseFile(game->databaseFileName);
+    QFile backupFile(game->backupFileName);
+    backupFile.remove();
+    databaseFile.copy(game->backupFileName);
+    openDatabase();
 }
 
 void MainWindow::on_actionFlipOnce_triggered() {

@@ -6,35 +6,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>260</width>
-    <height>125</height>
+    <width>300</width>
+    <height>342</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Save game</string>
   </property>
-  <widget class="QGroupBox" name="groupBoxPlayerNames">
+  <widget class="QGroupBox" name="groupBoxPlayerDetails">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>0</y>
-     <width>241</width>
-     <height>81</height>
+     <y>10</y>
+     <width>280</width>
+     <height>100</height>
     </rect>
    </property>
    <property name="locale">
     <locale language="English" country="Germany"/>
    </property>
    <property name="title">
-    <string>Names of the players</string>
+    <string>Player details</string>
    </property>
-   <widget class="QFrame" name="framePlayerNames">
+   <widget class="QFrame" name="framePlayerDetails">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>20</y>
-      <width>241</width>
-      <height>61</height>
+      <width>280</width>
+      <height>80</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -43,60 +43,78 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QWidget" name="formLayoutWidget">
+    <widget class="QLabel" name="labelNameRed">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>0</y>
-       <width>221</width>
-       <height>61</height>
+       <y>10</y>
+       <width>40</width>
+       <height>20</height>
       </rect>
      </property>
-     <layout class="QFormLayout" name="formLayoutNames">
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="lineEditNameRed">
-        <property name="text">
-         <string>Red</string>
-        </property>
-        <property name="placeholderText">
-         <string>Enter name</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="labelNameBlue">
-        <property name="text">
-         <string>Blue</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEditNameBlue">
-        <property name="text">
-         <string>Blue</string>
-        </property>
-        <property name="placeholderText">
-         <string>Enter name</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="labelNameRed">
-        <property name="text">
-         <string>Red</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <property name="text">
+      <string>Red</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelNameBlue">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>40</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Blue</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEditNameRed">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>10</y>
+       <width>220</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Red</string>
+     </property>
+     <property name="placeholderText">
+      <string>Enter player name</string>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEditNameBlue">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>40</y>
+       <width>220</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Blue</string>
+     </property>
+     <property name="placeholderText">
+      <string>Enter player name</string>
+     </property>
     </widget>
    </widget>
   </widget>
   <widget class="QDialogButtonBox" name="buttonBoxSave">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>90</y>
-     <width>241</width>
+     <x>0</x>
+     <y>300</y>
+     <width>300</width>
      <height>32</height>
     </rect>
    </property>
@@ -110,7 +128,245 @@
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>110</y>
+     <width>280</width>
+     <height>120</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Event details</string>
+   </property>
+   <widget class="QFrame" name="frameEvent">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>280</width>
+      <height>100</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QLineEdit" name="lineEditNameCity">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>40</y>
+       <width>220</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Enter event location</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelNameEvent">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>40</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Name</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelNameCity">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>40</y>
+       <width>40</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>City</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEditNameEvent">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>10</y>
+       <width>220</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Enter event name</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelDate">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>70</y>
+       <width>40</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Date</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEditRound">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>70</y>
+       <width>90</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Enter round</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelRound">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>40</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Round</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+    <widget class="QDateEdit" name="dateEdit">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>70</y>
+       <width>90</width>
+       <height>22</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>230</y>
+     <width>280</width>
+     <height>60</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Result</string>
+   </property>
+   <widget class="QFrame" name="frame">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>280</width>
+      <height>40</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <widget class="QRadioButton" name="radioButtonRed">
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>10</y>
+       <width>40</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>1-0</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup</string>
+     </attribute>
+    </widget>
+    <widget class="QRadioButton" name="radioButtonBlue">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>10</y>
+       <width>40</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>0-1</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup</string>
+     </attribute>
+    </widget>
+    <widget class="QRadioButton" name="radioButtonLine">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>10</y>
+       <width>40</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string> *</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroup</string>
+     </attribute>
+    </widget>
+   </widget>
+  </widget>
  </widget>
+ <tabstops>
+  <tabstop>lineEditNameRed</tabstop>
+  <tabstop>lineEditNameBlue</tabstop>
+  <tabstop>lineEditNameEvent</tabstop>
+  <tabstop>lineEditNameCity</tabstop>
+  <tabstop>lineEditRound</tabstop>
+  <tabstop>radioButtonRed</tabstop>
+  <tabstop>radioButtonBlue</tabstop>
+  <tabstop>radioButtonLine</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -120,8 +376,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>74</x>
-     <y>105</y>
+     <x>64</x>
+     <y>315</y>
     </hint>
     <hint type="destinationlabel">
      <x>90</x>
@@ -136,8 +392,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>178</x>
-     <y>105</y>
+     <x>168</x>
+     <y>315</y>
     </hint>
     <hint type="destinationlabel">
      <x>169</x>
@@ -146,4 +402,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="buttonGroup"/>
+ </buttongroups>
 </ui>

@@ -4,9 +4,10 @@
 #include <QWidget>
 #include <QtCore>
 #include <QtGui>
+#include "dialogsave.h"
 
-enum column {
-    red, blue, result, moves, cards, source, city, date
+enum column { // for gamesTable
+    colRed, colBlue, colResult, colMoves, colCards, colEvent, colCity, colDate
 };
 
 namespace Ui {
@@ -17,14 +18,19 @@ class WindowDatabase : public QWidget {
     Q_OBJECT
 
 public:
+    // constructor
     explicit WindowDatabase(QWidget *parent = 0);
+
+    // destructor
     ~WindowDatabase();
 
     // methods
+    void closeDatabase();
+    bool editGame(QModelIndex index);
     bool loadGames();
-    void openGame();
+    void openGame(QModelIndex index);
     bool saveChanges() const;
-    bool saveGameInDatabase();
+    bool saveGameInDatabase(bool newSave = false);
     void setCell(int row, column col, const QVariant &value, Qt::AlignmentFlag alignment = Qt::AlignCenter);
     void updateLayout();
 
@@ -34,19 +40,18 @@ protected:
 
 
 private slots:
-    inline void on_closeOnly_clicked() { close(); }
+    void on_close_clicked();
     void on_deleteGame_clicked();
-    void on_GamesTable_clicked(const QModelIndex &index);
+    void on_editGame_clicked();
     void on_GamesTable_doubleClicked(const QModelIndex &index);
     void on_openGame_clicked();
-    inline void on_saveAndClose_clicked() { saveChanges(); close(); }
-    inline void on_saveChanges_clicked() { saveChanges(); }
-    inline void on_undoChanges_clicked() { gamesArray = {}; loadGames(); updateLayout(); }
+    void on_undoChanges_clicked();
 
 private:
     // variables
     Ui::WindowDatabase *ui;
-    int windowPosX, windowPosY, modelCols, modelRows, selectedRow;
+    DialogSave *dialogSave;
+    int windowPosX, windowPosY, modelCols, modelRows;
     QStandardItemModel *model;
     QJsonArray gamesArray;
     QJsonObject tempGame;

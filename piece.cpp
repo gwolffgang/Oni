@@ -8,12 +8,8 @@ Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent), row(-1), col(
 
 int Piece::getOwner() {
     switch (type) {
-    case 'M':
-    case 'S':
-        return 1;
-    case 'm':
-    case 's':
-        return 2;
+    case 'M': case 'S': return 1;
+    case 'm': case 's': return 2;
     }
     return 0;
 }
@@ -25,14 +21,10 @@ void Piece::drawPiece() {
     piece.fill(Qt::transparent);
     QString name, color;
     switch (type) {
-    case 'M':
-        name = "master"; color = "red"; break;
-    case 'S':
-        name = "scolar"; color = "red"; break;
-    case 'm':
-        name = "master"; color = "blue"; break;
-    case 's':
-        name = "scolar"; color = "blue";
+    case 'M': name = "master"; color = "red"; break;
+    case 'S': name = "scolar"; color = "red"; break;
+    case 'm': name = "master"; color = "blue"; break;
+    case 's': name = "scolar"; color = "blue";
     }
     if (game->getPieceSet() == "Hanzi") {
         QFont namesFont = QFont("wts11");
