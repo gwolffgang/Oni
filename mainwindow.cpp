@@ -157,12 +157,6 @@ bool MainWindow::analyseSetupString(QString string) {
             }
             for (int i = 0; i < 5; i++) cards->append(availableCards.takeAt(rand() % availableCards.size()));
         }
-    // get game settings
-    if (part.size() >2) {
-        elem = part.at(2).split(",");
-        if (elem.at(0) == "true") game->setFirstPlayersTurn(true);
-        else game->setFirstPlayersTurn(false);
-    }
     return true;
 }
 
@@ -433,9 +427,6 @@ QString MainWindow::generateSetupString() {
             if (k != 0) saveString += ",";
             saveString += QString::number(game->getCards()->at(k)->getID());
         }
-    saveString += "|";
-    // set game settings
-    saveString += QString(game->getFirstPlayersTurn() ? "true" : "false");
     return saveString;
 }
 
@@ -445,7 +436,6 @@ void MainWindow::newGame(QString setupString) {
     if (setupString == "") {
         // reset settings
         game->setGameResult(0);
-        game->setFirstPlayersTurn(true);
         game->setPlayerNames("Red", "Blue");
         game->setEvent("");
         game->setCity("");
@@ -474,18 +464,14 @@ void MainWindow::newGame(QString setupString) {
 }
 
 void MainWindow::notateVictory(QString result) {
-    ui->notation->addItem(result);
-    ui->notation->scrollToBottom();
     QList<QString> *turns = game->getTurns();
-    if (turns->last() == "1-0" || turns->last() == "0-1")
-        turns->removeAt(turns->size()-1);
-    if (result == "1-0" || result == "1") {
-        game->setGameResult(1);
-        turns->append("1-0");
-    } else if (result == "0-1" || result == "-1") {
-        game->setGameResult(-1);
-        turns->append("0-1");
+    if ( "1-0" == turns->last() || "0-1" == turns->last()) {
+        turns->removeLast();
+        turns->append(result);
+        if ("1-0" == result) game->setGameResult(1);
+        else if ("0-1" == result) game->setGameResult(-1);
     } else game->setGameResult(0);
+    game->getWindow()->prepareGame();
 }
 
 void MainWindow::prepareGame() {

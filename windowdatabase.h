@@ -30,7 +30,7 @@ public:
     bool loadGames();
     void openGame(QModelIndex index);
     bool saveChanges() const;
-    bool saveGameInDatabase(bool newSave = false);
+    bool saveGame(bool newSave = false);
     void setCell(int row, column col, const QVariant &value, Qt::AlignmentFlag alignment = Qt::AlignCenter);
     void updateLayout();
 

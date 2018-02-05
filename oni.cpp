@@ -18,7 +18,7 @@ Oni::Oni() :
     pieces(new QList<Piece*>), capturedBlue(new QList<Piece*>), capturedRed(new QList<Piece*>),
     slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>),
     piecesSet("ComicStyle"), pickedUpPiece(NULL), fieldOfOrigin(NULL), actuallyDisplayedMove(0),
-    firstPlayersTurn(true), flippedBoard(false), cardChoiceActive(false) {
+    flippedBoard(false), cardChoiceActive(false) {
 
     match.openDatabaseGameNumber = -1;
     match.playerNameBlue = "Blue";
@@ -76,8 +76,6 @@ bool Oni::readConfig() {
             gameData = databaseData["tempGame"].toObject();
             if (gameData.contains("actuallyDisplayedMove") && gameData["actuallyDisplayedMove"].isDouble())
                 actuallyDisplayedMove = gameData["actuallyDisplayedMove"].toInt();
-            if (gameData.contains("firstPlayersTurn") && gameData["firstPlayersTurn"].isBool())
-                firstPlayersTurn = gameData["firstPlayersTurn"].toBool();
             if (gameData.contains("openDatabaseGameNumber") && gameData["openDatabaseGameNumber"].isDouble())
                 match.openDatabaseGameNumber = gameData["openDatabaseGameNumber"].toInt();
             if (gameData.contains("playerNameBlue") && gameData["playerNameBlue"].isString())
@@ -152,7 +150,6 @@ bool Oni::writeConfig() {
     if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("writeConfig: Couldn't open database file for writing."); return false; }
         QJsonObject tempGame;
             tempGame["actuallyDisplayedMove"] = actuallyDisplayedMove;
-            tempGame["firstPlayersTurn"] = firstPlayersTurn;
             tempGame["openDatabaseGameNumber"] = match.openDatabaseGameNumber;
             tempGame["playerNameBlue"] = match.playerNameBlue;
             tempGame["playerNameRed"] = match.playerNameRed;

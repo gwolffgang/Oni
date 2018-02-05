@@ -73,7 +73,6 @@ void Field::dropPiece() {
             }
         }
         linkPiece(game->getPickedUpPiece());
-        game->setFirstPlayersTurn(!game->getFirstPlayersTurn());
         game->getWindow()->saveTurnInNotation();
         game->getFieldOfOrigin()->setPieceType(' ');
 

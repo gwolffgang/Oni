@@ -115,8 +115,8 @@ private slots:
     // Match
     void on_actionNew_triggered();
     void on_actionSetupPosition_triggered();
-    inline void on_actionSave_triggered() { windowDatabase->saveGameInDatabase(); }
-    inline void on_actionSaveAs_triggered() { windowDatabase->saveGameInDatabase(true); }
+    inline void on_actionSave_triggered() { windowDatabase->saveGame(); }
+    inline void on_actionSaveAs_triggered() { windowDatabase->saveGame(true); }
     void on_actionResign_triggered();
     // Sensei
     void on_actionRedEasy_triggered();

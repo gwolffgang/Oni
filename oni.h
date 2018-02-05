@@ -60,7 +60,6 @@ public:
     inline QDate getDate() { return match.date; }
     inline QString getEvent() { return match.event; }
     inline Field *getFieldOfOrigin() { return fieldOfOrigin; }
-    inline bool getFirstPlayersTurn() { return firstPlayersTurn; }
     inline bool getFlippedBoard() { return flippedBoard; }
     inline int getGameResult() { return match.gameResult; }
     inline int getOpenDatabaseGameNumber() { return match.openDatabaseGameNumber; }
@@ -81,12 +80,12 @@ public:
     inline void setChosenField(Field *target) { chosenField = target; }
     inline void setCity(QString newCity) { match.city = newCity; }
     inline void setDate(QDate newDate) { match.date = newDate; }
-    inline void setDate(QString newDate) { match.date.fromString(newDate,"yy.MM.dd"); }
+    inline void setDate(QString newDate) { match.date = QDate::fromString(newDate, Qt::ISODate); }
     inline void setEvent(QString newEvent) { match.event = newEvent; }
     inline void setFlippedBoard(bool state) { flippedBoard = state; }
-    inline void setFirstPlayersTurn(bool state) { firstPlayersTurn = state; }
     inline void setFieldOfOrigin(Field *origin) { fieldOfOrigin = origin; }
     inline void setGameResult(int newResult) { match.gameResult = newResult; }
+    inline void setGameResult(QString newResult) { if (newResult == "1-0") match.gameResult = 1; if (newResult == "0-1") match.gameResult = 0; }
     inline void setOpenDatabaseGameNumber(int newNumber) { match.openDatabaseGameNumber = newNumber; }
     inline void setPickedUpPiece(Piece *newPiece) { pickedUpPiece = newPiece; }
     inline void setPiecesSet(QString newString) { piecesSet = newString; }
@@ -95,6 +94,7 @@ public:
     inline void setRound(double newRound) { match.round = newRound; }
 
     // methods
+    inline bool getFirstPlayersTurn() { if (match.turns->size()%2 == 1) return true; else return false; }
     bool readConfig();
     QList<Card*> identifyCards(int owner);
     void switchCards(CardSlot *usedCardSlot);
@@ -113,7 +113,7 @@ private:
     Piece *pickedUpPiece;
     Field *fieldOfOrigin, *chosenField;
     int actuallyDisplayedMove;
-    bool firstPlayersTurn, flippedBoard, cardChoiceActive;
+    bool flippedBoard, cardChoiceActive;
     Match match;
 };
 

@@ -4,7 +4,7 @@
 
 extern Oni *game;
 
-DialogSave::DialogSave(QWidget *parent) : QDialog(parent), ui(new Ui::DialogSave) {
+DialogSave::DialogSave(QWidget *parent) : QDialog(parent), ui(new Ui::DialogSave), turns({}) {
     ui->setupUi(this);
 
     ui->lineEditNameRed->setText(game->getPlayerNameRed());
@@ -25,15 +25,16 @@ DialogSave::~DialogSave() {
 
 QList<QString> DialogSave::getValues() {
     QList<QString> list;
-    list.append(ui->lineEditNameRed->text());
-    list.append(ui->lineEditNameBlue->text());
-    list.append(ui->lineEditNameEvent->text());
-    list.append(ui->lineEditNameCity->text());
-    list.append(ui->lineEditRound->text());
-    list.append(ui->dateEdit->date().toString());
-    if (ui->radioButtonRed->isChecked()) list.append("1");
-    else if (ui->radioButtonBlue->isChecked()) list.append("-1");
-    else list.append("0");
+    list.append(ui->lineEditNameRed->text()); // 0
+    list.append(ui->lineEditNameBlue->text()); // 1
+    list.append(ui->lineEditNameEvent->text()); // 2
+    list.append(ui->lineEditNameCity->text()); // 3
+    list.append(ui->lineEditRound->text()); // 4
+    list.append(ui->dateEdit->date().toString(Qt::ISODate)); // 5
+    if (ui->radioButtonRed->isChecked()) list.append("1-0");
+    else if (ui->radioButtonBlue->isChecked()) list.append("0-1");
+    else list.append("*"); // 6
+    for (int k = 0; k < turns.size(); k++) list.append(turns.at(k)); // 7 - END
     return list;
 }
 
@@ -60,6 +61,11 @@ void DialogSave::setData(QJsonObject gameData) {
     }
     if (gameData.contains("round") && gameData["round"].isDouble())
         if (gameData["round"].toDouble() != 0) ui->lineEditRound->setText(QString::number(gameData["round"].toDouble()));
+    if (gameData.contains("turns") && gameData["turns"].isArray()) {
+            QJsonArray turnsArray = gameData["turns"].toArray();
+            turns.clear();
+            for (int k = 0; k < turnsArray.size(); k++) turns.append(turnsArray[k].toString());
+    }
 }
 
 void DialogSave::on_radioButtonBlue_clicked() {

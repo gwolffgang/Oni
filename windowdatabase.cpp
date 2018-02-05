@@ -30,6 +30,7 @@ void WindowDatabase::closeDatabase() {
 
 bool WindowDatabase::editGame(QModelIndex index) {
     QFile databaseFile(game->databaseFileName);
+    QJsonObject match;
     if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("editGame: Couldn't open database file for reading."); return false; }
         QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
         QJsonObject databaseData = databaseDoc.object();
@@ -44,44 +45,31 @@ bool WindowDatabase::editGame(QModelIndex index) {
     dialogSave->setData(gamesArray.at(index.row()).toObject());
     if (dialogSave->exec() == QDialog::Accepted) {
         QList<QString> data = dialogSave->getValues();
-        game->setPlayerNames(data.at(0), data.at(1));
-        game->setEvent(data.at(2));
-        game->setCity(data.at(3));
-        game->setRound(data.at(4).toDouble());
-        game->setDate(data.at(5));
-        game->setGameResult(data.at(6).toInt());
-        game->getWindow()->notateVictory(data.at(6));
-        game->setOpenDatabaseGameNumber(gamesArray.size());
-        game->getWindow()->prepareGame();
+        match["playerNameRed"] = data.at(0);
+        match["playerNameBlue"] = data.at(1);
+        match["event"] = data.at(2);
+        match["city"] = data.at(3);
+        match["round"] = data.at(4).toDouble();
+        match["date"] = data.at(5);
+        match["gameResult"] = data.at(6).toInt();
+        if (data.size() > 7) {
+            if (data.last() == "1-0" || data.last() == "0-1") data.removeLast();
+            QJsonArray turnsArray = {};
+            for (int k = 7; k < data.size(); k++) turnsArray.append(data.at(k));
+            if (data.at(6) != "*") data.append(data.at(6));
+            match["turns"] = turnsArray;
+        }
     } else return false;
     if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("editGame: Couldn't open database file for writing."); return false; }
-        QJsonObject match;
-            match["playerNameRed"] = game->getPlayerNameRed();
-            match["playerNameBlue"] = game->getPlayerNameBlue();
-            match["firstPlayersTurn"] = game->getFirstPlayersTurn();
-            match["event"] = game->getEvent();
-            match["city"] = game->getCity();
-            match["round"] = game->getRound();
-            match["date"] = game->getDate().toString();
-            match["gameResult"] = game->getGameResult();
-            QJsonArray turnsArray;
-            for (auto & turn : *game->getTurns()) turnsArray.append(turn);
-            match["turns"] = turnsArray;
-        if (game->getOpenDatabaseGameNumber() == gamesArray.size()) gamesArray.append(match);
-        else {
-            gamesArray.removeAt(game->getOpenDatabaseGameNumber());
-            gamesArray.insert(game->getOpenDatabaseGameNumber(), match);
-        }
-
+        gamesArray.removeAt(index.row());
+        gamesArray.insert(index.row(), match);
         QJsonObject newDatabaseData;
         newDatabaseData["games"] = gamesArray;
         newDatabaseData["tempGame"] = tempGame;
-
         QJsonDocument newDatabaseDoc(newDatabaseData);
         databaseFile.write(newDatabaseDoc.toJson());
     databaseFile.close();
     this->updateLayout();
-    game->getWindow()->updateLayout();
     return true;
 }
 
@@ -126,8 +114,6 @@ bool WindowDatabase::loadGames() {
 void WindowDatabase::openGame(QModelIndex index) {
     int selectedRow = index.row();
     QJsonObject gameData = gamesArray.at(selectedRow).toObject();
-    if (gameData.contains("firstPlayersTurn") && gameData["firstPlayersTurn"].isBool())
-        game->setFirstPlayersTurn(gameData["firstPlayersTurn"].toBool());
     if (gameData.contains("playerNameBlue") && gameData["playerNameBlue"].isString() &&
         gameData.contains("playerNameRed") && gameData["playerNameRed"].isString())
         game->setPlayerNames(gameData["playerNameRed"].toString(), gameData["playerNameBlue"].toString());
@@ -158,7 +144,7 @@ bool WindowDatabase::saveChanges() const {
     return true;
 }
 
-bool WindowDatabase::saveGameInDatabase(bool newSave) {
+bool WindowDatabase::saveGame(bool newSave) {
     QFile databaseFile(game->databaseFileName);
     if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("saveGameInDatabase: Couldn't open database file for reading."); return false; }
         QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
@@ -179,7 +165,7 @@ bool WindowDatabase::saveGameInDatabase(bool newSave) {
             game->setCity(data.at(3));
             game->setRound(data.at(4).toDouble());
             game->setDate(data.at(5));
-            game->setGameResult(data.at(6).toInt());
+            game->setGameResult(data.at(6));
             game->getWindow()->notateVictory(data.at(6));
             game->setOpenDatabaseGameNumber(gamesArray.size());
             game->getWindow()->prepareGame();
@@ -189,7 +175,6 @@ bool WindowDatabase::saveGameInDatabase(bool newSave) {
         QJsonObject match;
             match["playerNameRed"] = game->getPlayerNameRed();
             match["playerNameBlue"] = game->getPlayerNameBlue();
-            match["firstPlayersTurn"] = game->getFirstPlayersTurn();
             match["event"] = game->getEvent();
             match["city"] = game->getCity();
             match["round"] = game->getRound();
@@ -295,6 +280,7 @@ void WindowDatabase::on_deleteGame_clicked() {
 void WindowDatabase::on_editGame_clicked() {
     QModelIndexList selection = ui->GamesTable->selectionModel()->selectedRows();
     editGame(selection.first());
+    gamesArray = {};
     loadGames();
     updateLayout();
 }

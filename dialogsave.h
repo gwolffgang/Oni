@@ -29,6 +29,9 @@ private slots:
     void on_radioButtonLine_clicked();
     void on_radioButtonRed_clicked();
 
+private:
+    // variables
+    QList<QString> turns;
 };
 
 #endif // DIALOGSAVE_H
