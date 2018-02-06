@@ -10,13 +10,13 @@ class Card : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
 public:
-    // constructors
+    // constructor
     Card(QGraphicsItem *parent = NULL);
 
     // operators
-    bool operator==(Card *card) { if (card->id == id) return true; else return false; }
+    inline bool operator==(Card *card) { if (card->id == id) return true; else return false; }
 
-    // getters
+    // getter
     inline QString getName() { return name; }
     inline int getID() { return id; }
     inline int getColFromChoice(const int number) { return choice[number][0]; }

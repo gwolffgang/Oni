@@ -6,20 +6,20 @@
 class Piece : public QGraphicsPixmapItem {
 
 public:
-    // constructors
+    // constructor
     Piece(QGraphicsItem *parent=NULL);
 
-    // getters
+    // getter
     inline int getCol() { return col; }
-    int getOwner();
+    inline int getOwner() { switch (type) { case 'M': case 'S': return 1; case 'm': case 's': return 2; } return 0; }
     inline QPixmap getPiece() { return piece; }
     inline int getRow() { return row; }
     inline char getType() { return type; }
 
-    // setters
-    void setCol(int newCol) { if (newCol > -1) col = newCol; }
-    void setRow(int newRow) { if (newRow > -1) row = newRow; }
-    void setType(char newType) { type = newType; }
+    // setter
+    inline void setCol(int newCol) { if (newCol > -1) col = newCol; }
+    inline void setRow(int newRow) { if (newRow > -1) row = newRow; }
+    inline void setType(char newType) { type = newType; }
 
     // methods
     void drawPiece();

@@ -7,7 +7,7 @@
 class Button : public QGraphicsPixmapItem {
 
 public:
-    // constructors
+    // constructor
     Button(QGraphicsItem *parent = NULL);
 
     // methods

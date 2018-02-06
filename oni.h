@@ -42,13 +42,13 @@ class Oni : public QObject {
     Q_OBJECT
 
 public:
-    // Variables
+    // variables
     QString backupFileName, configFileName, databaseFileName;
 
-    // constructors
+    // constructor
     Oni();
 
-    // getters
+    // getter
     inline int getActuallyDisplayedMove() { return actuallyDisplayedMove; }
     inline QList<QList<Field*>> *getBoard() { return board; }
     inline QList<Piece*> *getCapturedBlue() { return capturedBlue; }
@@ -74,7 +74,7 @@ public:
     inline MainWindow *getWindow() { return window; }
     inline WindowDatabase *getWindowDatabase() { return windowDatabase; }
 
-    // setters
+    // setter
     inline void setActuallyDisplayedMove(int newMove) { actuallyDisplayedMove = newMove; }
     inline void setCardChoiceActive(bool state) { cardChoiceActive = state; }
     inline void setChosenField(Field *target) { chosenField = target; }

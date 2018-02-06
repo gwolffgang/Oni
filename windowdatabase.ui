@@ -115,6 +115,9 @@
    </property>
   </widget>
   <widget class="QPushButton" name="pasteGame">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>390</x>

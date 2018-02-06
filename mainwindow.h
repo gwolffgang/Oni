@@ -23,10 +23,10 @@ public:
     Ui::MainWindow *ui;
     QColor colorHovered, colorSelected, colorChooseableCard1, colorChooseableCard2, colorChooseableBoth;
 
-    // constructors
+    // constructor
     explicit MainWindow(QWidget *parent = 0);
 
-    // destructors
+    // destructor
     ~MainWindow();
 
     // getter
@@ -72,6 +72,7 @@ public:
     void updateLayout();
 
 private:
+    // variables
     QScreen *screen;
     QGraphicsScene *scene;
     DialogAbout *dialogAbout;

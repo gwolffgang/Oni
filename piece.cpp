@@ -6,14 +6,6 @@ extern Oni *game;
 Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent), row(-1), col(-1) {
 }
 
-int Piece::getOwner() {
-    switch (type) {
-    case 'M': case 'S': return 1;
-    case 'm': case 's': return 2;
-    }
-    return 0;
-}
-
 void Piece::drawPiece() {
     // draw piece
     double pieceSize = game->getWindow()->getFieldSize();

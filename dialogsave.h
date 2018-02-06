@@ -13,6 +13,8 @@ class DialogSave : public QDialog {
 public:
     // constructor
     explicit DialogSave(QWidget *parent = 0);
+
+    // destructor
     ~DialogSave();
 
     // getter
@@ -22,6 +24,7 @@ public:
     void setData(QJsonObject gameData);
 
 private:
+    // variables
     Ui::DialogSave *ui;
 
 private slots:

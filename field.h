@@ -12,19 +12,19 @@ class Field : public QObject, public QGraphicsRectItem {
     Q_OBJECT
 
 public:
-    // constructors
+    // constructor
     Field(QGraphicsItem *parent = NULL);
 
-    // operators
+    // operator
     inline bool operator==(Field *field) { if ((field->row == row) && (field->col == col)) return true; return false; }
 
-    // getters
+    // getter
     inline int getCol() { return col; }
     inline Piece *getPiece() { return piece; }
     inline char getPieceType() { return pieceType; }
     inline int getRow() { return row; }
 
-    // setters
+    // setter
     inline void setCol(int newCol) { if (newCol > -1) col = newCol; }
     inline void setPiece(Piece *newPiece) { piece = newPiece; }
     inline void setPieceType(char newPieceType) { pieceType = newPieceType; }

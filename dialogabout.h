@@ -11,10 +11,14 @@ class DialogAbout : public QDialog {
     Q_OBJECT
 
 public:
+    // constructor
     explicit DialogAbout(QWidget *parent = 0);
+
+    // destructor
     ~DialogAbout();
 
 private:
+    // variables
     Ui::DialogAbout *ui;
 
 private slots:

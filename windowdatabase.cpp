@@ -6,7 +6,7 @@ extern Oni *game;
 
 WindowDatabase::WindowDatabase(QWidget *parent) : QWidget(parent), ui(new Ui::WindowDatabase),
     dialogSave(NULL), windowPosX(50), windowPosY(50), modelCols(8), modelRows(0),
-    model(new QStandardItemModel(modelRows, modelCols, this)), gamesArray({}), tempGame({}) {
+    model(new QStandardItemModel(modelRows, modelCols, this)), gamesArray({}), tempGame({}), gamesToCopy({}) {
     ui->setupUi(this);
     ui->GamesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
 
@@ -105,8 +105,10 @@ bool WindowDatabase::loadGames() {
             setCell(row, colEvent, game["event"].toString());
         if (game.contains("city") && game["city"].isString())
             setCell(row, colCity, game["city"].toString());
-        if (game.contains("date") && game["date"].isString())
-            setCell(row, colDate, game["date"].toString());
+        if (game.contains("date") && game["date"].isString()) {
+            QDate date = QDate::fromString(game["date"].toString(), Qt::ISODate);
+            setCell(row, colDate, date.toString());
+        }
     }
     return true;
 }
@@ -124,13 +126,35 @@ void WindowDatabase::openGame(QModelIndex index) {
         game->getTurns()->clear();
         for (int k = 0; k < turnsArray.size(); k++) game->getTurns()->append(turnsArray[k].toString());
     }
-
     if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1")
         game->getWindow()->newGame(game->getTurns()->at( game->getTurns()->size()-2) );
     else game->getWindow()->newGame(game->getTurns()->last());
     game->setActuallyDisplayedMove(game->getTurns()->size());
     game->setOpenDatabaseGameNumber(selectedRow);
     game->getWindow()->prepareGame();
+}
+
+bool WindowDatabase::pasteGames() {
+    if (gamesToCopy.size() > 0) {
+        QModelIndexList selection = ui->GamesTable->selectionModel()->selectedRows();
+        QJsonArray newGamesArray = gamesArray;
+        int addBefore = gamesArray.size();
+        if (selection.size() > 0) addBefore = selection.first().row();
+        for (int k = 0; k < gamesToCopy.size(); k++) newGamesArray.insert(addBefore+k, gamesArray.at(gamesToCopy.at(k).row()));
+        QFile databaseFile(game->databaseFileName);
+        if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("editGame: Couldn't open database file for writing."); return false; }
+            QJsonObject newDatabaseData;
+            newDatabaseData["games"] = newGamesArray;
+            newDatabaseData["tempGame"] = tempGame;
+
+            QJsonDocument newDatabaseDoc(newDatabaseData);
+            databaseFile.write(newDatabaseDoc.toJson());
+        databaseFile.close();
+        gamesArray = {};
+        loadGames();
+        updateLayout();
+        return true;
+    } else return false;
 }
 
 bool WindowDatabase::saveChanges() const {
@@ -146,7 +170,7 @@ bool WindowDatabase::saveChanges() const {
 
 bool WindowDatabase::saveGame(bool newSave) {
     QFile databaseFile(game->databaseFileName);
-    if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("saveGameInDatabase: Couldn't open database file for reading."); return false; }
+    if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("saveGame: Couldn't open database file for reading."); return false; }
         QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
         QJsonObject databaseData = databaseDoc.object();
         QJsonArray gamesArray;
@@ -171,7 +195,7 @@ bool WindowDatabase::saveGame(bool newSave) {
             game->getWindow()->prepareGame();
         } else return false;
     }
-    if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("saveGameInDatabase: Couldn't open database file for writing."); return false; }
+    if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("saveGame: Couldn't open database file for writing."); return false; }
         QJsonObject match;
             match["playerNameRed"] = game->getPlayerNameRed();
             match["playerNameBlue"] = game->getPlayerNameBlue();
@@ -258,14 +282,22 @@ void WindowDatabase::moveEvent(QMoveEvent *event) {
     windowPosY = geometry().y();
 }
 
-void WindowDatabase::on_close_clicked() {
-    closeDatabase();
+void WindowDatabase::on_copyGame_clicked() {
+    gamesToCopy = ui->GamesTable->selectionModel()->selectedRows();
+    int amount = gamesToCopy.size();
+    if (amount > 0) {
+        ui->copyGame->setText("Copy (" + QString::number(amount) + ")");
+        ui->pasteGame->setEnabled(true);
+    } else {
+        ui->copyGame->setText("Copy");
+        ui->pasteGame->setEnabled(false);
+    }
 }
 
 void WindowDatabase::on_deleteGame_clicked() {
     QModelIndexList selection = ui->GamesTable->selectionModel()->selectedRows();
     int openGame = game->getOpenDatabaseGameNumber();
-    for (int row = 0; row < selection.count(); row++) {
+    for (int row = selection.count()-1; row > -1; row--) {
         QModelIndex index = selection.at(row);
         if (index.row() < openGame) game->setOpenDatabaseGameNumber(openGame-1);
         else if (index.row() == openGame) game->setOpenDatabaseGameNumber(-1);

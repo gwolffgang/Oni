@@ -29,6 +29,7 @@ public:
     bool editGame(QModelIndex index);
     bool loadGames();
     void openGame(QModelIndex index);
+    bool pasteGames();
     bool saveChanges() const;
     bool saveGame(bool newSave = false);
     void setCell(int row, column col, const QVariant &value, Qt::AlignmentFlag alignment = Qt::AlignCenter);
@@ -38,13 +39,14 @@ protected:
     // events
     void moveEvent(QMoveEvent *event) override;
 
-
 private slots:
-    void on_close_clicked();
+    inline void on_close_clicked() { closeDatabase(); }
+    void on_copyGame_clicked();
     void on_deleteGame_clicked();
     void on_editGame_clicked();
     void on_GamesTable_doubleClicked(const QModelIndex &index);
     void on_openGame_clicked();
+    inline void on_pasteGame_clicked() { pasteGames(); }
     void on_undoChanges_clicked();
 
 private:
@@ -55,6 +57,7 @@ private:
     QStandardItemModel *model;
     QJsonArray gamesArray;
     QJsonObject tempGame;
+    QModelIndexList gamesToCopy;
 };
 
 #endif // WINDOWDATABASE_H
