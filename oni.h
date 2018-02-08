@@ -84,13 +84,12 @@ public:
     inline void setEvent(QString newEvent) { match.event = newEvent; }
     inline void setFlippedBoard(bool state) { flippedBoard = state; }
     inline void setFieldOfOrigin(Field *origin) { fieldOfOrigin = origin; }
-    inline void setGameResult(int newResult) { match.gameResult = newResult; }
-    inline void setGameResult(QString newResult) { if (newResult == "1-0") match.gameResult = 1; if (newResult == "0-1") match.gameResult = 0; }
+    inline void setGameResult(int newResult) { if (abs(newResult) == 1) match.gameResult = newResult; else match.gameResult = 0; }
+    inline void setGameResult(QString newResult) { if (newResult == "1-0") match.gameResult = 1; else if (newResult == "0-1") match.gameResult = -1; else match.gameResult = 0; }
     inline void setOpenDatabaseGameNumber(int newNumber) { match.openDatabaseGameNumber = newNumber; }
     inline void setPickedUpPiece(Piece *newPiece) { pickedUpPiece = newPiece; }
     inline void setPiecesSet(QString newString) { piecesSet = newString; }
-    inline void setPlayerNames(QString nameRed = "Red", QString nameBlue = "Blue") {if (nameBlue != "") match.playerNameBlue = nameBlue;
-                                                                                    if (nameRed != "") match.playerNameRed = nameRed;}
+    inline void setPlayerNames(QString nameRed = "Red", QString nameBlue = "Blue") {if (nameBlue != "") match.playerNameBlue = nameBlue; if (nameRed != "") match.playerNameRed = nameRed;}
     inline void setRound(double newRound) { match.round = newRound; }
 
     // methods

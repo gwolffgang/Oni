@@ -157,6 +157,19 @@
    </property>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>GamesTable</tabstop>
+  <tabstop>close</tabstop>
+  <tabstop>openGame</tabstop>
+  <tabstop>editGame</tabstop>
+  <tabstop>copyGame</tabstop>
+  <tabstop>pasteGame</tabstop>
+  <tabstop>deleteGame</tabstop>
+  <tabstop>filterGames</tabstop>
+  <tabstop>importGames</tabstop>
+  <tabstop>exportGames</tabstop>
+  <tabstop>undoChanges</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

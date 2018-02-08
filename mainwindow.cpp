@@ -91,8 +91,12 @@ bool MainWindow::analyseSetupString(QString string) {
             }
         }
     }
-    // check numbers of masters
-    if (count_M != 1 || count_m != 1) return false;
+    // check number of masters
+    if (!(count_M == 1 && count_m == 1)) {
+        if (count_M == 1 && count_m == 0) game->setGameResult(1);
+        else if (count_M == 0 && count_m == 1) game->setGameResult(-1);
+        else return false;
+    }
 
     // take care of missing pieces
     game->getCapturedRed()->clear();
@@ -384,7 +388,6 @@ QString MainWindow::generateNotationString(QString lastTurn, QString thisTurn) {
     Card temp;
     temp.setCardValues(newCards.at(0).toInt());
     notationString += " (" + QString(temp.getName()) + ")";
-
     return notationString;
 }
 
@@ -430,9 +433,43 @@ QString MainWindow::generateSetupString() {
     return saveString;
 }
 
+QString MainWindow::generateMovesString() {
+    QString moves = "";
+    QList<QString> *turns = game->getTurns();
+    if (turns->size() > 1) {
+        QStringList newPieces, lastPieces;
+        int maxTurns = turns->size();
+        if (turns->last() == "1-0" || turns->last() == "0-1") maxTurns--;
+        for (int k = 1; k < maxTurns; k++) {
+            QStringList part = turns->at(k-1).split("|");
+            lastPieces = part.at(0).split(",");
+            part = turns->at(k).split("|");
+            newPieces = part.at(0).split(",");
+            //QStringList cards = part.at(1).split(",");
+            for (int k = lastPieces.size(); k > -1; k--) {
+                for (int l = newPieces.size(); l > -1; l--) {
+                    if (newPieces.at(l) == lastPieces.at(k)) {
+                        newPieces.removeAt(l);
+                        lastPieces.removeAt(k);
+                    }
+                }
+            }
+            if (1 == newPieces.size() && 1 == lastPieces.size()) moves += lastPieces.at(0) + "-" + newPieces.at(0).at(1) + newPieces.at(0).at(2);
+            else {
+                if (newPieces.at(0).at(0) == lastPieces.at(0).at(0)) moves += lastPieces.at(0) + "x" + lastPieces.at(1);
+                else moves += lastPieces.at(1) + "x" + lastPieces.at(0);
+            }
+            moves += " ";
+    /*    Card temp;
+        temp.setCardValues(cards.at(0).toInt());
+        moves += " (" + QString(temp.getName()) + ")";*/
+        }
+    }
+    return moves;
+}
+
 void MainWindow::newGame(QString setupString) {
     game->setCardChoiceActive(false);
-    game->setActuallyDisplayedMove(0);
     if (setupString == "") {
         // reset settings
         game->setGameResult(0);
@@ -443,6 +480,7 @@ void MainWindow::newGame(QString setupString) {
         game->setDate(QDate::currentDate());
         setWindowTitle("Oni - Red vs. Blue - new unsaved game");
         game->setOpenDatabaseGameNumber(-1);
+        game->setActuallyDisplayedMove(0);
         if (game->getTurns()) game->getTurns()->clear();
     }
 
@@ -468,9 +506,10 @@ void MainWindow::notateVictory(QString result) {
     if ( "1-0" == turns->last() || "0-1" == turns->last()) {
         turns->removeLast();
         turns->append(result);
-        if ("1-0" == result) game->setGameResult(1);
-        else if ("0-1" == result) game->setGameResult(-1);
-    } else game->setGameResult(0);
+    }
+    if ("1-0" == result) game->setGameResult(1);
+    else if ("0-1" == result) game->setGameResult(-1);
+    else game->setGameResult(0);
     game->getWindow()->prepareGame();
 }
 
@@ -487,6 +526,7 @@ void MainWindow::prepareGame() {
     drawCardSlots();
     setupNotation();
     game->writeConfig();
+    //if (game->getTurns()->size() > 1) qDebug().nospace() << qPrintable(generateMovesString()) << endl;
 }
 
 void MainWindow::readWindowConfig(QJsonObject &json) {

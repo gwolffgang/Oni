@@ -45,13 +45,17 @@ bool WindowDatabase::editGame(QModelIndex index) {
     dialogSave->setData(gamesArray.at(index.row()).toObject());
     if (dialogSave->exec() == QDialog::Accepted) {
         QList<QString> data = dialogSave->getValues();
-        match["playerNameRed"] = data.at(0);
-        match["playerNameBlue"] = data.at(1);
+        if (data.at(0) == "") match["playerNameRed"] = "Red";
+        else match["playerNameRed"] = data.at(0);
+        if (data.at(1) == "") match["playerNameBlue"] = "Blue";
+        else match["playerNameBlue"] = data.at(1);
         match["event"] = data.at(2);
         match["city"] = data.at(3);
         match["round"] = data.at(4).toDouble();
         match["date"] = data.at(5);
-        match["gameResult"] = data.at(6).toInt();
+        if ("1-0" == data.at(6)) match["gameResult"] = 1;
+        else if ("0-1" == data.at(6)) match["gameResult"] = -1;
+        else match["gameResult"] = 0;
         if (data.size() > 7) {
             if (data.last() == "1-0" || data.last() == "0-1") data.removeLast();
             QJsonArray turnsArray = {};
@@ -180,16 +184,17 @@ bool WindowDatabase::saveGame(bool newSave) {
             if (databaseData.contains("tempGame") && databaseData["tempGame"].isObject())
                 tempGame = databaseData["tempGame"].toObject();
     databaseFile.close();
+    if (gamesArray.size()-1 < game->getOpenDatabaseGameNumber()) game->setOpenDatabaseGameNumber(-1);
     if (newSave == true || game->getOpenDatabaseGameNumber() == -1) {
         dialogSave = new DialogSave(this);
         if (dialogSave->exec() == QDialog::Accepted) {
+            Oni *test = game;
             QList<QString> data = dialogSave->getValues();
             game->setPlayerNames(data.at(0), data.at(1));
             game->setEvent(data.at(2));
             game->setCity(data.at(3));
             game->setRound(data.at(4).toDouble());
             game->setDate(data.at(5));
-            game->setGameResult(data.at(6));
             game->getWindow()->notateVictory(data.at(6));
             game->setOpenDatabaseGameNumber(gamesArray.size());
             game->getWindow()->prepareGame();
@@ -202,7 +207,7 @@ bool WindowDatabase::saveGame(bool newSave) {
             match["event"] = game->getEvent();
             match["city"] = game->getCity();
             match["round"] = game->getRound();
-            match["date"] = game->getDate().toString();
+            match["date"] = game->getDate().toString(Qt::ISODate);
             match["gameResult"] = game->getGameResult();
             QJsonArray turnsArray;
             for (auto & turn : *game->getTurns()) turnsArray.append(turn);

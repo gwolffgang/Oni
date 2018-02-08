@@ -6,6 +6,12 @@
 #include <time.h>
 #include <stdlib.h>
 
+enum CardID {
+    BOAR = 1, COBRA, CRAB, CRANE, DRAGON, EEL, ELEPHANT, FROG, GOOSE, HORSE, MANTIS, MONKEY, OX, RABBIT, ROOSTER, TIGER,
+    BEAR, DOG, FOX, GIRAFFE, IGUANA, KIRIN, MOUSE, OTTER, PANDA, PHOENIX, RAT, SABLE, SEASNAKE, TANUKI, TURTLE, VIPER,
+    GOAT, SHEEP
+};
+
 class Card : public QObject, public QGraphicsPixmapItem {
     Q_OBJECT
 
