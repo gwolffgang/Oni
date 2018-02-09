@@ -43,7 +43,7 @@ class Oni : public QObject {
 
 public:
     // variables
-    QString backupFileName, configFileName, databaseFileName;
+    QString backupFileName, configFileName, databaseFileName, tempDataFileName;
 
     // constructor
     Oni();
@@ -93,7 +93,7 @@ public:
     inline void setRound(double newRound) { match.round = newRound; }
 
     // methods
-    inline bool getFirstPlayersTurn() { if (match.turns->size()%2 == 1) return true; else return false; }
+    inline bool getFirstPlayersTurn() { if (actuallyDisplayedMove%2 == 0) return true; else return false; }
     bool readConfig();
     QList<Card*> identifyCards(int owner);
     void switchCards(CardSlot *usedCardSlot);

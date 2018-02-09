@@ -26,7 +26,10 @@ public:
 
     // methods
     void closeDatabase();
+    bool copyGames();
     bool editGame(QModelIndex index);
+    bool exportGames();
+    QString generateMovesString();
     bool loadGames();
     void openGame(QModelIndex index);
     bool pasteGames();
@@ -41,9 +44,12 @@ protected:
 
 private slots:
     inline void on_close_clicked() { closeDatabase(); }
-    void on_copyGame_clicked();
+    inline void on_copyGame_clicked() { copyGames(); }
     void on_deleteGame_clicked();
     void on_editGame_clicked();
+    inline void on_exportGames_clicked() { exportGames(); }
+    void on_filterGames_clicked();
+    void on_importGames_clicked();
     void on_GamesTable_doubleClicked(const QModelIndex &index);
     void on_openGame_clicked();
     inline void on_pasteGame_clicked() { pasteGames(); }
@@ -56,7 +62,6 @@ private:
     int windowPosX, windowPosY, modelCols, modelRows;
     QStandardItemModel *model;
     QJsonArray gamesArray;
-    QJsonObject tempGame;
     QModelIndexList gamesToCopy;
 };
 

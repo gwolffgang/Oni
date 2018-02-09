@@ -16,7 +16,7 @@ int myrandom(int i) { srand(unsigned(time(NULL))); return std::rand()%i; }
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),
     colorHovered(Qt::gray), colorSelected(Qt::darkCyan), colorChooseableCard1(Qt::yellow),
     colorChooseableCard2(Qt::blue), colorChooseableBoth(Qt::green), screen(QGuiApplication::primaryScreen()), scene(NULL),
-    dialogAbout(new DialogAbout(this)), windowDatabase(new WindowDatabase(this)), axisLabel(new QList<QGraphicsTextItem*>),
+    dialogAbout(new DialogAbout(this)), windowDatabase(NULL), axisLabel(new QList<QGraphicsTextItem*>),
     windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
     fieldSize(0), slotHeight(0.0), slotWidth(0.0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
 
@@ -381,8 +381,8 @@ QString MainWindow::generateNotationString(QString lastTurn, QString thisTurn) {
     }
     if (usedPieces.size() == 2) notationString += usedPieces.at(0) + "-" + usedPieces.at(1).at(1) + usedPieces.at(1).at(2);
     else {
-        if (usedPieces.at(2).at(0) == usedPieces.at(0).at(0)) notationString += usedPieces.at(0) + "x" + usedPieces.at(1);
-        else notationString += usedPieces.at(1) + "x" + usedPieces.at(0);
+        if (usedPieces.at(2).at(0) == usedPieces.at(0).at(0)) notationString += usedPieces.at(0) + "x" + usedPieces.at(1).at(1) + usedPieces.at(1).at(2);
+        else notationString += usedPieces.at(1) + "x" + usedPieces.at(0).at(1) + usedPieces.at(0).at(2);
     }
     // add used card (neutral card of actual cards)
     Card temp;
@@ -431,41 +431,6 @@ QString MainWindow::generateSetupString() {
             saveString += QString::number(game->getCards()->at(k)->getID());
         }
     return saveString;
-}
-
-QString MainWindow::generateMovesString() {
-    QString moves = "";
-    QList<QString> *turns = game->getTurns();
-    if (turns->size() > 1) {
-        QStringList newPieces, lastPieces;
-        int maxTurns = turns->size();
-        if (turns->last() == "1-0" || turns->last() == "0-1") maxTurns--;
-        for (int k = 1; k < maxTurns; k++) {
-            QStringList part = turns->at(k-1).split("|");
-            lastPieces = part.at(0).split(",");
-            part = turns->at(k).split("|");
-            newPieces = part.at(0).split(",");
-            //QStringList cards = part.at(1).split(",");
-            for (int k = lastPieces.size(); k > -1; k--) {
-                for (int l = newPieces.size(); l > -1; l--) {
-                    if (newPieces.at(l) == lastPieces.at(k)) {
-                        newPieces.removeAt(l);
-                        lastPieces.removeAt(k);
-                    }
-                }
-            }
-            if (1 == newPieces.size() && 1 == lastPieces.size()) moves += lastPieces.at(0) + "-" + newPieces.at(0).at(1) + newPieces.at(0).at(2);
-            else {
-                if (newPieces.at(0).at(0) == lastPieces.at(0).at(0)) moves += lastPieces.at(0) + "x" + lastPieces.at(1);
-                else moves += lastPieces.at(1) + "x" + lastPieces.at(0);
-            }
-            moves += " ";
-    /*    Card temp;
-        temp.setCardValues(cards.at(0).toInt());
-        moves += " (" + QString(temp.getName()) + ")";*/
-        }
-    }
-    return moves;
 }
 
 void MainWindow::newGame(QString setupString) {
@@ -526,7 +491,6 @@ void MainWindow::prepareGame() {
     drawCardSlots();
     setupNotation();
     game->writeConfig();
-    //if (game->getTurns()->size() > 1) qDebug().nospace() << qPrintable(generateMovesString()) << endl;
 }
 
 void MainWindow::readWindowConfig(QJsonObject &json) {
@@ -580,42 +544,6 @@ void MainWindow::resetLists() {
     }
 }
 
-/* void MainWindow::saveGame(QString fileName) {
-    if (fileName == "") {
-        if (dialogSave->exec() == QDialog::Accepted) {
-            QList<QString> names = dialogSave->getValues();
-            game->setPlayerNames(names.at(0), names.at(1));
-
-            int i = 0;
-            QString number = "";
-            do {
-                if (++i > 1) number = " " + QString::number(i);
-                fileName = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + "/saves/" + names.at(0) + "-" + names.at(1) + " (" + QDate::currentDate().toString("yyyy-MM-dd") + ")"+ number +".oni";
-            } while (fileExists(fileName));
-
-            // set window title
-            QStringList elements = fileName.split("/");
-            QStringList name = elements.last().split(".");
-            setWindowTitle("Oni - " + name.first());
-        }
-    }
-    if (fileName != "") {
-        // (over)write current savegame
-        QFile file(fileName);
-        if (!file.open(QFile::WriteOnly | QFile::Text))
-            QMessageBox::warning(this, tr("Application"), tr("Cannot write file %1:\n%2.").arg(QDir::toNativeSeparators(fileName),file.errorString()));
-        QTextStream out(&file);
-        #ifndef QT_NO_CURSOR
-            QApplication::setOverrideCursor(Qt::WaitCursor);
-        #endif
-        for (int i = 0; i < game->getTurns()->size(); i++)
-            out << game->getTurns()->at(i) << endl;
-        #ifndef QT_NO_CURSOR
-            QApplication::restoreOverrideCursor();
-        #endif
-    }
-} */
-
 void MainWindow::saveTurnInNotation() {
     // refreshing of the notation if jumped back
     QString lastMove, thisMove;
@@ -627,6 +555,7 @@ void MainWindow::saveTurnInNotation() {
     lastMove = turns->last();
     turns->append(thisMove);
     game->setActuallyDisplayedMove(actuallyDisplayedMove+1);
+    ui->notation->scrollToBottom();
     setupNotation();
 }
 
@@ -679,7 +608,6 @@ void MainWindow::setupNotation() {
     if (lastTurn == "1-0" || lastTurn == "0-1") ui->notation->addItem(lastTurn);
     if (ui->actionHideNotation->isChecked()) ui->notation->setVisible(false);
     else ui->notation->setVisible(true);
-    ui->notation->scrollToBottom();
 }
 
 void MainWindow::updateLayout() {
@@ -736,10 +664,11 @@ void MainWindow::moveEvent(QMoveEvent *event) {
 
 void MainWindow::showMove(QListWidgetItem *item) {
     if (item->text() != "1-0" && item->text() != "0-1") {
-        for (int i = 0; i < ui->notation->count(); i++) {
-            if (ui->notation->item(i) == item) {
-                newGame(game->getTurns()->at(i+1));
-                game->setActuallyDisplayedMove(i+1);
+        for (int elem = 0; elem < ui->notation->count(); elem++) {
+            if (ui->notation->item(elem) == item) {
+                newGame(game->getTurns()->at(elem+1));
+                game->setActuallyDisplayedMove(elem+1);
+                game->getWindow()->updateLayout();
                 return;
             }
         }
@@ -761,17 +690,18 @@ void MainWindow::on_actionStartingPosition_triggered() {
 }
 
 void MainWindow::on_actionPreviousMove_triggered() {
-    if (game->getTurns()->size() > 1 && game->getActuallyDisplayedMove() > 0) {
-        game->setActuallyDisplayedMove(game->getActuallyDisplayedMove()-1);
+    int displayedMove = game->getActuallyDisplayedMove();
+    if (game->getTurns()->size() > 1 && displayedMove > 0) {
+        game->setActuallyDisplayedMove(displayedMove-1);
         newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
     }
 }
 
 void MainWindow::on_actionNextMove_triggered() {
-    int actuallyDisplayedMove = game->getActuallyDisplayedMove();
-    if (game->getTurns()->size() > 1 && actuallyDisplayedMove < game->getTurns()->size()-1) {
-        game->setActuallyDisplayedMove(actuallyDisplayedMove+1);
-        newGame(game->getTurns()->at(actuallyDisplayedMove));
+    int displayedMove = game->getActuallyDisplayedMove();
+    if (game->getTurns()->size() > 1 && displayedMove < game->getTurns()->size()-1) {
+        game->setActuallyDisplayedMove(displayedMove+1);
+        newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
     }
 }
 

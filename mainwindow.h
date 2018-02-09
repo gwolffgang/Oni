@@ -61,7 +61,6 @@ public:
     void drawSideBar();
     QString generateNotationString(QString lastTurn, QString thisTurn);
     QString generateSetupString();
-    QString generateMovesString();
     void newGame(QString setupString = "");
     void notateVictory(QString result);
     void prepareGame();

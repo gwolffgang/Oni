@@ -14,6 +14,7 @@ Oni::Oni() :
     backupFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_backup.json")),
     configFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_cfg.json")),
     databaseFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_save.json")),
+    tempDataFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_temp.json")),
     window(new MainWindow), windowDatabase(NULL), board(new QList<QList<Field*>>),
     pieces(new QList<Piece*>), capturedBlue(new QList<Piece*>), capturedRed(new QList<Piece*>),
     slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>),
@@ -32,10 +33,12 @@ Oni::Oni() :
 
     // create AppData folder and needed files, if not done yet
     QDir appDataFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QFile databaseFile(databaseFileName);
     QFile backupFile(backupFileName);
+    QFile databaseFile(databaseFileName);
+    QFile tempFile(tempDataFileName);
     if (!appDataFolder.exists()) appDataFolder.mkpath(".");
     if (!fileExists(databaseFileName)) databaseFile.open(QIODevice::WriteOnly);
+    if (!fileExists(tempDataFileName)) tempFile.open(QIODevice::WriteOnly);
     if (backupFile.exists()) {
         if(databaseFile.size() == 0) {
             databaseFile.remove();
@@ -67,13 +70,13 @@ bool Oni::readConfig() {
         window->readWindowConfig(configData);
     configFile.close();
 
-    QFile databaseFile(databaseFileName);
-    if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("readConfig: Couldn't open database file for reading."); return false; }
-        QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
-        QJsonObject databaseData = databaseDoc.object();
+    QFile tempFile(tempDataFileName);
+    if (!tempFile.open(QIODevice::ReadOnly)) { qWarning("readConfig: Couldn't open tempFile file for reading."); return false; }
+        QJsonDocument tempFileDoc(QJsonDocument::fromJson(tempFile.readAll()));
+        QJsonObject tempFileData = tempFileDoc.object();
         QJsonObject gameData;
-        if (databaseData.contains("tempGame") && databaseData["tempGame"].isObject()) {
-            gameData = databaseData["tempGame"].toObject();
+        if (tempFileData.contains("tempGame") && tempFileData["tempGame"].isObject()) {
+            gameData = tempFileData["tempGame"].toObject();
             if (gameData.contains("actuallyDisplayedMove") && gameData["actuallyDisplayedMove"].isDouble())
                 actuallyDisplayedMove = gameData["actuallyDisplayedMove"].toInt();
             if (gameData.contains("openDatabaseGameNumber") && gameData["openDatabaseGameNumber"].isDouble())
@@ -98,7 +101,7 @@ bool Oni::readConfig() {
                     for (int k = 0; k < turnsArray.size(); k++) match.turns->append(turnsArray[k].toString());
                 }
         }
-    databaseFile.close();
+    tempFile.close();
     return true;
 }
 
@@ -139,15 +142,15 @@ bool Oni::writeConfig() {
         configFile.write(configDoc.toJson());
     configFile.close();
 
-    QFile databaseFile(databaseFileName);
-    if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("writeConfig: Couldn't open database file for reading."); return false; }
-        QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
-        QJsonObject databaseData = databaseDoc.object();
-        QJsonArray gamesDatabase;
-            if (databaseData.contains("games") && databaseData["games"].isArray())
-                gamesDatabase = databaseData["games"].toArray();
-    databaseFile.close();
-    if (!databaseFile.open(QIODevice::WriteOnly)) { qWarning("writeConfig: Couldn't open database file for writing."); return false; }
+    QFile tempFile(tempDataFileName);
+    if (!tempFile.open(QIODevice::ReadOnly)) { qWarning("writeConfig: Couldn't open tempFile file for reading."); return false; }
+        QJsonDocument tempFileDoc(QJsonDocument::fromJson(tempFile.readAll()));
+        QJsonObject tempFileData = tempFileDoc.object();
+        QJsonArray copyGames;
+            if (tempFileData.contains("copyGames") && tempFileData["copyGames"].isArray())
+                copyGames = tempFileData["copyGames"].toArray();
+    tempFile.close();
+    if (!tempFile.open(QIODevice::WriteOnly)) { qWarning("writeConfig: Couldn't open tempFile file for writing."); return false; }
         QJsonObject tempGame;
             tempGame["actuallyDisplayedMove"] = actuallyDisplayedMove;
             tempGame["openDatabaseGameNumber"] = match.openDatabaseGameNumber;
@@ -161,11 +164,11 @@ bool Oni::writeConfig() {
             QJsonArray turnsArray;
                 for (auto & turn : *match.turns) turnsArray.append(turn);
             tempGame["turns"] = turnsArray;
-        QJsonObject newDatabaseData;
-        newDatabaseData["games"] = gamesDatabase;
-        newDatabaseData["tempGame"] = tempGame;
-        QJsonDocument newDatabaseDoc(newDatabaseData);
-        databaseFile.write(newDatabaseDoc.toJson());
-    databaseFile.close();
+        QJsonObject newTempFileData;
+        if (copyGames.size() > 0) newTempFileData["copyGames"] = copyGames;
+        newTempFileData["tempGame"] = tempGame;
+        QJsonDocument newTempFileDoc(newTempFileData);
+        tempFile.write(newTempFileDoc.toJson());
+    tempFile.close();
     return true;
 }
