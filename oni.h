@@ -1,21 +1,12 @@
 #ifndef ONI_H
 #define ONI_H
 
+#include <QtCore>
+#include <QtGui>
 #include <QApplication>
-#include <QBrush>
 #include <QFileDialog>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
 #include <QMessageBox>
-#include <QMouseEvent>
-#include <QListWidget>
-#include <QObject>
-#include <QScreen>
-#include <QTextStream>
-#include <QtPrintSupport/QPrinter>
+
 #include "card.h"
 #include "cardslot.h"
 #include "field.h"

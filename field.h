@@ -1,8 +1,8 @@
 #ifndef FIELD_H
 #define FIELD_H
 
-#include <QObject>
-#include <QMouseEvent>
+#include <QtCore>
+#include <QtGui>
 
 #include "piece.h"
 #include "card.h"

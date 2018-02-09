@@ -5,20 +5,17 @@
 extern Oni *game;
 
 WindowDatabase::WindowDatabase(QWidget *parent) : QWidget(parent), ui(new Ui::WindowDatabase),
-    dialogSave(NULL), windowPosX(50), windowPosY(50), modelCols(8), modelRows(0),
-    model(new QStandardItemModel(modelRows, modelCols, this)), gamesArray({}), gamesToCopy({}) {
+    dialogSave(NULL), windowPosX(50), windowPosY(50), modelCols(9), modelRows(0),
+    model(new QStandardItemModel(modelRows, modelCols, this)), gamesArray({}) {
     ui->setupUi(this);
     ui->GamesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
-
     setWindowTitle("Oni - Games Database");
     loadGames();
     updateLayout();
     show();
 }
 
-WindowDatabase::~WindowDatabase() {
-    delete ui;
-}
+WindowDatabase::~WindowDatabase() { delete ui; }
 
 void WindowDatabase::closeDatabase() {
     QFile databaseFile(game->databaseFileName);
@@ -29,8 +26,8 @@ void WindowDatabase::closeDatabase() {
 }
 
 bool WindowDatabase::copyGames() {
-    gamesToCopy = ui->GamesTable->selectionModel()->selectedRows();
-    int amount = gamesToCopy.size();
+    QModelIndexList selection = ui->GamesTable->selectionModel()->selectedRows();
+    int amount = selection.size();
     if (amount > 0) {
         ui->copyGame->setText("Copy (" + QString::number(amount) + ")");
         ui->pasteGame->setEnabled(true);
@@ -53,8 +50,8 @@ bool WindowDatabase::copyGames() {
     tempFile.close();
     if (!tempFile.open(QIODevice::WriteOnly)) { qWarning("writeConfig: Couldn't open tempFile for writing."); return false; }
         QJsonArray copyGames;
-            for (int i = 0; i < gamesToCopy.size(); i++)
-            copyGames.append(gamesArray.at(gamesToCopy.at(i).row()));
+            for (int i = 0; i < selection.size(); i++)
+            copyGames.append(gamesArray.at(selection.at(i).row()));
         QJsonObject newTempFileData;
         newTempFileData["copyGames"] = copyGames;
         newTempFileData["tempGame"] = tempGame;
@@ -65,8 +62,8 @@ bool WindowDatabase::copyGames() {
 }
 
 bool WindowDatabase::editGame(QModelIndex index) {
-    QFile databaseFile(game->databaseFileName);
     QJsonObject match;
+    QFile databaseFile(game->databaseFileName);
     if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("editGame: Couldn't open database file for reading."); return false; }
         QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
         QJsonObject databaseData = databaseDoc.object();
@@ -110,41 +107,103 @@ bool WindowDatabase::editGame(QModelIndex index) {
 }
 
 bool WindowDatabase::exportGames() {
-    QFileDialog dialog(this);
-        dialog.setWindowModality(Qt::WindowModal);
-        dialog.setAcceptMode(QFileDialog::AcceptSave);
-        if (dialog.exec() != QDialog::Accepted) return false;
-    QString fileName = dialog.selectedFiles().first();
-    if (fileName != "") {
-        // write current savegame
-        QFile file(fileName);
-        QModelIndexList selection = ui->GamesTable->selectionModel()->selectedRows();
-        if (!file.open(QFile::WriteOnly | QFile::Text))
-            QMessageBox::warning(this, tr("Application"), tr("Cannot write file %1:\n%2.").arg(QDir::toNativeSeparators(fileName),file.errorString()));
-        QTextStream out(&file);
-        #ifndef QT_NO_CURSOR
-            QApplication::setOverrideCursor(Qt::WaitCursor);
-        #endif
-        if (game->getTurns()->size() > 1) out << qPrintable(generateMovesString());
-        #ifndef QT_NO_CURSOR
-            QApplication::restoreOverrideCursor();
-        #endif
-        return true;
+    QModelIndexList selection = ui->GamesTable->selectionModel()->selectedRows();
+    if (selection.size() > 0) {
+        QFileDialog dialog(this);
+            dialog.setWindowModality(Qt::WindowModal);
+            dialog.setAcceptMode(QFileDialog::AcceptSave);
+            if (dialog.exec() != QDialog::Accepted) return false;
+        QString fileName = dialog.selectedFiles().first();
+        if (fileName != "") {
+            QJsonArray gamesArray;
+            QFile file(fileName);
+            if (!file.open(QFile::WriteOnly | QFile::Text))
+                QMessageBox::warning(this, tr("Application"), tr("Cannot write file %1:\n%2.").arg(QDir::toNativeSeparators(fileName),file.errorString()));
+            QTextStream out(&file);
+            #ifndef QT_NO_CURSOR
+                QApplication::setOverrideCursor(Qt::WaitCursor);
+            #endif
+
+            QFile databaseFile(game->databaseFileName);
+            if (!databaseFile.open(QIODevice::ReadOnly)) { qWarning("editGame: Couldn't open database file for reading."); return false; }
+                QJsonDocument databaseDoc(QJsonDocument::fromJson(databaseFile.readAll()));
+                QJsonObject databaseData = databaseDoc.object();
+                if (databaseData.contains("games") && databaseData["games"].isArray()) gamesArray = databaseData["games"].toArray();
+            databaseFile.close();
+
+            QJsonArray turns;
+            for (int item = 0; item < selection.size(); item++) {
+                QJsonObject game = gamesArray.at(selection.at(item).row()).toObject();
+                if (game.contains("playerNameRed") && game["playerNameRed"].isString()) out << "[  Red   | " << game["playerNameRed"].toString() << " ]" << endl;
+                if (game.contains("playerNameBlue") && game["playerNameBlue"].isString()) out << "[  Blue  | " << game["playerNameBlue"].toString() << " ]" << endl;
+                if (game.contains("event") && game["event"].isString()) out << "[ Event  | " << game["event"].toString() << " ]" << endl;
+                if (game.contains("city") && game["city"].isString()) out << "[  City  | " << game["city"].toString() << " ]" << endl;
+                if (game.contains("round") && game["round"].isDouble()){
+                    out << "[ Round  | ";
+                    if (game["round"].toDouble() != 0) out << game["round"].toDouble();
+                    out << " ]" << endl;
+                }
+                if (game.contains("date") && game["date"].isString()) out << "[  Date  | " << game["date"].toString() << " ]" << endl;
+                if (game.contains("gameResult") && game["gameResult"].isDouble()) {
+                    out << "[ Result | ";
+                    switch (game["gameResult"].toInt()) {
+                    case -1: out << "0-1"; break;
+                    case 0: out << "*"; break;
+                    case 1: out << "1-0";
+                    }
+                    out << " ]" << endl;
+                }
+                if (game.contains("turns") && game["turns"].isArray()) {
+                    turns = game["turns"].toArray();
+                    QStringList startingPosition = turns.at(0).toString().split("|");
+                    out << "[ Cards  | ";
+                    QString cards = startingPosition.at(1);
+                    QStringList cardsList = cards.remove(" ").split(",");
+                    Card card;
+                    for (int i = 0; i < cardsList.size(); i++) {
+                        card.setCardValues(cardsList.at(i).toInt());
+                        switch (i) {
+                        case 0: out << card.getName() << " (" << card.getID() << ")"; break;
+                        case 1: case 2: out << card.getName() << " (" << card.getID() << "-Red)"; break;
+                        case 3: case 4: out << card.getName() << " (" << card.getID() << "-Blue)"; break;
+                        }
+                        if (i != 4) out << ", ";
+                    }
+                    out << " ]" << endl;
+                    out << "[ Pieces | " << startingPosition.at(0) << " ]" << endl << endl;
+                    if (turns.size() > 1) out << qPrintable(generateMovesString(turns)) << endl << endl;
+                }
+            }
+
+            #ifndef QT_NO_CURSOR
+                QApplication::restoreOverrideCursor();
+            #endif
+            return true;
+        }
     }
     return false;
 }
 
-QString WindowDatabase::generateMovesString() {
+QString WindowDatabase::generateMovesString(QJsonArray turnsList) {
     QString moves = "";
-    QList<QString> *turns = game->getTurns();
+    QList<QString> *turns;
+    if (turnsList.isEmpty()) turns = game->getTurns();
+    else {
+        turns = new QList<QString>;
+        for (int i = 0; i < turnsList.size(); i++) turns->append(turnsList.at(i).toString());
+    }
     if (turns->size() > 1) {
         QStringList newPieces, lastPieces;
         int maxTurns = turns->size();
         if (turns->last() == "1-0" || turns->last() == "0-1") maxTurns--;
         for (int k = 1; k < maxTurns; k++) {
-            QStringList part = turns->at(k-1).split("|");
+            QString turn = turns->at(k-1);
+            turn = turn.remove(" ");
+            QStringList part = turn.split("|");
             lastPieces = part.at(0).split(",");
-            part = turns->at(k).split("|");
+            turn = turns->at(k);
+            turn = turn.remove(" ");
+            part = turn.split("|");
             newPieces = part.at(0).split(",");
             QStringList cards = part.at(1).split(",");
             QStringList usedPieces;
@@ -194,6 +253,7 @@ bool WindowDatabase::loadGames() {
         if (game.contains("turns") && game["turns"].isArray()) setCell(row, colMoves, game["turns"].toArray().size() / 2);
         if (game.contains("event") && game["event"].isString()) setCell(row, colEvent, game["event"].toString());
         if (game.contains("city") && game["city"].isString()) setCell(row, colCity, game["city"].toString());
+        if (game.contains("round") && game["round"].isDouble() && game["round"].toDouble() != 0) setCell(row, colRound, game["round"].toDouble());
         if (game.contains("date") && game["date"].isString()) {
             QDate date = QDate::fromString(game["date"].toString(), Qt::ISODate);
             setCell(row, colDate, date.toString());
@@ -333,6 +393,7 @@ void WindowDatabase::updateLayout() {
     model->setHeaderData(colCards, Qt::Horizontal, "Cards");
     model->setHeaderData(colEvent, Qt::Horizontal, "Event");
     model->setHeaderData(colCity, Qt::Horizontal, "City");
+    model->setHeaderData(colRound, Qt::Horizontal, "Round");
     model->setHeaderData(colDate, Qt::Horizontal, "Date");
 
     QTableView *table = ui->GamesTable;

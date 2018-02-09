@@ -1,8 +1,8 @@
 #ifndef CARDSLOT_H
 #define CARDSLOT_H
 
-#include <QMouseEvent>
-#include <QObject>
+#include <QtCore>
+#include <QtGui>
 
 #include "card.h"
 

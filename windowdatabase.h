@@ -1,13 +1,12 @@
 #ifndef WINDOWDATABASE_H
 #define WINDOWDATABASE_H
 
-#include <QWidget>
 #include <QtCore>
 #include <QtGui>
 #include "dialogsave.h"
 
 enum column { // for gamesTable
-    colRed, colBlue, colResult, colMoves, colCards, colEvent, colCity, colDate
+    colRed, colBlue, colResult, colMoves, colCards, colEvent, colCity, colRound, colDate
 };
 
 namespace Ui {
@@ -29,7 +28,7 @@ public:
     bool copyGames();
     bool editGame(QModelIndex index);
     bool exportGames();
-    QString generateMovesString();
+    QString generateMovesString(QJsonArray turnsList = {});
     bool loadGames();
     void openGame(QModelIndex index);
     bool pasteGames();
@@ -62,7 +61,6 @@ private:
     int windowPosX, windowPosY, modelCols, modelRows;
     QStandardItemModel *model;
     QJsonArray gamesArray;
-    QModelIndexList gamesToCopy;
 };
 
 #endif // WINDOWDATABASE_H

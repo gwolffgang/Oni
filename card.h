@@ -1,10 +1,9 @@
 #ifndef CARD_H
 #define CARD_H
 
+#include <QtCore>
+#include <QtGui>
 #include <QGraphicsPixmapItem>
-#include <QString>
-#include <time.h>
-#include <stdlib.h>
 
 enum CardID {
     BOAR = 1, COBRA, CRAB, CRANE, DRAGON, EEL, ELEPHANT, FROG, GOOSE, HORSE, MANTIS, MONKEY, OX, RABBIT, ROOSTER, TIGER,

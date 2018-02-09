@@ -36,6 +36,7 @@ bool MainWindow::getFlipEveryMove() {
 }
 
 bool MainWindow::analyseSetupString(QString string) {
+    string = string.remove(" ");
     QList<Card*> *cards = game->getCards();
     QList<Piece*> *pieces = game->getPieces();
 
@@ -360,6 +361,8 @@ void MainWindow::drawSideBar() {
 }
 
 QString MainWindow::generateNotationString(QString lastTurn, QString thisTurn) {
+    lastTurn = lastTurn.remove(" ");
+    thisTurn = thisTurn.remove(" ");
     QString notationString = "";
     QStringList part = lastTurn.split("|");
     QStringList lastPieces = part.at(0).split(",");
@@ -396,7 +399,7 @@ QString MainWindow::generateSetupString() {
     QString saveString = "";
     for (int i = 0; i < game->getPieces()->size(); i++) {
         Piece *piece = game->getPieces()->at(i);
-        if (saveString != "") saveString += ",";
+        if (saveString != "") saveString += ", ";
         saveString += piece->getType();
         switch (game->getPieces()->at(i)->getCol()) {
         case 0:
@@ -416,18 +419,18 @@ QString MainWindow::generateSetupString() {
         }
         saveString += QString::number(game->getPieces()->at(i)->getRow()+1);
     }
-    saveString += "|";
+    saveString += "| ";
     // set cards
     if (game->getSlotsGrid()->size() > 0) {
         for (int k = 0; k < 3; k++) {
             for (int l = 0; l < game->getSlotsGrid()->at(k).size(); l++) {
-                if (k != 0) saveString += ",";
+                if (k != 0) saveString += ", ";
                 saveString += QString::number(game->getSlotsGrid()->at(k).at(l)->getCard()->getID());
             }
         }
     } else
         for (int k = 0; k < 5; k++) {
-            if (k != 0) saveString += ",";
+            if (k != 0) saveString += ", ";
             saveString += QString::number(game->getCards()->at(k)->getID());
         }
     return saveString;
@@ -453,7 +456,7 @@ void MainWindow::newGame(QString setupString) {
     resetLists();
 
     // setup string
-    const QString defaultString = "Sa1,Sb1,Mc1,Sd1,Se1,sa5,sb5,mc5,sd5,se5|";
+    const QString defaultString = "Sa1, Sb1, Mc1, Sd1, Se1, sa5, sb5, mc5, sd5, se5|";
     if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = defaultString;
     if (!analyseSetupString(setupString)) {
         game->setGameResult(0);

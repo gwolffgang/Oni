@@ -1,11 +1,11 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QDesktopServices>
+#include <QtCore>
+#include <QtGui>
 #include <QGraphicsScene>
 #include <QListWidget>
 #include <QMainWindow>
-#include <QMoveEvent>
 
 #include "dialogabout.h"
 #include "windowdatabase.h"
@@ -116,8 +116,8 @@ private slots:
     // Match
     void on_actionNew_triggered();
     void on_actionSetupPosition_triggered();
-    inline void on_actionSave_triggered() { windowDatabase->saveGame(); }
-    inline void on_actionSaveAs_triggered() { windowDatabase->saveGame(true); }
+    inline void on_actionSave_triggered() { windowDatabase = new WindowDatabase; windowDatabase->saveGame(); delete windowDatabase; }
+    inline void on_actionSaveAs_triggered() { windowDatabase = new WindowDatabase; windowDatabase->saveGame(true); delete windowDatabase; }
     void on_actionResign_triggered();
     // Sensei
     void on_actionRedEasy_triggered();
