@@ -1,5 +1,0 @@
-Es reicht aus eine Version von Qt runterzuladen, fuer Onitama wurde Qt 5.8 verwendet.
- --> bei der Auswahl ist zu beachten, dass die jeweilige Version von Microsoft VS ausgewaehlt werden kann ("msvc2013_64")
-Qt verwendet den Compiler einer der Visual Studio Versionen, die sich auf dem Rechner befinden.
-Durch ein "Qt Visual Studio Add-in" wird Qt in VS integriert und kann somit dort samt aller Libraries verwendet werden.
-

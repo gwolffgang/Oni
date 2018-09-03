@@ -8,7 +8,7 @@ Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent), row(-1), col(
 
 void Piece::drawPiece() {
     // draw piece
-    double pieceSize = game->getWindow()->getFieldSize();
+    int pieceSize = static_cast<int>(game->getWindow()->getFieldSize());
     piece = QPixmap(pieceSize, pieceSize);
     piece.fill(Qt::transparent);
     QString name, color;
@@ -24,14 +24,14 @@ void Piece::drawPiece() {
             if (color == "red") painter.setBrush(QBrush(Qt::red, Qt::SolidPattern));
             else painter.setBrush(QBrush(Qt::blue, Qt::SolidPattern));
             painter.setPen(Qt::lightGray);
-            painter.drawEllipse(0.15*pieceSize, 0.15*pieceSize, 0.7*pieceSize, 0.7*pieceSize);
+            painter.drawEllipse(15*pieceSize/100, 15*pieceSize/100, 70*pieceSize/100, 70*pieceSize/100);
             if (name == "master") {
-                namesFont.setPixelSize(0.45*pieceSize);
+                namesFont.setPixelSize(45*pieceSize/100);
                 painter.setFont(namesFont);
                 painter.drawText(QRectF(0.15*pieceSize, 0.15*pieceSize, 0.7*pieceSize, 0.7*pieceSize), Qt::AlignCenter, "師");
             }
             else {
-                namesFont.setPixelSize(0.35*pieceSize);
+                namesFont.setPixelSize(35*pieceSize/100);
                 painter.setFont(namesFont);
                 painter.drawText(QRectF(0.15*pieceSize, 0.15*pieceSize, 0.7*pieceSize, 0.7*pieceSize), Qt::AlignCenter, "徒");
             }

@@ -11,12 +11,12 @@
 
 extern Oni *game;
 
-int myrandom(int i) { srand(unsigned(time(NULL))); return std::rand()%i; }
+int myrandom(int i) { srand(unsigned(time(nullptr))); return std::rand()%i; }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow),
     colorHovered(Qt::gray), colorSelected(Qt::darkCyan), colorChooseableCard1(Qt::yellow),
-    colorChooseableCard2(Qt::blue), colorChooseableBoth(Qt::green), screen(QGuiApplication::primaryScreen()), scene(NULL),
-    dialogAbout(new DialogAbout(this)), windowDatabase(NULL), axisLabel(new QList<QGraphicsTextItem*>),
+    colorChooseableCard2(Qt::blue), colorChooseableBoth(Qt::green), screen(QGuiApplication::primaryScreen()), scene(nullptr),
+    dialogAbout(new DialogAbout(this)), windowDatabase(nullptr), axisLabel(new QList<QGraphicsTextItem*>),
     windowPosX(0), windowPosY(0), windowHeight(0), windowWidth(0), borderX(0), borderY(0),
     fieldSize(0), slotHeight(0.0), slotWidth(0.0), sideBarSize(0), axisLabelSize(0), MSWindowsCorrection(0) {
 
@@ -193,7 +193,7 @@ void MainWindow::drawAxisLabeling() {
 void MainWindow::drawBackGroundPicture() {
     double size = fieldSize * 5;
     QGraphicsPixmapItem *back = new QGraphicsPixmapItem(QPixmap(":/pics/back.png"));
-        back->setPixmap(back->pixmap().scaled(size, size));
+        back->setPixmap(back->pixmap().scaled(static_cast<int>(size), static_cast<int>(size)));
         back->setPos(borderX + axisLabelSize, borderY);
         scene->addItem(back);
     }
@@ -334,7 +334,7 @@ void MainWindow::drawSideBar() {
         double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
         double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
         if (victim->getType() == 's') {
-            victim->setPixmap(victim->pixmap().scaled(victimHeight, victimWidth));
+            victim->setPixmap(victim->pixmap().scaled(static_cast<int>(victimHeight), static_cast<int>(victimWidth)));
             victim->setPos(posXright - 1.5 * borderX, windowHeight - MSWindowsCorrection - 2*borderY - turnRed->boundingRect().height() - sideBarSize - axisLabelSize - victim->pixmap().height()*(i+1));
             delItem = false;
             for (int k = 0; k < scene->items().size(); k++)
@@ -349,7 +349,7 @@ void MainWindow::drawSideBar() {
         double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
         double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
         if (victim->getType() == 'S') {
-            victim->setPixmap(victim->pixmap().scaled(victimHeight, victimWidth));
+            victim->setPixmap(victim->pixmap().scaled(static_cast<int>(victimHeight), static_cast<int>(victimWidth)));
             victim->setPos(posXright - 1.5 * borderX, 2*borderY + turnRed->boundingRect().height() + victim->pixmap().height()*i);
             delItem = false;
             for (int k = 0; k < scene->items().size(); k++)
@@ -448,7 +448,7 @@ void MainWindow::newGame(QString setupString) {
         game->setDate(QDate::currentDate());
         setWindowTitle("Oni - Red vs. Blue - new unsaved game");
         game->setOpenDatabaseGameNumber(-1);
-        game->setActuallyDisplayedMove(0);
+        game->setCurrentDisplayedMove(0);
         if (game->getTurns()) game->getTurns()->clear();
     }
 
@@ -551,13 +551,13 @@ void MainWindow::saveTurnInNotation() {
     // refreshing of the notation if jumped back
     QString lastMove, thisMove;
     QList<QString> *turns = game->getTurns();
-    int actuallyDisplayedMove = game->getActuallyDisplayedMove();
-    if (turns->size() > (actuallyDisplayedMove+1))
-         for(int i = turns->size(); i > actuallyDisplayedMove+1; i--) turns->removeLast();
+    int currentDisplayedMove = game->getCurrentDisplayedMove();
+    if (turns->size() > (currentDisplayedMove+1))
+         for(int i = turns->size(); i > currentDisplayedMove+1; i--) turns->removeLast();
     thisMove = generateSetupString();
     lastMove = turns->last();
     turns->append(thisMove);
-    game->setActuallyDisplayedMove(actuallyDisplayedMove+1);
+    game->setCurrentDisplayedMove(currentDisplayedMove+1);
     ui->notation->scrollToBottom();
     setupNotation();
 }
@@ -583,14 +583,14 @@ void MainWindow::setupNotation() {
     QString lastTurn = turns->last();
     double posX = scene->height() - MSWindowsCorrection + slotWidth + 2*borderX + 2.5;
     double posY = slotHeight + 2*borderY + 2.5;
-    ui->notation->setGeometry(posX, posY, slotWidth, slotHeight);
+    ui->notation->setGeometry(static_cast<int>(posX), static_cast<int>(posY), static_cast<int>(slotWidth), static_cast<int>(slotHeight));
     ui->notation->clear();
     int maxLines = turns->size();
     if (turns->size() > 1 && (lastTurn == "1-0" || lastTurn == "0-1")) maxLines--;
     for (int i = 1; i < maxLines; i++) {
         QListWidgetItem *item;
         if (i%2 == 1) {
-            item = new QListWidgetItem(QString::number((int)ui->notation->count()/2+1) + ". "
+            item = new QListWidgetItem(QString::number(static_cast<int>(ui->notation->count()/2+1)) + ". "
                                        + generateNotationString(turns->at(i-1), turns->at(i)));
             item->setBackground(QBrush(QColor(200,55,55), Qt::Dense4Pattern));
             if (ui->actionTinyWindow->isChecked()) item->setFont(QFont("Arial", 6));
@@ -639,8 +639,8 @@ void MainWindow::updateLayout() {
         slotWidth = (windowHeight - 4*borderY - MSWindowsCorrection)/3 * 5/6;
         windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*slotWidth;
     } while (windowWidth > desktop.width()-4 || windowHeight > desktop.height()-4);
-    setGeometry(windowPosX, windowPosY, windowWidth+5, windowHeight+5);
-    setFixedSize(windowWidth+5, windowHeight+5);
+    setGeometry(static_cast<int>(windowPosX), static_cast<int>(windowPosY), static_cast<int>(windowWidth)+5, static_cast<int>(windowHeight)+5);
+    setFixedSize(static_cast<int>(windowWidth)+5, static_cast<int>(windowHeight)+5);
     slotHeight = slotWidth * 6/5;
     fieldSize = (windowHeight - MSWindowsCorrection - 2*borderY - sideBarSize - axisLabelSize) / 5;
     bool sceneWasSetUp = true;
@@ -654,7 +654,7 @@ void MainWindow::updateLayout() {
         ui->view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         ui->notation->setSelectionMode(QAbstractItemView::SingleSelection);
     }
-    ui->view->setFixedSize(windowWidth+5, windowHeight+5);
+    ui->view->setFixedSize(static_cast<int>(windowWidth)+5, static_cast<int>(windowHeight)+5);
     scene->setSceneRect(0, 0, windowWidth, windowHeight);
     if (sceneWasSetUp) prepareGame();
 }
@@ -670,7 +670,7 @@ void MainWindow::showMove(QListWidgetItem *item) {
         for (int elem = 0; elem < ui->notation->count(); elem++) {
             if (ui->notation->item(elem) == item) {
                 newGame(game->getTurns()->at(elem+1));
-                game->setActuallyDisplayedMove(elem+1);
+                game->setCurrentDisplayedMove(elem+1);
                 game->getWindow()->updateLayout();
                 return;
             }
@@ -679,7 +679,7 @@ void MainWindow::showMove(QListWidgetItem *item) {
 }
 
 void MainWindow::on_actionNew_triggered() {
-    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "New game", "Do you want to start a new game?<br>All unsaved changes to the actual game will be lost.");
+    QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "New game", "Do you want to start a new game?<br>All unsaved changes to the actual game will be lost.");
     if (reply == QMessageBox::Yes) newGame();
 }
 
@@ -688,29 +688,29 @@ void MainWindow::on_actionSetupPosition_triggered() {
 }
 
 void MainWindow::on_actionStartingPosition_triggered() {
-    game->setActuallyDisplayedMove(0);
-    newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
+    game->setCurrentDisplayedMove(0);
+    newGame(game->getTurns()->at(game->getCurrentDisplayedMove()));
 }
 
 void MainWindow::on_actionPreviousMove_triggered() {
-    int displayedMove = game->getActuallyDisplayedMove();
+    int displayedMove = game->getCurrentDisplayedMove();
     if (game->getTurns()->size() > 1 && displayedMove > 0) {
-        game->setActuallyDisplayedMove(displayedMove-1);
-        newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
+        game->setCurrentDisplayedMove(displayedMove-1);
+        newGame(game->getTurns()->at(game->getCurrentDisplayedMove()));
     }
 }
 
 void MainWindow::on_actionNextMove_triggered() {
-    int displayedMove = game->getActuallyDisplayedMove();
+    int displayedMove = game->getCurrentDisplayedMove();
     if (game->getTurns()->size() > 1 && displayedMove < game->getTurns()->size()-1) {
-        game->setActuallyDisplayedMove(displayedMove+1);
-        newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
+        game->setCurrentDisplayedMove(displayedMove+1);
+        newGame(game->getTurns()->at(game->getCurrentDisplayedMove()));
     }
 }
 
 void MainWindow::on_actionLastMove_triggered() {
-    game->setActuallyDisplayedMove(game->getTurns()->size()-1);
-    newGame(game->getTurns()->at(game->getActuallyDisplayedMove()));
+    game->setCurrentDisplayedMove(game->getTurns()->size()-1);
+    newGame(game->getTurns()->at(game->getCurrentDisplayedMove()));
 }
 
 void MainWindow::on_actionResign_triggered() {
@@ -721,7 +721,8 @@ void MainWindow::on_actionResign_triggered() {
             if (game->getFirstPlayersTurn()) {
                 game->setGameResult(-1);
                 game->getWindow()->notateVictory("0-1");
-            } else {
+            }
+            else {
                 game->setGameResult(1);
                 game->getWindow()->notateVictory("1-0");
             }
@@ -730,35 +731,27 @@ void MainWindow::on_actionResign_triggered() {
     }
 }
 
-void MainWindow::on_actionRedEasy_triggered() {
-
-}
+void MainWindow::on_actionRedEasy_triggered() {}
 
 void MainWindow::on_actionRedMedium_triggered() {}
 
-void MainWindow::on_actionRedHard_triggered() {
+void MainWindow::on_actionRedHard_triggered() {}
 
-}
+void MainWindow::on_actionBlueEasy_triggered() {}
 
-void MainWindow::on_actionBlueEasy_triggered() {
+void MainWindow::on_actionBlueMedium_triggered() {}
 
-}
-
-void MainWindow::on_actionBlueMedium_triggered() {
-
-}
-
-void MainWindow::on_actionBlueHard_triggered() {
-
-}
+void MainWindow::on_actionBlueHard_triggered() {}
 
 void MainWindow::on_actionBasisGame_triggered() {
-    if (!ui->actionSenseisPath->isChecked()) ui->actionBasisGame->setChecked(true);
+    if (!ui->actionSenseisPath->isChecked())
+        ui->actionBasisGame->setChecked(true);
     game->writeConfig();
 }
 
 void MainWindow::on_actionSenseisPath_triggered() {
-    if (!ui->actionBasisGame->isChecked()) ui->actionSenseisPath->setChecked(true);
+    if (!ui->actionBasisGame->isChecked())
+        ui->actionSenseisPath->setChecked(true);
     game->writeConfig();
 }
 
@@ -783,7 +776,8 @@ void MainWindow::on_actionHideNotation_triggered() {
     if (ui->notation->isVisible()) {
         ui->notation->setVisible(false);
         ui->actionHideNotation->setChecked(true);
-    } else {
+    }
+    else {
         ui->notation->setVisible(true);
         ui->actionHideNotation->setChecked(false);
     }
@@ -795,13 +789,15 @@ void MainWindow::on_actionAxisLabeling_triggered() {
 }
 
 void MainWindow::on_actionPiecesComicStyle_triggered() {
-    if (ui->actionPiecesHanzi->isChecked()) ui->actionPiecesHanzi->setChecked(false);
+    if (ui->actionPiecesHanzi->isChecked())
+        ui->actionPiecesHanzi->setChecked(false);
     game->setPiecesSet("ComicStyle");
     prepareGame();
 }
 
 void MainWindow::on_actionPiecesHanzi_triggered() {
-    if (ui->actionPiecesComicStyle->isChecked()) ui->actionPiecesComicStyle->setChecked(false);
+    if (ui->actionPiecesComicStyle->isChecked())
+        ui->actionPiecesComicStyle->setChecked(false);
     game->setPiecesSet("Hanzi");
     prepareGame();
 }
@@ -847,8 +843,10 @@ void MainWindow::on_actionLargeWindow_triggered() {
 }
 
 void MainWindow::on_actionFullScreen_triggered(){
-    if (ui->actionFullScreen->isChecked()) QMainWindow::showFullScreen();
-    else QMainWindow::showNormal();
+    if (ui->actionFullScreen->isChecked())
+        QMainWindow::showFullScreen();
+    else
+        QMainWindow::showNormal();
     updateLayout();
 }
 

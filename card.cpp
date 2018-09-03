@@ -8,7 +8,7 @@ extern Oni *game;
 int randomizer(const int max) {
     static bool seeded = false;
     if(!seeded) {
-        srand(unsigned(time(NULL)));
+        srand(unsigned(time(nullptr)));
         seeded = true;
     }
     return(rand() % max +1);
@@ -20,7 +20,8 @@ Card::Card(QGraphicsItem *parent) : QGraphicsPixmapItem(parent), name(""), id(0)
 void Card::setCardValues(int cardID) {
     // determinate card
     id = cardID;
-    if (id == 0) id = randomizer(16);
+    if (id == 0)
+        id = randomizer(16);
     // movement options
     switch (id) {
     case 1:
@@ -273,27 +274,26 @@ void Card::drawCard(int player) {
 
     // drawing the card
     double width = slotWidth - 2*borderX -1;
-    double height = (slotHeight - 2*borderY)*5/6 -5/6;
-    card = QPixmap(width +1, height/5*6 +1);
+    double height = (slotHeight - 2*borderY)*5/6 - 5/6;
+    card = QPixmap(static_cast<int>(width+1), static_cast<int>(height*6/5 +1));
     setPos(borderX, borderY);
     QBrush lightGrayBrush = QBrush(Qt::lightGray, Qt::SolidPattern);
     QBrush grayBrush = QBrush(Qt::white, Qt::SolidPattern);
-    QBrush noBrush = QBrush(Qt::NoBrush);
     QPen blackPen = QPen(Qt::black);
     QFont namesFont = QFont("Amburegul");
-    namesFont.setPixelSize(height*0.1);
+    namesFont.setPixelSize(static_cast<int>(height*0.1));
     QPainter painter(&card);
         painter.setFont(namesFont);
         painter.setBrush(lightGrayBrush);
         painter.setPen(blackPen);
-        painter.drawRect(0, 0, width, height);
-        painter.setBrush(noBrush);
-        painter.drawRect(0.2*width, 0, 0.6*width, height);
-        painter.drawRect(0, 0.2*height, width, 0.6*height);
-        painter.drawRect(0.4*width, 0, 0.2*width, height);
-        painter.drawRect(0, 0.4*height, width, 0.2*height);
+        painter.drawRect(0, 0, static_cast<int>(width), static_cast<int>(height));
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRect(static_cast<int>(0.2*width), 0, static_cast<int>(0.6*width), static_cast<int>(height));
+        painter.drawRect(0, static_cast<int>(0.2*height), static_cast<int>(width), static_cast<int>(0.6*height));
+        painter.drawRect(static_cast<int>(0.4*width), 0, static_cast<int>(0.2*width), static_cast<int>(height));
+        painter.drawRect(0, static_cast<int>(0.4*height), static_cast<int>(width), static_cast<int>(0.2*height));
         painter.setBrush(grayBrush);
-        painter.drawRect(0, height, width, 0.2*height);
+        painter.drawRect(0, static_cast<int>(height), static_cast<int>(width), static_cast<int>(0.2*height));
         painter.drawText(QRectF(0, 1.01*height, width, 0.2*height), Qt::AlignCenter, this->getName());
         drawYinYang(&painter, choice[0][0], choice[0][1]);
         drawYinYang(&painter, choice[1][0], choice[1][1]);
@@ -308,11 +308,13 @@ void Card::drawCard(int player) {
     if (!flippedBoard) {
         if ((firstPlayersTurn && player == 2) || (!firstPlayersTurn && (player == 0 || player == 2)))
             setRotation(180);
-        else setRotation(0);
+        else
+            setRotation(0);
     } else {
         if ((!firstPlayersTurn && player == 1) || (firstPlayersTurn && (player == 0 || player == 1)))
             setRotation(180);
-        else setRotation(0);
+        else
+            setRotation(0);
     }
 }
 
@@ -336,7 +338,7 @@ void Card::drawYinYang(QPainter *painter, int x, int y) {
     // drawing Yin Yang
     painter->setPen(noPen);
     painter->setBrush(whiteBrush);
-    painter->drawEllipse(width*(x*0.2 + 0.4)+2, height*(-y*0.2 + 0.4)+2, 0.2*width-4, 0.2*height-4);
+    painter->drawEllipse(static_cast<int>(width*(x*0.2 + 0.4)+2), static_cast<int>(height*(-y*0.2 + 0.4)+2), static_cast<int>(0.2*width-4), static_cast<int>(0.2*height-4));
     painter->setBrush(colorBrush);
     painter->drawPie(QRectF(width*(x*0.2 + 0.4)+2, height*(-y*0.2 + 0.4)+2, 0.2*width-4, 0.2*height-4), 270*16, 180*16);
     painter->setPen(whitePen);
@@ -345,8 +347,8 @@ void Card::drawYinYang(QPainter *painter, int x, int y) {
     painter->setPen(colorPen);
     painter->setBrush(colorBrush);
     painter->drawPie(QRectF(width*(x*0.2 + 0.45), height*(-y*0.2 + 0.5)-1, 0.1*width, 0.1*height-1), 90*16, 180*16);
-    painter->drawEllipse(width*(x*0.2 + 0.48), height*(-y*0.2 + 0.43), 0.04*width, 0.04*height);
+    painter->drawEllipse(static_cast<int>(width*(x*0.2 + 0.48)), static_cast<int>(height*(-y*0.2 + 0.43)), static_cast<int>(0.04*width), static_cast<int>(0.04*height));
     painter->setPen(whitePen);
     painter->setBrush(whiteBrush);
-    painter->drawEllipse(width*(x*0.2 + 0.48), height*(-y*0.2 + 0.52), 0.04*width, 0.04*height);
+    painter->drawEllipse(static_cast<int>(width*(x*0.2 + 0.48)), static_cast<int>(height*(-y*0.2 + 0.52)), static_cast<int>(0.04*width), static_cast<int>(0.04*height));
 }

@@ -9,7 +9,7 @@ DialogSave::DialogSave(QWidget *parent) : QDialog(parent), ui(new Ui::DialogSave
 
     ui->lineEditNameRed->setText(game->getPlayerNameRed());
     ui->lineEditNameBlue->setText(game->getPlayerNameBlue());
-    if (game->getRound() != 0) ui->lineEditRound->setText(QString::number(game->getRound()));
+    if (static_cast<int>(game->getRound()) != 0) ui->lineEditRound->setText(QString::number(game->getRound()));
     else ui->lineEditRound->setText("");
     ui->dateEdit->setDate(game->getDate());
     switch (game->getGameResult()) {
@@ -60,7 +60,8 @@ void DialogSave::setData(QJsonObject gameData) {
         ui->dateEdit->setDate(date);
     }
     if (gameData.contains("round") && gameData["round"].isDouble())
-        if (gameData["round"].toDouble() != 0) ui->lineEditRound->setText(QString::number(gameData["round"].toDouble()));
+        if (gameData["round"].toInt() != 0)
+            ui->lineEditRound->setText(QString::number(gameData["round"].toDouble()));
     if (gameData.contains("turns") && gameData["turns"].isArray()) {
             QJsonArray turnsArray = gameData["turns"].toArray();
             turns.clear();

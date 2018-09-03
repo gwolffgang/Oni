@@ -3,7 +3,7 @@
 
 extern Oni *game;
 
-CardSlot::CardSlot(QGraphicsItem *parent) : QGraphicsRectItem(parent), card(NULL), owner(0) {
+CardSlot::CardSlot(QGraphicsItem *parent) : QGraphicsRectItem(parent), card(nullptr), owner(0) {
     //create a slot to put to the scene
     QGraphicsRectItem *rect;
     rect = new QGraphicsRectItem;
@@ -42,15 +42,23 @@ void CardSlot::colorizePlayersSlots(int player, int number) {
             break;
         case 1:
             if (game->getFirstPlayersTurn()) {
-                if (number == 0) brush.setColor(window->colorChooseableCard1);
-                else brush.setColor(window->colorChooseableCard2);
-            } else brush.setColor(window->colorHovered);
+                if (number == 0)
+                    brush.setColor(window->colorChooseableCard1);
+                else
+                    brush.setColor(window->colorChooseableCard2);
+            }
+            else
+                brush.setColor(window->colorHovered);
             break;
         case 2:
             if (!game->getFirstPlayersTurn()) {
-                if (number == 0) brush.setColor(window->colorChooseableCard1);
-                else brush.setColor(window->colorChooseableCard2);
-            } else brush.setColor(window->colorHovered);
+                if (number == 0)
+                    brush.setColor(window->colorChooseableCard1);
+                else
+                    brush.setColor(window->colorChooseableCard2);
+            }
+            else
+                brush.setColor(window->colorHovered);
     }
     setBrush(brush);
 }

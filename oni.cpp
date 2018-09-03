@@ -15,10 +15,10 @@ Oni::Oni() :
     configFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_cfg.json")),
     databaseFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_save.json")),
     tempDataFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_temp.json")),
-    window(new MainWindow), windowDatabase(NULL), board(new QList<QList<Field*>>),
+    window(new MainWindow), windowDatabase(nullptr), board(new QList<QList<Field*>>),
     pieces(new QList<Piece*>), capturedBlue(new QList<Piece*>), capturedRed(new QList<Piece*>),
     slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>),
-    piecesSet("ComicStyle"), pickedUpPiece(NULL), fieldOfOrigin(NULL), actuallyDisplayedMove(0),
+    piecesSet("ComicStyle"), pickedUpPiece(nullptr), fieldOfOrigin(nullptr), currentDisplayedMove(0),
     flippedBoard(false), cardChoiceActive(false) {
 
     match.openDatabaseGameNumber = -1;
@@ -36,9 +36,12 @@ Oni::Oni() :
     QFile backupFile(backupFileName);
     QFile databaseFile(databaseFileName);
     QFile tempFile(tempDataFileName);
-    if (!appDataFolder.exists()) appDataFolder.mkpath(".");
-    if (!fileExists(databaseFileName)) databaseFile.open(QIODevice::WriteOnly);
-    if (!fileExists(tempDataFileName)) tempFile.open(QIODevice::WriteOnly);
+    if (!appDataFolder.exists())
+        appDataFolder.mkpath(".");
+    if (!fileExists(databaseFileName))
+        databaseFile.open(QIODevice::WriteOnly);
+    if (!fileExists(tempDataFileName))
+        tempFile.open(QIODevice::WriteOnly);
     if (backupFile.exists()) {
         if(databaseFile.size() == 0) {
             databaseFile.remove();
@@ -47,10 +50,11 @@ Oni::Oni() :
         backupFile.remove();
     }
     databaseFile.copy(backupFileName);
-    if (fileExists(configFileName)) readConfig();
+    if (fileExists(configFileName))
+        readConfig();
 
     // seed up randomizer
-    srand(unsigned(time(NULL)));
+    srand(unsigned(time(nullptr)));
 
     QFontDatabase::addApplicationFont(":/fonts/Amburegul.ttf");
     QFontDatabase::addApplicationFont(":/fonts/wts11.ttf");
@@ -77,8 +81,8 @@ bool Oni::readConfig() {
         QJsonObject gameData;
         if (tempFileData.contains("tempGame") && tempFileData["tempGame"].isObject()) {
             gameData = tempFileData["tempGame"].toObject();
-            if (gameData.contains("actuallyDisplayedMove") && gameData["actuallyDisplayedMove"].isDouble())
-                actuallyDisplayedMove = gameData["actuallyDisplayedMove"].toInt();
+            if (gameData.contains("currentDisplayedMove") && gameData["currentDisplayedMove"].isDouble())
+                currentDisplayedMove = gameData["currentDisplayedMove"].toInt();
             if (gameData.contains("openDatabaseGameNumber") && gameData["openDatabaseGameNumber"].isDouble())
                 match.openDatabaseGameNumber = gameData["openDatabaseGameNumber"].toInt();
             if (gameData.contains("playerNameBlue") && gameData["playerNameBlue"].isString())
@@ -115,7 +119,7 @@ QList<Card*> Oni::identifyCards(int owner) {
 }
 
 void Oni::switchCards(CardSlot *usedCardSlot) {
-    Card *temporary = NULL;
+    Card *temporary = nullptr;
     // switch cards
     temporary = usedCardSlot->getCard();
     usedCardSlot->setCard(game->getSlotsGrid()->at(0).at(0)->getCard());
@@ -127,7 +131,7 @@ void Oni::winGame(int winner) {
     QString victor;
     if (winner == 1) victor = game->getPlayerNameRed();
     else victor = game->getPlayerNameBlue();
-    QMessageBox::StandardButton reply = QMessageBox::information(NULL, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
+    QMessageBox::StandardButton reply = QMessageBox::information(nullptr, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
     if (reply == QMessageBox::Save) QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionSave_triggered()) );
 }
 
@@ -152,7 +156,7 @@ bool Oni::writeConfig() {
     tempFile.close();
     if (!tempFile.open(QIODevice::WriteOnly)) { qWarning("writeConfig: Couldn't open tempFile file for writing."); return false; }
         QJsonObject tempGame;
-            tempGame["actuallyDisplayedMove"] = actuallyDisplayedMove;
+            tempGame["currentDisplayedMove"] = currentDisplayedMove;
             tempGame["openDatabaseGameNumber"] = match.openDatabaseGameNumber;
             tempGame["playerNameBlue"] = match.playerNameBlue;
             tempGame["playerNameRed"] = match.playerNameRed;

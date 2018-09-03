@@ -24,7 +24,7 @@ void Button::drawButton(QString buttonType, QString buttonPos) {
             height = sideBarSize;
             width = height / button.height() * button.width();
         }
-        button = button.scaled(width, height);
+        button = button.scaled(static_cast<int>(width), static_cast<int>(height));
         setPixmap(button);
     }
 }
@@ -39,17 +39,22 @@ void Button::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void Button::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
-    if (type == "flipButton") setCursor(Qt::ArrowCursor);
+    if (type == "flipButton")
+        setCursor(Qt::ArrowCursor);
     if (type == "whiteFlag") {
-        if (game->getFirstPlayersTurn()) drawButton("turnRed", "right");
-        else drawButton("turnBlue", "right");
+        if (game->getFirstPlayersTurn())
+            drawButton("turnRed", "right");
+        else
+            drawButton("turnBlue", "right");
         setCursor((Qt::ArrowCursor));
     }
     event->ignore();
 }
 
 void Button::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    if (type == "flipButton") QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );
-    if (type == "whiteFlag") QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionResign_triggered()) );
+    if (type == "flipButton")
+        QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionFlipOnce_triggered()) );
+    if (type == "whiteFlag")
+        QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionResign_triggered()) );
     event->ignore();
 }

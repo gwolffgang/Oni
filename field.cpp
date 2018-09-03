@@ -10,7 +10,7 @@ extern Oni *game;
 
 Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent), col(-1), row(-1), pieceType(' ') {
     //create a field to put to the scene
-    float size = game->getWindow()->getFieldSize();
+    double size = game->getWindow()->getFieldSize();
     QGraphicsRectItem *rect;
     rect = new QGraphicsRectItem;
     setRect(0, 0, size, size);
@@ -48,8 +48,8 @@ void Field::captureOrChangePiece(Piece *target) {
 
         if (target != game->getPickedUpPiece()) pickUpPiece(target);
         else {
-            game->setPickedUpPiece(NULL);
-            game->setFieldOfOrigin(NULL);
+            game->setPickedUpPiece(nullptr);
+            game->setFieldOfOrigin(nullptr);
         }
     }
 }
@@ -60,14 +60,14 @@ void Field::dropPiece() {
     else exchangeCards();
 
     if (!game->getCardChoiceActive()) {
-        if (game->getTurns()->size() > (game->getActuallyDisplayedMove()+1)) {
-            QMessageBox::StandardButton reply = QMessageBox::question(NULL, "Change Move", "Do you really want to enter this new move?<br>The old move and all following ones will be deleted.");
+        if (game->getTurns()->size() > (game->getCurrentDisplayedMove()+1)) {
+            QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "Change Move", "Do you really want to enter this new move?<br>The old move and all following ones will be deleted.");
             if (reply == QMessageBox::No) {
                 unmarkAllFields();
                 // put back picked up piece
                 game->setCardChoiceActive(false);
-                game->setPickedUpPiece(NULL);
-                game->setFieldOfOrigin(NULL);
+                game->setPickedUpPiece(nullptr);
+                game->setFieldOfOrigin(nullptr);
                 game->getWindow()->prepareGame();
                 return;
             }
@@ -89,8 +89,8 @@ void Field::dropPiece() {
 
         // cleaning up
         unmarkAllFields();
-        game->setFieldOfOrigin(NULL);
-        game->setPickedUpPiece(NULL);
+        game->setFieldOfOrigin(nullptr);
+        game->setPickedUpPiece(nullptr);
 
         // winning conditions check
         if (game->getGameResult() == 0) {
@@ -118,7 +118,7 @@ void Field::dropPiece() {
 
 void Field::exchangeCards() {
     // determine used cardslot card
-    CardSlot *usedCardSlot = NULL;
+    CardSlot *usedCardSlot = nullptr;
     int player = game->getFieldOfOrigin()->getPiece()->getOwner();
     if (this->brush().color() == game->getWindow()->colorChooseableCard1)
         usedCardSlot = game->getSlotsGrid()->at(player).at(0);
@@ -250,9 +250,8 @@ void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
                 setBrush(brush);
             }
         }
-        if (brush().style() != Qt::NoBrush) {
+        if (brush().style() != Qt::NoBrush)
             setCursor(Qt::PointingHandCursor);
-        }
     }
     event->ignore();
 }
@@ -272,12 +271,13 @@ void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         int pieceNumber = identifyPiece();
         if (pieceNumber == -1) {
             // no piece on that field
-            if (game->getPickedUpPiece() != NULL)
+            if (game->getPickedUpPiece() != nullptr)
                 // try to drop piece
                 dropPiece();
-        } else {
+        }
+        else {
             // existing piece on that field
-            if (game->getPickedUpPiece() != NULL)
+            if (game->getPickedUpPiece() != nullptr)
                 // capture piece
                 captureOrChangePiece(game->getPieces()->at(pieceNumber));
             else

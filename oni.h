@@ -40,7 +40,7 @@ public:
     Oni();
 
     // getter
-    inline int getActuallyDisplayedMove() { return actuallyDisplayedMove; }
+    inline int getCurrentDisplayedMove() { return currentDisplayedMove; }
     inline QList<QList<Field*>> *getBoard() { return board; }
     inline QList<Piece*> *getCapturedBlue() { return capturedBlue; }
     inline QList<Piece*> *getCapturedRed() { return capturedRed; }
@@ -66,10 +66,10 @@ public:
     inline WindowDatabase *getWindowDatabase() { return windowDatabase; }
 
     // setter
-    inline void setActuallyDisplayedMove(int newMove) { actuallyDisplayedMove = newMove; }
     inline void setCardChoiceActive(bool state) { cardChoiceActive = state; }
     inline void setChosenField(Field *target) { chosenField = target; }
     inline void setCity(QString newCity) { match.city = newCity; }
+    inline void setCurrentDisplayedMove(int newMove) { currentDisplayedMove = newMove; }
     inline void setDate(QDate newDate) { match.date = newDate; }
     inline void setDate(QString newDate) { match.date = QDate::fromString(newDate, Qt::ISODate); }
     inline void setEvent(QString newEvent) { match.event = newEvent; }
@@ -84,7 +84,7 @@ public:
     inline void setRound(double newRound) { match.round = newRound; }
 
     // methods
-    inline bool getFirstPlayersTurn() { if (actuallyDisplayedMove%2 == 0) return true; else return false; }
+    inline bool getFirstPlayersTurn() { if (currentDisplayedMove%2 == 0) return true; else return false; }
     bool readConfig();
     QList<Card*> identifyCards(int owner);
     void switchCards(CardSlot *usedCardSlot);
@@ -102,7 +102,7 @@ private:
     QString piecesSet;
     Piece *pickedUpPiece;
     Field *fieldOfOrigin, *chosenField;
-    int actuallyDisplayedMove;
+    int currentDisplayedMove;
     bool flippedBoard, cardChoiceActive;
     Match match;
 };

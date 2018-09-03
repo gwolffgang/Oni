@@ -5,7 +5,7 @@
 extern Oni *game;
 
 WindowDatabase::WindowDatabase(QWidget *parent) : QWidget(parent), ui(new Ui::WindowDatabase),
-    dialogSave(NULL), windowPosX(50), windowPosY(50), modelCols(9), modelRows(0),
+    dialogSave(nullptr), windowPosX(50), windowPosY(50), modelCols(9), modelRows(0),
     model(new QStandardItemModel(modelRows, modelCols, this)), gamesArray({}) {
     ui->setupUi(this);
     ui->GamesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -140,7 +140,7 @@ bool WindowDatabase::exportGames() {
                 if (game.contains("city") && game["city"].isString()) out << "[  City  | " << game["city"].toString() << " ]" << endl;
                 if (game.contains("round") && game["round"].isDouble()){
                     out << "[ Round  | ";
-                    if (game["round"].toDouble() != 0) out << game["round"].toDouble();
+                    if (game["round"].toInt() != 0) out << game["round"].toDouble();
                     out << " ]" << endl;
                 }
                 if (game.contains("date") && game["date"].isString()) out << "[  Date  | " << game["date"].toString() << " ]" << endl;
@@ -253,7 +253,7 @@ bool WindowDatabase::loadGames() {
         if (game.contains("turns") && game["turns"].isArray()) setCell(row, colMoves, game["turns"].toArray().size() / 2);
         if (game.contains("event") && game["event"].isString()) setCell(row, colEvent, game["event"].toString());
         if (game.contains("city") && game["city"].isString()) setCell(row, colCity, game["city"].toString());
-        if (game.contains("round") && game["round"].isDouble() && game["round"].toDouble() != 0) setCell(row, colRound, game["round"].toDouble());
+        if (game.contains("round") && game["round"].isDouble() && game["round"].toInt() != 0) setCell(row, colRound, game["round"].toDouble());
         if (game.contains("date") && game["date"].isString()) {
             QDate date = QDate::fromString(game["date"].toString(), Qt::ISODate);
             setCell(row, colDate, date.toString());
@@ -275,7 +275,7 @@ void WindowDatabase::openGame(QModelIndex index) {
     }
     if (game->getTurns()->last() == "1-0" || game->getTurns()->last() == "0-1") game->getWindow()->newGame(game->getTurns()->at( game->getTurns()->size()-2) );
     else game->getWindow()->newGame(game->getTurns()->last());
-    game->setActuallyDisplayedMove(game->getTurns()->size());
+    game->setCurrentDisplayedMove(game->getTurns()->size());
     game->setOpenDatabaseGameNumber(selectedRow);
     game->getWindow()->prepareGame();
 }
@@ -403,14 +403,14 @@ void WindowDatabase::updateLayout() {
     table->resizeRowsToContents();
 
     QRect desktop = QGuiApplication::primaryScreen()->availableGeometry();
-    int windowMaxHeight = 0.8 * desktop.height();
-    int windowMaxWidth = 0.8 * desktop.width();
+    int windowMaxHeight = static_cast<int>(0.8 * desktop.height());
+    int windowMaxWidth = static_cast<int>(0.8 * desktop.width());
     int buttonsWidth = ui->openGame->width();
     int buttonsHeight = ui->openGame->height();
-    double tableWidth = std::min(std::max(table->horizontalHeader()->length() + table->verticalHeader()->width(), 3 * buttonsWidth), windowMaxWidth);
-    double tableHeight = std::min(std::max(table->verticalHeader()->length() + table->horizontalHeader()->height(), 5 * buttonsHeight), windowMaxHeight);
-    double windowWidth = tableWidth + buttonsWidth;
-    double windowHeight = tableHeight + 1.8 * buttonsHeight;
+    int tableWidth = std::min(std::max(table->horizontalHeader()->length() + table->verticalHeader()->width(), 3 * buttonsWidth), windowMaxWidth);
+    int tableHeight = std::min(std::max(table->verticalHeader()->length() + table->horizontalHeader()->height(), 5 * buttonsHeight), windowMaxHeight);
+    int windowWidth = tableWidth + buttonsWidth;
+    int windowHeight = tableHeight + static_cast<int>(1.8 * buttonsHeight);
     table->setGeometry(0, 0, tableWidth, tableHeight);
     table->setFixedSize(tableWidth+2, tableHeight+2);
 
@@ -420,11 +420,11 @@ void WindowDatabase::updateLayout() {
     ui->exportGames->setGeometry(2 * buttonsWidth, tableHeight, buttonsWidth, buttonsHeight);
     ui->openGame->setGeometry(tableWidth, 0, buttonsWidth, buttonsHeight);
     ui->editGame->setGeometry(tableWidth, buttonsHeight, buttonsWidth, buttonsHeight);
-    ui->deleteGame->setGeometry(tableWidth, 1.8 * buttonsHeight, buttonsWidth, buttonsHeight);
+    ui->deleteGame->setGeometry(tableWidth, static_cast<int>(1.8 * buttonsHeight), buttonsWidth, buttonsHeight);
     ui->copyGame->setGeometry(tableWidth, 3 * buttonsHeight, buttonsWidth, buttonsHeight);
-    ui->pasteGame->setGeometry(tableWidth, 3.8 * buttonsHeight, buttonsWidth, buttonsHeight);
+    ui->pasteGame->setGeometry(tableWidth, static_cast<int>(3.8 * buttonsHeight), buttonsWidth, buttonsHeight);
     ui->undoChanges->setGeometry(tableWidth, tableHeight, buttonsWidth, buttonsHeight);
-    ui->close->setGeometry(tableWidth, tableHeight + 0.8 * buttonsHeight, buttonsWidth, buttonsHeight);
+    ui->close->setGeometry(tableWidth, tableHeight + static_cast<int>(0.8 * buttonsHeight), buttonsWidth, buttonsHeight);
 
     setGeometry(windowPosX, windowPosY, windowWidth, windowHeight);
     setFixedSize(windowWidth, windowHeight);
@@ -464,7 +464,7 @@ void WindowDatabase::on_filterGames_clicked() {
 }
 
 void WindowDatabase::on_GamesTable_doubleClicked(const QModelIndex &index) {
-    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "Load game", "Do you want to open this game?<br>All unsaved changes to the actual game will be lost.");
+    QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "Load game", "Do you want to open this game?<br>All unsaved changes to the actual game will be lost.");
     if (reply == QMessageBox::Yes) {
         openGame(index);
         closeDatabase();
@@ -476,7 +476,7 @@ void WindowDatabase::on_importGames_clicked() {
 }
 
 void WindowDatabase::on_openGame_clicked() {
-    QMessageBox::StandardButton reply = QMessageBox::question(NULL, "Load game", "Do you want to open this game?<br>All unsaved changes to the actual game will be lost.");
+    QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "Load game", "Do you want to open this game?<br>All unsaved changes to the actual game will be lost.");
     if (reply == QMessageBox::Yes) {
         QModelIndexList selection = ui->GamesTable->selectionModel()->selectedRows();
         openGame(selection.first());
