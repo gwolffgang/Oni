@@ -34,19 +34,23 @@ void Field::captureOrChangePiece(Piece *target) {
     if ((!game->getFirstPlayersTurn() && targetOwner == 1) || (game->getFirstPlayersTurn() && (targetOwner == 2))) {
         // remove captured piece
         game->getWindow()->getScene()->removeItem(target);
-        if (targetOwner == 1) game->getCapturedRed()->append(target);
-        else game->getCapturedBlue()->append(target);
+        if (targetOwner == 1)
+            game->getCapturedRed()->append(target);
+        else
+            game->getCapturedBlue()->append(target);
         game->getPieces()->removeAll(target);
 
         // drop piece
         dropPiece();
-    } else {
+    }
+    else {
         unmarkAllFields();
         // put back picked up piece
         QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
         setBrush(brush);
 
-        if (target != game->getPickedUpPiece()) pickUpPiece(target);
+        if (target != game->getPickedUpPiece())
+            pickUpPiece(target);
         else {
             game->setPickedUpPiece(nullptr);
             game->setFieldOfOrigin(nullptr);
@@ -56,11 +60,13 @@ void Field::captureOrChangePiece(Piece *target) {
 
 void Field::dropPiece() {
     // drop piece
-    if (game->getCardChoiceActive()) game->setCardChoiceActive(false);
-    else exchangeCards();
+    if (game->getCardChoiceActive())
+        game->setCardChoiceActive(false);
+    else
+        exchangeCards();
 
     if (!game->getCardChoiceActive()) {
-        if (game->getTurns()->size() > (game->getCurrentDisplayedMove()+1)) {
+        if (game->getMatch()->getTurns()->size() > (game->getCurrentDisplayedMove()+1)) {
             QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "Change Move", "Do you really want to enter this new move?<br>The old move and all following ones will be deleted.");
             if (reply == QMessageBox::No) {
                 unmarkAllFields();
@@ -93,19 +99,19 @@ void Field::dropPiece() {
         game->setPickedUpPiece(nullptr);
 
         // winning conditions check
-        if (game->getGameResult() == 0) {
+        if (game->getMatch()->getResult() == 0) {
             if ((game->getCapturedRed()->size() > 0 && game->getCapturedRed()->last()->getType() == 'M') ||
                 (game->getBoard()->at(0).at(2)->getPieceType() == 'm')) {
                 game->winGame(-1);
-            } else {
-                if ((game->getCapturedBlue()->size() > 0 && game->getCapturedBlue()->last()->getType() == 'm') ||
-                    (game->getBoard()->at(4).at(2)->getPieceType() == 'M'))
-                    game->winGame(1);
+                game->getWindow()->notateVictory("0-1");
             }
-        }
-        if (game->getGameResult() != 0) {
-            if (game->getGameResult() == 1) game->getWindow()->notateVictory("1-0");
-            else game->getWindow()->notateVictory("0-1");
+            else {
+                if ((game->getCapturedBlue()->size() > 0 && game->getCapturedBlue()->last()->getType() == 'm') ||
+                    (game->getBoard()->at(4).at(2)->getPieceType() == 'M')) {
+                    game->winGame(1);
+                    game->getWindow()->notateVictory("1-0");
+                }
+            }
         }
 
         // flip board every move check
@@ -122,15 +128,17 @@ void Field::exchangeCards() {
     int player = game->getFieldOfOrigin()->getPiece()->getOwner();
     if (this->brush().color() == game->getWindow()->colorChooseableCard1)
         usedCardSlot = game->getSlotsGrid()->at(player).at(0);
-    else if (this->brush().color() == game->getWindow()->colorChooseableCard2)
+    else
+        if (this->brush().color() == game->getWindow()->colorChooseableCard2)
             usedCardSlot = game->getSlotsGrid()->at(player).at(1);
-         else {
+        else {
             game->setCardChoiceActive(true);
             game->setChosenField(this);
          }
 
     // switch used card and neutral card
-    if (!game->getCardChoiceActive()) game->switchCards(usedCardSlot);
+    if (!game->getCardChoiceActive())
+        game->switchCards(usedCardSlot);
 }
 
 int Field::identifyPiece() {
@@ -181,8 +189,7 @@ void Field::pickUpPiece(Piece *piece) {
             master = 'm';
             scolar = 's';
         }
-        int fieldCol = col;
-        int fieldRow = row;
+        int fieldCol = col, fieldRow = row;
 
         // identify cards of player
         QList<Card*> cards = game->identifyCards(player);
@@ -217,7 +224,8 @@ void Field::pickUpPiece(Piece *piece) {
             brush = QBrush(game->getWindow()->colorChooseableCard1, Qt::Dense4Pattern);
             fieldCard1->setBrush(brush);
             foreach (Field *fieldCard2, fields.at(1)) {
-                if (fieldCard1 == fieldCard2) doubleAccessFields.append(fieldCard1);
+                if (fieldCard1 == fieldCard2)
+                    doubleAccessFields.append(fieldCard1);
                 else {
                     brush = QBrush(game->getWindow()->colorChooseableCard2, Qt::Dense4Pattern);
                     fieldCard2->setBrush(brush);
@@ -242,7 +250,7 @@ void Field::unmarkAllFields() {
 }
 
 void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    if (!game->getCardChoiceActive() && game->getGameResult() == 0) {
+    if (!game->getCardChoiceActive() && game->getMatch()->getResult() == 0) {
         if ((game->getFirstPlayersTurn() && (pieceType == 'M' || pieceType == 'S')) ||
             (!game->getFirstPlayersTurn() && (pieceType == 'm' || pieceType == 's'))) {
             if (piece != game->getPickedUpPiece()) {
@@ -267,21 +275,16 @@ void Field::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
 
 void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     // identify possible piece from pieces list
-    if (brush().style() != Qt::NoBrush && !game->getCardChoiceActive() && game->getGameResult() == 0) {
+    if (brush().style() != Qt::NoBrush && !game->getCardChoiceActive() && game->getMatch()->getResult() == 0) {
         int pieceNumber = identifyPiece();
-        if (pieceNumber == -1) {
-            // no piece on that field
+        if (pieceNumber == -1) {    // no piece on that field
             if (game->getPickedUpPiece() != nullptr)
-                // try to drop piece
                 dropPiece();
         }
-        else {
-            // existing piece on that field
+        else {                      // existing piece on that field
             if (game->getPickedUpPiece() != nullptr)
-                // capture piece
                 captureOrChangePiece(game->getPieces()->at(pieceNumber));
             else
-                // pick up piece
                 pickUpPiece(game->getPieces()->at(pieceNumber));
         }
     }

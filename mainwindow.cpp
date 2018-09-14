@@ -49,8 +49,8 @@ bool MainWindow::analyseSetupString(QString string) {
     QStringList elem = part.at(0).split(",");
     for (int i = 0; i < elem.size(); i++) {
         Piece *piece = new Piece;
-        piece->setType(elem[i].at(0).unicode());
-        char c = tolower(elem[i].at(1).unicode());
+        piece->setType(static_cast<char>(elem[i].at(0).unicode()));
+        char c = static_cast<char>(tolower(elem[i].at(1).unicode()));
         switch (c) {
         case 'a':
             piece->setCol(0);
@@ -94,9 +94,14 @@ bool MainWindow::analyseSetupString(QString string) {
     }
     // check number of masters
     if (!(count_M == 1 && count_m == 1)) {
-        if (count_M == 1 && count_m == 0) game->setGameResult(1);
-        else if (count_M == 0 && count_m == 1) game->setGameResult(-1);
-        else return false;
+        if (count_M == 1 && count_m == 0)
+            game->getMatch()->setResult(1);
+        else {
+            if (count_M == 0 && count_m == 1)
+                game->getMatch()->setResult(-1);
+            else
+                return false;
+        }
     }
 
     // take care of missing pieces
@@ -440,16 +445,17 @@ void MainWindow::newGame(QString setupString) {
     game->setCardChoiceActive(false);
     if (setupString == "") {
         // reset settings
-        game->setGameResult(0);
-        game->setPlayerNames("Red", "Blue");
-        game->setEvent("");
-        game->setCity("");
-        game->setRound(0);
-        game->setDate(QDate::currentDate());
-        setWindowTitle("Oni - Red vs. Blue - new unsaved game");
-        game->setOpenDatabaseGameNumber(-1);
+        game->getMatch()->setResult(0);
+        game->getMatch()->setPlayerNameRed("Red");
+        game->getMatch()->setPlayerNameBlue("Blue");
+        game->getMatch()->setEvent("");
+        game->getMatch()->setCity("");
+        game->getMatch()->setRound(0);
+        game->getMatch()->setDate(QDate::currentDate());
+        setWindowTitle("Oni - Red vs. Blue - unsaved game");
+        game->getMatch()->setOpenDatabaseGameNumber(-1);
         game->setCurrentDisplayedMove(0);
-        if (game->getTurns()) game->getTurns()->clear();
+        if (game->getMatch()->getTurns()) game->getMatch()->getTurns()->clear();
     }
 
     // reset lists
@@ -459,25 +465,25 @@ void MainWindow::newGame(QString setupString) {
     const QString defaultString = "Sa1, Sb1, Mc1, Sd1, Se1, sa5, sb5, mc5, sd5, se5|";
     if (setupString == "" || setupString == "1-0" || setupString == "0-1") setupString = defaultString;
     if (!analyseSetupString(setupString)) {
-        game->setGameResult(0);
+        game->getMatch()->setResult(0);
         setupString = defaultString;
         resetLists();
         analyseSetupString(setupString);
     }
-    if (game->getTurns()->size() == 0) game->getTurns()->append(generateSetupString());
+    if (game->getMatch()->getTurns()->size() == 0) game->getMatch()->getTurns()->append(generateSetupString());
 
     updateLayout();
 }
 
 void MainWindow::notateVictory(QString result) {
-    QList<QString> *turns = game->getTurns();
+    QList<QString> *turns = game->getMatch()->getTurns();
     if ( "1-0" == turns->last() || "0-1" == turns->last()) {
         turns->removeLast();
         turns->append(result);
     }
-    if ("1-0" == result) game->setGameResult(1);
-    else if ("0-1" == result) game->setGameResult(-1);
-    else game->setGameResult(0);
+    if ("1-0" == result) game->getMatch()->setResult(1);
+    else if ("0-1" == result) game->getMatch()->setResult(-1);
+    else game->getMatch()->setResult(0);
     game->getWindow()->prepareGame();
 }
 
@@ -550,7 +556,7 @@ void MainWindow::resetLists() {
 void MainWindow::saveTurnInNotation() {
     // refreshing of the notation if jumped back
     QString lastMove, thisMove;
-    QList<QString> *turns = game->getTurns();
+    QList<QString> *turns = game->getMatch()->getTurns();
     int currentDisplayedMove = game->getCurrentDisplayedMove();
     if (turns->size() > (currentDisplayedMove+1))
          for(int i = turns->size(); i > currentDisplayedMove+1; i--) turns->removeLast();
@@ -579,14 +585,15 @@ void MainWindow::saveWindowConfig(QJsonObject &json) const {
 }
 
 void MainWindow::setupNotation() {
-    QList<QString> *turns = game->getTurns();
+    QList<QString> *turns = game->getMatch()->getTurns();
     QString lastTurn = turns->last();
     double posX = scene->height() - MSWindowsCorrection + slotWidth + 2*borderX + 2.5;
     double posY = slotHeight + 2*borderY + 2.5;
     ui->notation->setGeometry(static_cast<int>(posX), static_cast<int>(posY), static_cast<int>(slotWidth), static_cast<int>(slotHeight));
     ui->notation->clear();
     int maxLines = turns->size();
-    if (turns->size() > 1 && (lastTurn == "1-0" || lastTurn == "0-1")) maxLines--;
+    if (turns->size() > 1 && (lastTurn == "1-0" || lastTurn == "0-1"))
+        maxLines--;
     for (int i = 1; i < maxLines; i++) {
         QListWidgetItem *item;
         if (i%2 == 1) {
@@ -597,7 +604,8 @@ void MainWindow::setupNotation() {
             else if (ui->actionSmallWindow->isChecked()) item->setFont(QFont("Arial", 9));
                  else if (ui->actionNormalWindow->isChecked()) item->setFont(QFont("Arial", 12));
                       else item->setFont(QFont("Arial", 15));
-        } else {
+        }
+        else {
             item = new QListWidgetItem(generateNotationString(turns->at(i-1), turns->at(i)));
             item->setBackground(QBrush(Qt::blue, Qt::Dense4Pattern));
             item->setTextAlignment(Qt::AlignRight);
@@ -608,27 +616,42 @@ void MainWindow::setupNotation() {
         }
         ui->notation->addItem(item);
     }
-    if (lastTurn == "1-0" || lastTurn == "0-1") ui->notation->addItem(lastTurn);
-    if (ui->actionHideNotation->isChecked()) ui->notation->setVisible(false);
-    else ui->notation->setVisible(true);
+    if (lastTurn == "1-0" || lastTurn == "0-1")
+        ui->notation->addItem(lastTurn);
+    if (ui->actionHideNotation->isChecked())
+        ui->notation->setVisible(false);
+    else
+        ui->notation->setVisible(true);
 }
 
 void MainWindow::updateLayout() {
-    if (!scene || game->getOpenDatabaseGameNumber() == -1) setWindowTitle("Oni - Red vs. Blue - new unsaved game");
-    else setWindowTitle("Oni - " + game->getPlayerNameRed() + " vs. " + game->getPlayerNameBlue());
+    if (!scene || game->getMatch()->getOpenDatabaseGameNumber() == -1)
+        setWindowTitle("Oni - Red vs. Blue - unsaved game");
+    else
+        setWindowTitle("Oni - " + game->getMatch()->getPlayerNameRed() + " vs. " + game->getMatch()->getPlayerNameBlue());
 
     // Change menu checkings
     double factor = 0.0;
-    if (ui->actionFullScreen->isChecked()) factor = 1.0;
-    else if (ui->actionTinyWindow->isChecked()) factor = 0.3;
-    else if (ui->actionSmallWindow->isChecked()) factor = 0.5;
-    else if (ui->actionNormalWindow->isChecked()) factor = 0.7;
-    else factor = 0.9;
+    if (ui->actionFullScreen->isChecked())
+        factor = 1.0;
+    else
+        if (ui->actionTinyWindow->isChecked())
+            factor = 0.3;
+        else
+            if (ui->actionSmallWindow->isChecked())
+                factor = 0.5;
+            else
+                if (ui->actionNormalWindow->isChecked())
+                    factor = 0.7;
+                else
+                    factor = 0.9;
 
     // measure and fill available screen
     QRect desktop = screen->availableGeometry();
-    if (scene && ui->actionAxisLabeling->isChecked()) axisLabelSize = 30 * factor;
-    else axisLabelSize = 0;
+    if (scene && ui->actionAxisLabeling->isChecked())
+        axisLabelSize = 30 * factor;
+    else
+        axisLabelSize = 0;
     borderX = 10 * factor;
     borderY = 10 * factor;
     sideBarSize = 40 * factor;
@@ -638,7 +661,8 @@ void MainWindow::updateLayout() {
         windowHeight--;
         slotWidth = (windowHeight - 4*borderY - MSWindowsCorrection)/3 * 5/6;
         windowWidth = windowHeight - MSWindowsCorrection + 3*borderX + 2*slotWidth;
-    } while (windowWidth > desktop.width()-4 || windowHeight > desktop.height()-4);
+    }
+    while (windowWidth > desktop.width()-4 || windowHeight > desktop.height()-4);
     setGeometry(static_cast<int>(windowPosX), static_cast<int>(windowPosY), static_cast<int>(windowWidth)+5, static_cast<int>(windowHeight)+5);
     setFixedSize(static_cast<int>(windowWidth)+5, static_cast<int>(windowHeight)+5);
     slotHeight = slotWidth * 6/5;
@@ -656,7 +680,8 @@ void MainWindow::updateLayout() {
     }
     ui->view->setFixedSize(static_cast<int>(windowWidth)+5, static_cast<int>(windowHeight)+5);
     scene->setSceneRect(0, 0, windowWidth, windowHeight);
-    if (sceneWasSetUp) prepareGame();
+    if (sceneWasSetUp)
+        prepareGame();
 }
 
 void MainWindow::moveEvent(QMoveEvent *event) {
@@ -669,9 +694,10 @@ void MainWindow::showMove(QListWidgetItem *item) {
     if (item->text() != "1-0" && item->text() != "0-1") {
         for (int elem = 0; elem < ui->notation->count(); elem++) {
             if (ui->notation->item(elem) == item) {
-                newGame(game->getTurns()->at(elem+1));
+                newGame(game->getMatch()->getTurns()->at(elem+1));
                 game->setCurrentDisplayedMove(elem+1);
                 game->getWindow()->updateLayout();
+                ui->notation->scrollToItem(ui->notation->item(elem));
                 return;
             }
         }
@@ -679,8 +705,9 @@ void MainWindow::showMove(QListWidgetItem *item) {
 }
 
 void MainWindow::on_actionNew_triggered() {
-    QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "New game", "Do you want to start a new game?<br>All unsaved changes to the actual game will be lost.");
-    if (reply == QMessageBox::Yes) newGame();
+    QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "New game", "Do you want to start a new game?<br>All unsaved changes to the current game will be lost.");
+    if (reply == QMessageBox::Yes)
+        newGame();
 }
 
 void MainWindow::on_actionSetupPosition_triggered() {
@@ -689,41 +716,45 @@ void MainWindow::on_actionSetupPosition_triggered() {
 
 void MainWindow::on_actionStartingPosition_triggered() {
     game->setCurrentDisplayedMove(0);
-    newGame(game->getTurns()->at(game->getCurrentDisplayedMove()));
+    ui->notation->scrollToTop();
+    newGame(game->getMatch()->getTurns()->at(game->getCurrentDisplayedMove()));
 }
 
 void MainWindow::on_actionPreviousMove_triggered() {
     int displayedMove = game->getCurrentDisplayedMove();
-    if (game->getTurns()->size() > 1 && displayedMove > 0) {
+    ui->notation->scrollToItem(ui->notation->item(displayedMove));
+    if (game->getMatch()->getTurns()->size() > 1 && displayedMove > 0) {
         game->setCurrentDisplayedMove(displayedMove-1);
-        newGame(game->getTurns()->at(game->getCurrentDisplayedMove()));
+        newGame(game->getMatch()->getTurns()->at(game->getCurrentDisplayedMove()));
     }
 }
 
 void MainWindow::on_actionNextMove_triggered() {
     int displayedMove = game->getCurrentDisplayedMove();
-    if (game->getTurns()->size() > 1 && displayedMove < game->getTurns()->size()-1) {
+    ui->notation->scrollToItem(ui->notation->item(displayedMove));
+    if (game->getMatch()->getTurns()->size() > 1 && displayedMove < game->getMatch()->getTurns()->size()-1) {
         game->setCurrentDisplayedMove(displayedMove+1);
-        newGame(game->getTurns()->at(game->getCurrentDisplayedMove()));
+        newGame(game->getMatch()->getTurns()->at(game->getCurrentDisplayedMove()));
     }
 }
 
 void MainWindow::on_actionLastMove_triggered() {
-    game->setCurrentDisplayedMove(game->getTurns()->size()-1);
-    newGame(game->getTurns()->at(game->getCurrentDisplayedMove()));
+    game->setCurrentDisplayedMove(game->getMatch()->getTurns()->size()-1);
+    ui->notation->scrollToBottom();
+    newGame(game->getMatch()->getTurns()->at(game->getCurrentDisplayedMove()));
 }
 
 void MainWindow::on_actionResign_triggered() {
-    if (game->getGameResult() == 0 && !game->getCardChoiceActive()) {
+    if (game->getMatch()->getResult() == 0 && !game->getCardChoiceActive()) {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Resign match", "Do you really want to resign?", QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::Yes) {
             if (game->getFirstPlayersTurn()) {
-                game->setGameResult(-1);
+                game->getMatch()->setResult(-1);
                 game->getWindow()->notateVictory("0-1");
             }
             else {
-                game->setGameResult(1);
+                game->getMatch()->setResult(1);
                 game->getWindow()->notateVictory("1-0");
             }
             prepareGame();

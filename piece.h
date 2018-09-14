@@ -7,7 +7,7 @@ class Piece : public QGraphicsPixmapItem {
 
 public:
     // constructor
-    Piece(QGraphicsItem *parent=NULL);
+    Piece(QGraphicsItem *parent = nullptr);
 
     // getter
     inline int getCol() { return col; }

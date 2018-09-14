@@ -38,7 +38,7 @@
        <height>321</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
+     <layout class="QGridLayout" name="gridLayoutAbout">
       <item row="0" column="0">
        <widget class="QLabel" name="aboutLabel">
         <property name="text">
@@ -443,7 +443,7 @@ p, li { white-space: pre-wrap; }
        <height>61</height>
       </rect>
      </property>
-     <layout class="QGridLayout" name="gridLayout">
+     <layout class="QGridLayout" name="gridLayoutLicenses">
       <item row="0" column="0">
        <widget class="QLabel" name="licensesLabel">
         <property name="text">

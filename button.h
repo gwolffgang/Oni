@@ -8,7 +8,7 @@ class Button : public QGraphicsPixmapItem {
 
 public:
     // constructor
-    Button(QGraphicsItem *parent = NULL);
+    Button(QGraphicsItem *parent = nullptr);
 
     // methods
     void drawButton(QString buttonType = "", QString buttonPos = "right");

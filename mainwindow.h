@@ -24,10 +24,10 @@ public:
     QColor colorHovered, colorSelected, colorChooseableCard1, colorChooseableCard2, colorChooseableBoth;
 
     // constructor
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
 
     // destructor
-    ~MainWindow();
+    ~MainWindow() override;
 
     // getter
     inline double getBorderX() { return borderX; }

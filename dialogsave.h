@@ -12,7 +12,7 @@ class DialogSave : public QDialog {
 
 public:
     // constructor
-    explicit DialogSave(QWidget *parent = 0);
+    explicit DialogSave(QWidget *parent = nullptr);
 
     // destructor
     ~DialogSave();

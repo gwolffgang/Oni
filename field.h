@@ -13,7 +13,7 @@ class Field : public QObject, public QGraphicsRectItem {
 
 public:
     // constructor
-    Field(QGraphicsItem *parent = NULL);
+    Field(QGraphicsItem *parent = nullptr);
 
     // operator
     inline bool operator==(Field *field) { if ((field->row == row) && (field->col == col)) return true; return false; }

@@ -16,7 +16,7 @@ class Card : public QObject, public QGraphicsPixmapItem {
 
 public:
     // constructor
-    Card(QGraphicsItem *parent = NULL);
+    Card(QGraphicsItem *parent = nullptr);
 
     // operators
     inline bool operator==(Card *card) { if (card->id == id) return true; else return false; }

@@ -11,7 +11,7 @@ class CardSlot : public QObject, public QGraphicsRectItem {
 
 public:
     //constructors
-    CardSlot(QGraphicsItem *parent = NULL);
+    CardSlot(QGraphicsItem *parent = nullptr);
 
     // getter
     inline int getOwner() { return owner; }

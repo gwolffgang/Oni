@@ -12,7 +12,7 @@ class DialogAbout : public QDialog {
 
 public:
     // constructor
-    explicit DialogAbout(QWidget *parent = 0);
+    explicit DialogAbout(QWidget *parent = nullptr);
 
     // destructor
     ~DialogAbout();

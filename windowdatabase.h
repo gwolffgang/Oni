@@ -18,10 +18,10 @@ class WindowDatabase : public QWidget {
 
 public:
     // constructor
-    explicit WindowDatabase(QWidget *parent = 0);
+    explicit WindowDatabase(QWidget *parent = nullptr);
 
     // destructor
-    ~WindowDatabase();
+    ~WindowDatabase() override;
 
     // methods
     void closeDatabase();

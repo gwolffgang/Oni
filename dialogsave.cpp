@@ -7,12 +7,12 @@ extern Oni *game;
 DialogSave::DialogSave(QWidget *parent) : QDialog(parent), ui(new Ui::DialogSave), turns({}) {
     ui->setupUi(this);
 
-    ui->lineEditNameRed->setText(game->getPlayerNameRed());
-    ui->lineEditNameBlue->setText(game->getPlayerNameBlue());
-    if (static_cast<int>(game->getRound()) != 0) ui->lineEditRound->setText(QString::number(game->getRound()));
+    ui->lineEditNameRed->setText(game->getMatch()->getPlayerNameRed());
+    ui->lineEditNameBlue->setText(game->getMatch()->getPlayerNameBlue());
+    if (static_cast<int>(game->getMatch()->getRound()) != 0) ui->lineEditRound->setText(QString::number(game->getMatch()->getRound()));
     else ui->lineEditRound->setText("");
-    ui->dateEdit->setDate(game->getDate());
-    switch (game->getGameResult()) {
+    ui->dateEdit->setDate(game->getMatch()->getDate());
+    switch (game->getMatch()->getResult()) {
     case -1: ui->radioButtonBlue->setChecked(true); break;
     case 0: ui->radioButtonLine->setChecked(true); break;
     case 1: ui->radioButtonRed->setChecked(true);

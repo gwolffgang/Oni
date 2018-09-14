@@ -11,23 +11,9 @@
 #include "cardslot.h"
 #include "field.h"
 #include "mainwindow.h"
-#include "windowdatabase.h"
+#include "match.h"
 #include "piece.h"
-
-struct Match {
-    QString playerNameBlue, playerNameRed, event, city;
-    QDate date;
-    QList<QString> *turns;
-    int gameResult, openDatabaseGameNumber;
-    double round;
-
-    bool operator==(const Match &other) const {
-        if (playerNameBlue != other.playerNameBlue || playerNameRed != other.playerNameRed) return false;
-        if (turns->size() != other.turns->size() || gameResult != other.gameResult) return false;
-        for (int i = 0; i < turns->size(); i++) if (turns->at(i) != other.turns->at(i)) return false;
-        return true;
-    }
-};
+#include "windowdatabase.h"
 
 class Oni : public QObject {
     Q_OBJECT
@@ -47,46 +33,30 @@ public:
     inline QList<Card*> *getCards() { return cards; }
     inline bool getCardChoiceActive() { return cardChoiceActive; }
     inline Field *getChosenField() { return chosenField; }
-    inline QString getCity() { return match.city; }
-    inline QDate getDate() { return match.date; }
-    inline QString getEvent() { return match.event; }
     inline Field *getFieldOfOrigin() { return fieldOfOrigin; }
     inline bool getFlippedBoard() { return flippedBoard; }
-    inline int getGameResult() { return match.gameResult; }
-    inline int getOpenDatabaseGameNumber() { return match.openDatabaseGameNumber; }
+    inline Match *getMatch() { return match; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
     inline QList<Piece*> *getPieces() { return pieces; }
     inline QString getPieceSet() { return piecesSet; }
-    inline QString getPlayerNameBlue() { return match.playerNameBlue; }
-    inline QString getPlayerNameRed() { return match.playerNameRed; }
-    inline double getRound() { return match.round; }
     inline QList<QList<CardSlot*>> *getSlotsGrid() { return slotsGrid; }
-    inline QList<QString> *getTurns() { return match.turns; }
     inline MainWindow *getWindow() { return window; }
     inline WindowDatabase *getWindowDatabase() { return windowDatabase; }
 
     // setter
     inline void setCardChoiceActive(bool state) { cardChoiceActive = state; }
     inline void setChosenField(Field *target) { chosenField = target; }
-    inline void setCity(QString newCity) { match.city = newCity; }
     inline void setCurrentDisplayedMove(int newMove) { currentDisplayedMove = newMove; }
-    inline void setDate(QDate newDate) { match.date = newDate; }
-    inline void setDate(QString newDate) { match.date = QDate::fromString(newDate, Qt::ISODate); }
-    inline void setEvent(QString newEvent) { match.event = newEvent; }
     inline void setFlippedBoard(bool state) { flippedBoard = state; }
     inline void setFieldOfOrigin(Field *origin) { fieldOfOrigin = origin; }
-    inline void setGameResult(int newResult) { if (abs(newResult) == 1) match.gameResult = newResult; else match.gameResult = 0; }
-    inline void setGameResult(QString newResult) { if (newResult == "1-0") match.gameResult = 1; else if (newResult == "0-1") match.gameResult = -1; else match.gameResult = 0; }
-    inline void setOpenDatabaseGameNumber(int newNumber) { match.openDatabaseGameNumber = newNumber; }
     inline void setPickedUpPiece(Piece *newPiece) { pickedUpPiece = newPiece; }
     inline void setPiecesSet(QString newString) { piecesSet = newString; }
-    inline void setPlayerNames(QString nameRed = "Red", QString nameBlue = "Blue") {if (nameBlue != "") match.playerNameBlue = nameBlue; if (nameRed != "") match.playerNameRed = nameRed;}
-    inline void setRound(double newRound) { match.round = newRound; }
 
     // methods
     inline bool getFirstPlayersTurn() { if (currentDisplayedMove%2 == 0) return true; else return false; }
     bool readConfig();
     QList<Card*> identifyCards(int owner);
+    void setupFoldersAndFiles();
     void switchCards(CardSlot *usedCardSlot);
     void winGame(int winner);
     bool writeConfig();
@@ -104,7 +74,7 @@ private:
     Field *fieldOfOrigin, *chosenField;
     int currentDisplayedMove;
     bool flippedBoard, cardChoiceActive;
-    Match match;
+    Match *match;
 };
 
 #endif // ONI_H

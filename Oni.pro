@@ -34,7 +34,8 @@ SOURCES += main.cpp\
     cardslot.cpp \
     dialogabout.cpp \
     dialogsave.cpp \
-    windowdatabase.cpp
+    windowdatabase.cpp \
+    match.cpp
 
 HEADERS  += mainwindow.h \
     oni.h \
@@ -45,7 +46,8 @@ HEADERS  += mainwindow.h \
     cardslot.h \
     dialogabout.h \
     dialogsave.h \
-    windowdatabase.h
+    windowdatabase.h \
+    match.h
 
 FORMS    += mainwindow.ui \
     dialogabout.ui \

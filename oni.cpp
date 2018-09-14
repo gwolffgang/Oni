@@ -19,37 +19,10 @@ Oni::Oni() :
     pieces(new QList<Piece*>), capturedBlue(new QList<Piece*>), capturedRed(new QList<Piece*>),
     slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>),
     piecesSet("ComicStyle"), pickedUpPiece(nullptr), fieldOfOrigin(nullptr), currentDisplayedMove(0),
-    flippedBoard(false), cardChoiceActive(false) {
-
-    match.openDatabaseGameNumber = -1;
-    match.playerNameBlue = "Blue";
-    match.playerNameRed = "Red";
-    match.turns = new QList<QString>;
-    match.gameResult = 0;
-    match.event = "";
-    match.city = "";
-    match.date = QDate::currentDate();
-    match.round = 0;
+    flippedBoard(false), cardChoiceActive(false), match(new Match) {
 
     // create AppData folder and needed files, if not done yet
-    QDir appDataFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QFile backupFile(backupFileName);
-    QFile databaseFile(databaseFileName);
-    QFile tempFile(tempDataFileName);
-    if (!appDataFolder.exists())
-        appDataFolder.mkpath(".");
-    if (!fileExists(databaseFileName))
-        databaseFile.open(QIODevice::WriteOnly);
-    if (!fileExists(tempDataFileName))
-        tempFile.open(QIODevice::WriteOnly);
-    if (backupFile.exists()) {
-        if(databaseFile.size() == 0) {
-            databaseFile.remove();
-            backupFile.copy(databaseFileName);
-        }
-        backupFile.remove();
-    }
-    databaseFile.copy(backupFileName);
+    setupFoldersAndFiles();
     if (fileExists(configFileName))
         readConfig();
 
@@ -84,25 +57,28 @@ bool Oni::readConfig() {
             if (gameData.contains("currentDisplayedMove") && gameData["currentDisplayedMove"].isDouble())
                 currentDisplayedMove = gameData["currentDisplayedMove"].toInt();
             if (gameData.contains("openDatabaseGameNumber") && gameData["openDatabaseGameNumber"].isDouble())
-                match.openDatabaseGameNumber = gameData["openDatabaseGameNumber"].toInt();
+                match->setOpenDatabaseGameNumber(gameData["openDatabaseGameNumber"].toInt());
             if (gameData.contains("playerNameBlue") && gameData["playerNameBlue"].isString())
-                match.playerNameBlue = gameData["playerNameBlue"].toString();
+                match->setPlayerNameBlue(gameData["playerNameBlue"].toString());
             if (gameData.contains("playerNameRed") && gameData["playerNameRed"].isString())
-                match.playerNameRed = gameData["playerNameRed"].toString();
-            if (gameData.contains("gameResult") && gameData["gameResult"].isDouble())
-                match.gameResult = gameData["gameResult"].toInt();
+                match->setPlayerNameRed(gameData["playerNameRed"].toString());
+            if (gameData.contains("result") && gameData["result"].isDouble())
+                match->setResult(gameData["result"].toInt());
             if (gameData.contains("event") && gameData["event"].isString())
-                match.event = gameData["event"].toString();
+                match->setEvent(gameData["event"].toString());
             if (gameData.contains("city") && gameData["city"].isString())
-                match.city = gameData["city"].toString();
-            if (gameData.contains("date") && gameData["date"].isString())
-                match.date.fromString(gameData["date"].toString(),"YY.MM.dd");
+                match->setCity(gameData["city"].toString());
+            if (gameData.contains("date") && gameData["date"].isString()) {
+                QString readDateString = gameData["date"].toString();
+                QDate datum;
+                match->setDate(datum.fromString(readDateString,"YY.MM.dd"));
+            }
             if (gameData.contains("round") && gameData["round"].isDouble())
-                match.round = gameData["round"].toDouble();
+                match->setRound(gameData["round"].toDouble());
             if (gameData.contains("turns") && gameData["turns"].isArray()) {
                     QJsonArray turnsArray = gameData["turns"].toArray();
-                    match.turns->clear();
-                    for (int k = 0; k < turnsArray.size(); k++) match.turns->append(turnsArray[k].toString());
+                    match->getTurns()->clear();
+                    for (int k = 0; k < turnsArray.size(); k++) match->getTurns()->append(turnsArray[k].toString());
                 }
         }
     tempFile.close();
@@ -118,21 +94,43 @@ QList<Card*> Oni::identifyCards(int owner) {
     return list;
 }
 
+void Oni::setupFoldersAndFiles() {
+    QDir appDataFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QFile backupFile(backupFileName);
+    QFile databaseFile(databaseFileName);
+    QFile tempFile(tempDataFileName);
+    if (!appDataFolder.exists())
+        appDataFolder.mkpath(".");
+    if (!fileExists(databaseFileName))
+        databaseFile.open(QIODevice::WriteOnly);
+    if (!fileExists(tempDataFileName))
+        tempFile.open(QIODevice::WriteOnly);
+    if (backupFile.exists()) {
+        if (databaseFile.size() == 0) {
+            databaseFile.remove();
+            backupFile.copy(databaseFileName);
+        }
+        backupFile.remove();
+    }
+    databaseFile.copy(backupFileName);
+}
+
 void Oni::switchCards(CardSlot *usedCardSlot) {
-    Card *temporary = nullptr;
-    // switch cards
-    temporary = usedCardSlot->getCard();
-    usedCardSlot->setCard(game->getSlotsGrid()->at(0).at(0)->getCard());
-    game->getSlotsGrid()->at(0).at(0)->setCard(temporary);
+    Card *temporary = usedCardSlot->getCard();
+    usedCardSlot->setCard(slotsGrid->at(0).at(0)->getCard());
+    slotsGrid->at(0).at(0)->setCard(temporary);
 }
 
 void Oni::winGame(int winner) {
-    match.gameResult = winner;
+    match->setResult(winner);
     QString victor;
-    if (winner == 1) victor = game->getPlayerNameRed();
-    else victor = game->getPlayerNameBlue();
+    if (winner == 1)
+        victor = match->getPlayerNameRed();
+    else
+        victor = match->getPlayerNameBlue();
     QMessageBox::StandardButton reply = QMessageBox::information(nullptr, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
-    if (reply == QMessageBox::Save) QTimer::singleShot( 1, game->getWindow(), SLOT(on_actionSave_triggered()) );
+    if (reply == QMessageBox::Save)
+        QTimer::singleShot(1, window, SLOT(on_actionSave_triggered()) );
 }
 
 bool Oni::writeConfig() {
@@ -157,19 +155,21 @@ bool Oni::writeConfig() {
     if (!tempFile.open(QIODevice::WriteOnly)) { qWarning("writeConfig: Couldn't open tempFile file for writing."); return false; }
         QJsonObject tempGame;
             tempGame["currentDisplayedMove"] = currentDisplayedMove;
-            tempGame["openDatabaseGameNumber"] = match.openDatabaseGameNumber;
-            tempGame["playerNameBlue"] = match.playerNameBlue;
-            tempGame["playerNameRed"] = match.playerNameRed;
-            tempGame["gameResult"] = match.gameResult;
-            tempGame["event"] = match.event;
-            tempGame["city"] = match.city;
-            tempGame["round"] = match.round;
-            tempGame["date"] = match.date.toString();
+            tempGame["openDatabaseGameNumber"] = match->getOpenDatabaseGameNumber();
+            tempGame["playerNameBlue"] = match->getPlayerNameBlue();
+            tempGame["playerNameRed"] = match->getPlayerNameRed();
+            tempGame["result"] = match->getResult();
+            tempGame["event"] = match->getEvent();
+            tempGame["city"] = match->getCity();
+            tempGame["round"] = match->getRound();
+            tempGame["date"] = match->getDate().toString();
             QJsonArray turnsArray;
-                for (auto & turn : *match.turns) turnsArray.append(turn);
+                for (auto & turn : *match->getTurns())
+                    turnsArray.append(turn);
             tempGame["turns"] = turnsArray;
         QJsonObject newTempFileData;
-        if (copyGames.size() > 0) newTempFileData["copyGames"] = copyGames;
+        if (copyGames.size() > 0)
+            newTempFileData["copyGames"] = copyGames;
         newTempFileData["tempGame"] = tempGame;
         QJsonDocument newTempFileDoc(newTempFileData);
         tempFile.write(newTempFileDoc.toJson());
