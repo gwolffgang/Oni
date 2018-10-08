@@ -1,18 +1,12 @@
 #ifndef ONI_H
 #define ONI_H
 
-#include <QtCore>
-#include <QtGui>
 #include <QApplication>
 #include <QFileDialog>
 #include <QMessageBox>
 
-#include "card.h"
-#include "cardslot.h"
-#include "field.h"
 #include "mainwindow.h"
 #include "match.h"
-#include "piece.h"
 #include "windowdatabase.h"
 
 class Oni : public QObject {

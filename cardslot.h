@@ -1,9 +1,6 @@
 #ifndef CARDSLOT_H
 #define CARDSLOT_H
 
-#include <QtCore>
-#include <QtGui>
-
 #include "card.h"
 
 class CardSlot : public QObject, public QGraphicsRectItem {

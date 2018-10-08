@@ -1,7 +1,6 @@
 #ifndef WINDOWDATABASE_H
 #define WINDOWDATABASE_H
 
-#include <QtCore>
 #include <QtGui>
 #include "dialogsave.h"
 

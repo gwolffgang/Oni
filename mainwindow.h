@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtCore>
 #include <QtGui>
 #include <QGraphicsScene>
 #include <QListWidget>
@@ -88,7 +87,7 @@ protected:
 private slots:
     inline void openDatabase() { windowDatabase = new WindowDatabase; windowDatabase->show(); }
     inline void refreshWindow() { prepareGame(); }
-    void showMove(QListWidgetItem *item = NULL);
+    void showMove(QListWidgetItem *item = nullptr);
     // Game - Cards
     void on_actionBasisGame_triggered();
     void on_actionSenseisPath_triggered();

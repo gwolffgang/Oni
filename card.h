@@ -1,8 +1,6 @@
 #ifndef CARD_H
 #define CARD_H
 
-#include <QtCore>
-#include <QtGui>
 #include <QGraphicsPixmapItem>
 
 enum CardID {
