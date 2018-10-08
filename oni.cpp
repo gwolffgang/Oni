@@ -15,10 +15,7 @@ Oni::Oni() :
     configFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_cfg.json")),
     databaseFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_save.json")),
     tempDataFileName(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/oni_temp.json")),
-    window(new MainWindow), windowDatabase(nullptr), board(new QList<QList<Field*>>),
-    pieces(new QList<Piece*>), capturedBlue(new QList<Piece*>), capturedRed(new QList<Piece*>),
-    slotsGrid(new QList<QList<CardSlot*>>), cards(new QList<Card*>),
-    piecesSet("ComicStyle"), pickedUpPiece(nullptr), fieldOfOrigin(nullptr), currentDisplayedMove(0),
+    window(new MainWindow), windowDatabase(nullptr), piecesSet("ComicStyle"), currentDisplayedMove(0),
     flippedBoard(false), cardChoiceActive(false), match(new Match) {
 
     // create AppData folder and needed files, if not done yet
@@ -85,15 +82,6 @@ bool Oni::readConfig() {
     return true;
 }
 
-QList<Card*> Oni::identifyCards(int owner) {
-    QList<Card*> list;
-    int slotsSize = slotsGrid->at(owner).size();
-    for (int k = 0; k < slotsSize; k++) {
-        list.append(slotsGrid->at(owner).at(k)->getCard());
-    }
-    return list;
-}
-
 void Oni::setupFoldersAndFiles() {
     QDir appDataFolder = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     QFile backupFile(backupFileName);
@@ -113,12 +101,6 @@ void Oni::setupFoldersAndFiles() {
         backupFile.remove();
     }
     databaseFile.copy(backupFileName);
-}
-
-void Oni::switchCards(CardSlot *usedCardSlot) {
-    Card *temporary = usedCardSlot->getCard();
-    usedCardSlot->setCard(slotsGrid->at(0).at(0)->getCard());
-    slotsGrid->at(0).at(0)->setCard(temporary);
 }
 
 void Oni::winGame(int winner) {

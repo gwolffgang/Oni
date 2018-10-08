@@ -21,15 +21,15 @@ void CardSlot::assignCard(int player, int number) {
     // determine correct card
     switch (player) {
         case 0:
-            card = game->getCards()->at(0);
+            card = game->getMatch()->getCards()->at(0);
             break;
         case 1:
-            if (number == 0) card = game->getCards()->at(1);
-            else card = game->getCards()->at(2);
+            if (number == 0) card = game->getMatch()->getCards()->at(1);
+            else card = game->getMatch()->getCards()->at(2);
             break;
         case 2:
-            if (number == 0) card = game->getCards()->at(3);
-            else card = game->getCards()->at(4);
+            if (number == 0) card = game->getMatch()->getCards()->at(3);
+            else card = game->getMatch()->getCards()->at(4);
     }
 }
 
@@ -66,8 +66,8 @@ void CardSlot::colorizePlayersSlots(int player, int number) {
 void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (game->getCardChoiceActive()) {
         if ((game->getFirstPlayersTurn() && owner == 1) || (!game->getFirstPlayersTurn() && owner == 2)) {
-            game->switchCards(this);
-            game->getChosenField()->dropPiece();
+            game->getMatch()->switchCards(this);
+            game->getMatch()->getChosenField()->dropPiece();
         }
     }
     event->ignore();

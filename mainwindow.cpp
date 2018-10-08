@@ -37,8 +37,8 @@ bool MainWindow::getFlipEveryMove() {
 
 bool MainWindow::analyseSetupString(QString string) {
     string = string.remove(" ");
-    QList<Card*> *cards = game->getCards();
-    QList<Piece*> *pieces = game->getPieces();
+    QList<Card*> *cards = game->getMatch()->getCards();
+    QList<Piece*> *pieces = game->getMatch()->getPieces();
 
     // seperate pieces and cards
     QStringList part = string.split("|");
@@ -105,22 +105,22 @@ bool MainWindow::analyseSetupString(QString string) {
     }
 
     // take care of missing pieces
-    game->getCapturedRed()->clear();
+    game->getMatch()->getCapturedRed()->clear();
     for (int i = count_S+1; i < 5; i++) {
         Piece *victim = new Piece;
         victim->setRow(-1);
         victim->setCol(-1);
         victim->setType('S');
-        game->getCapturedRed()->append(victim);
+        game->getMatch()->getCapturedRed()->append(victim);
         victim->drawPiece();
     }
-    game->getCapturedBlue()->clear();
+    game->getMatch()->getCapturedBlue()->clear();
     for (int i = count_s+1; i < 5; i++) {
         Piece *victim = new Piece;
         victim->setRow(-1);
         victim->setCol(-1);
         victim->setType('s');
-        game->getCapturedBlue()->append(victim);
+        game->getMatch()->getCapturedBlue()->append(victim);
         victim->drawPiece();
     }
 
@@ -205,7 +205,7 @@ void MainWindow::drawBackGroundPicture() {
 
 void MainWindow::drawBoard() {
     // drawing the board
-    if (game->getBoard()->size() == 0) {
+    if (game->getMatch()->getBoard()->size() == 0) {
         QList<Field*> fieldsRow;
         for (int row = 0; row < 5; row++) {
             fieldsRow.clear();
@@ -219,7 +219,7 @@ void MainWindow::drawBoard() {
                 // add piece to field
                 int pieceNumber = field->identifyPiece();
                 if (pieceNumber != -1) {
-                    field->linkPiece(game->getPieces()->at(pieceNumber));
+                    field->linkPiece(game->getMatch()->getPieces()->at(pieceNumber));
                     field->getPiece()->drawPiece();
                 }
                 // add field to row
@@ -227,12 +227,12 @@ void MainWindow::drawBoard() {
                 scene->addItem(field);
             }
             // add row to board
-            game->getBoard()->append(fieldsRow);
+            game->getMatch()->getBoard()->append(fieldsRow);
         }
     } else {
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 5; col++) {
-                Field *field = game->getBoard()->at(row).at(col);
+                Field *field = game->getMatch()->getBoard()->at(row).at(col);
                 if (!game->getFlippedBoard()) field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
                 else field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
                 double size = game->getWindow()->getFieldSize();
@@ -241,7 +241,7 @@ void MainWindow::drawBoard() {
                 // add piece to field
                 int pieceNumber = field->identifyPiece();
                 if (pieceNumber != -1) {
-                    field->linkPiece(game->getPieces()->at(pieceNumber));
+                    field->linkPiece(game->getMatch()->getPieces()->at(pieceNumber));
                     field->getPiece()->drawPiece();
                 }
                 scene->addItem(field);
@@ -261,16 +261,16 @@ void MainWindow::drawCardSlots() {
         if (player == 0) maxSlots = 1;
         // draw cardslots
         for (int number = 0; number < maxSlots; number++) {
-            if (game->getSlotsGrid()->size() < 3) {
+            if (game->getMatch()->getSlotsGrid()->size() < 3) {
                 slot = new CardSlot;
                 slot->setOwner(player);
                 slot->assignCard(player, number);
             } else {
-                if (game->getSlotsGrid()->at(2).size() < 2) {
+                if (game->getMatch()->getSlotsGrid()->at(2).size() < 2) {
                     slot = new CardSlot;
                     slot->setOwner(player);
                     slot->assignCard(player, number);
-                } else slot = game->getSlotsGrid()->at(player).at(number);
+                } else slot = game->getMatch()->getSlotsGrid()->at(player).at(number);
             }
             slot->setRect(0, 0, slotWidth, slotHeight);
             double posX = scene->height() - MSWindowsCorrection + number * slotWidth + (number + 1) * borderX;
@@ -290,12 +290,12 @@ void MainWindow::drawCardSlots() {
             slot->getCard()->drawCard(player);
             scene->addItem(slot);
             slot->colorizePlayersSlots(player, number);
-            if (game->getSlotsGrid()->size() < 3) slotsRow.append(slot);
-            else if(game->getSlotsGrid()->at(2).size() < 2)
+            if (game->getMatch()->getSlotsGrid()->size() < 3) slotsRow.append(slot);
+            else if(game->getMatch()->getSlotsGrid()->at(2).size() < 2)
                 slotsRow.append(slot);
         }
-        if (game->getSlotsGrid()->size() < 3) game->getSlotsGrid()->append(slotsRow);
-        else if(game->getSlotsGrid()->at(2).size() < 2) game->getSlotsGrid()->append(slotsRow);
+        if (game->getMatch()->getSlotsGrid()->size() < 3) game->getMatch()->getSlotsGrid()->append(slotsRow);
+        else if(game->getMatch()->getSlotsGrid()->at(2).size() < 2) game->getMatch()->getSlotsGrid()->append(slotsRow);
     }
 }
 
@@ -333,8 +333,8 @@ void MainWindow::drawSideBar() {
 
     // Captured pieces
     bool delItem = false;
-    for (int i = 0; i < game->getCapturedBlue()->count(); i++) {
-        Piece *victim = game->getCapturedBlue()->at(i);
+    for (int i = 0; i < game->getMatch()->getCapturedBlue()->count(); i++) {
+        Piece *victim = game->getMatch()->getCapturedBlue()->at(i);
         victim->drawPiece();
         double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
         double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
@@ -348,8 +348,8 @@ void MainWindow::drawSideBar() {
             scene->addItem(victim);
         }
     }
-    for (int i = 0; i < game->getCapturedRed()->count(); i++) {
-        Piece *victim = game->getCapturedRed()->at(i);
+    for (int i = 0; i < game->getMatch()->getCapturedRed()->count(); i++) {
+        Piece *victim = game->getMatch()->getCapturedRed()->at(i);
         victim->drawPiece();
         double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
         double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
@@ -402,11 +402,11 @@ QString MainWindow::generateNotationString(QString lastTurn, QString thisTurn) {
 QString MainWindow::generateSetupString() {
     // set fields
     QString saveString = "";
-    for (int i = 0; i < game->getPieces()->size(); i++) {
-        Piece *piece = game->getPieces()->at(i);
+    for (int i = 0; i < game->getMatch()->getPieces()->size(); i++) {
+        Piece *piece = game->getMatch()->getPieces()->at(i);
         if (saveString != "") saveString += ", ";
         saveString += piece->getType();
-        switch (game->getPieces()->at(i)->getCol()) {
+        switch (game->getMatch()->getPieces()->at(i)->getCol()) {
         case 0:
             saveString += "a";
             break;
@@ -422,21 +422,21 @@ QString MainWindow::generateSetupString() {
         case 4:
             saveString += "e";
         }
-        saveString += QString::number(game->getPieces()->at(i)->getRow()+1);
+        saveString += QString::number(game->getMatch()->getPieces()->at(i)->getRow()+1);
     }
     saveString += "| ";
     // set cards
-    if (game->getSlotsGrid()->size() > 0) {
+    if (game->getMatch()->getSlotsGrid()->size() > 0) {
         for (int k = 0; k < 3; k++) {
-            for (int l = 0; l < game->getSlotsGrid()->at(k).size(); l++) {
+            for (int l = 0; l < game->getMatch()->getSlotsGrid()->at(k).size(); l++) {
                 if (k != 0) saveString += ", ";
-                saveString += QString::number(game->getSlotsGrid()->at(k).at(l)->getCard()->getID());
+                saveString += QString::number(game->getMatch()->getSlotsGrid()->at(k).at(l)->getCard()->getID());
             }
         }
     } else
         for (int k = 0; k < 5; k++) {
             if (k != 0) saveString += ", ";
-            saveString += QString::number(game->getCards()->at(k)->getID());
+            saveString += QString::number(game->getMatch()->getCards()->at(k)->getID());
         }
     return saveString;
 }
@@ -533,19 +533,19 @@ void MainWindow::readWindowConfig(QJsonObject &json) {
 
 void MainWindow::resetLists() {
     ui->notation->clear();
-    if (game->getBoard()) game->getBoard()->clear();
-    if (game->getCards()) game->getCards()->clear();
-    if (game->getPieces()) game->getPieces()->clear();
-    if (game->getSlotsGrid()) game->getSlotsGrid()->clear();
-    for (int k = 0; k < game->getCapturedBlue()->size(); k++) {
-        Piece *victim = game->getCapturedBlue()->at(k);
+    if (game->getMatch()->getBoard()) game->getMatch()->getBoard()->clear();
+    if (game->getMatch()->getCards()) game->getMatch()->getCards()->clear();
+    if (game->getMatch()->getPieces()) game->getMatch()->getPieces()->clear();
+    if (game->getMatch()->getSlotsGrid()) game->getMatch()->getSlotsGrid()->clear();
+    for (int k = 0; k < game->getMatch()->getCapturedBlue()->size(); k++) {
+        Piece *victim = game->getMatch()->getCapturedBlue()->at(k);
         bool delItem = false;
         for (int k = 0; k < scene->items().size(); k++)
             if (scene->items().at(k) == victim) delItem = true;
         if (delItem) scene->removeItem(victim);
     }
-    for (int k = 0; k < game->getCapturedRed()->size(); k++) {
-        Piece *victim = game->getCapturedRed()->at(k);
+    for (int k = 0; k < game->getMatch()->getCapturedRed()->size(); k++) {
+        Piece *victim = game->getMatch()->getCapturedRed()->at(k);
         bool delItem = false;
         for (int k = 0; k < scene->items().size(); k++)
             if (scene->items().at(k) == victim) delItem = true;

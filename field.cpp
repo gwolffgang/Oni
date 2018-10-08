@@ -35,10 +35,10 @@ void Field::captureOrChangePiece(Piece *target) {
         // remove captured piece
         game->getWindow()->getScene()->removeItem(target);
         if (targetOwner == 1)
-            game->getCapturedRed()->append(target);
+            game->getMatch()->getCapturedRed()->append(target);
         else
-            game->getCapturedBlue()->append(target);
-        game->getPieces()->removeAll(target);
+            game->getMatch()->getCapturedBlue()->append(target);
+        game->getMatch()->getPieces()->removeAll(target);
 
         // drop piece
         dropPiece();
@@ -49,11 +49,11 @@ void Field::captureOrChangePiece(Piece *target) {
         QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
         setBrush(brush);
 
-        if (target != game->getPickedUpPiece())
+        if (target != game->getMatch()->getPickedUpPiece())
             pickUpPiece(target);
         else {
-            game->setPickedUpPiece(nullptr);
-            game->setFieldOfOrigin(nullptr);
+            game->getMatch()->setPickedUpPiece(nullptr);
+            game->getMatch()->setFieldOfOrigin(nullptr);
         }
     }
 }
@@ -72,15 +72,15 @@ void Field::dropPiece() {
                 unmarkAllFields();
                 // put back picked up piece
                 game->setCardChoiceActive(false);
-                game->setPickedUpPiece(nullptr);
-                game->setFieldOfOrigin(nullptr);
+                game->getMatch()->setPickedUpPiece(nullptr);
+                game->getMatch()->setFieldOfOrigin(nullptr);
                 game->getWindow()->prepareGame();
                 return;
             }
         }
-        linkPiece(game->getPickedUpPiece());
+        linkPiece(game->getMatch()->getPickedUpPiece());
         game->getWindow()->saveTurnInNotation();
-        game->getFieldOfOrigin()->setPieceType(' ');
+        game->getMatch()->getFieldOfOrigin()->setPieceType(' ');
 
         // set turnmarker
         QGraphicsScene *scene = game->getWindow()->getScene();
@@ -95,19 +95,19 @@ void Field::dropPiece() {
 
         // cleaning up
         unmarkAllFields();
-        game->setFieldOfOrigin(nullptr);
-        game->setPickedUpPiece(nullptr);
+        game->getMatch()->setFieldOfOrigin(nullptr);
+        game->getMatch()->setPickedUpPiece(nullptr);
 
         // winning conditions check
         if (game->getMatch()->getResult() == 0) {
-            if ((game->getCapturedRed()->size() > 0 && game->getCapturedRed()->last()->getType() == 'M') ||
-                (game->getBoard()->at(0).at(2)->getPieceType() == 'm')) {
+            if ((game->getMatch()->getCapturedRed()->size() > 0 && game->getMatch()->getCapturedRed()->last()->getType() == 'M') ||
+                (game->getMatch()->getBoard()->at(0).at(2)->getPieceType() == 'm')) {
                 game->winGame(-1);
                 game->getWindow()->notateVictory("0-1");
             }
             else {
-                if ((game->getCapturedBlue()->size() > 0 && game->getCapturedBlue()->last()->getType() == 'm') ||
-                    (game->getBoard()->at(4).at(2)->getPieceType() == 'M')) {
+                if ((game->getMatch()->getCapturedBlue()->size() > 0 && game->getMatch()->getCapturedBlue()->last()->getType() == 'm') ||
+                    (game->getMatch()->getBoard()->at(4).at(2)->getPieceType() == 'M')) {
                     game->winGame(1);
                     game->getWindow()->notateVictory("1-0");
                 }
@@ -125,25 +125,25 @@ void Field::dropPiece() {
 void Field::exchangeCards() {
     // determine used cardslot card
     CardSlot *usedCardSlot = nullptr;
-    int player = game->getFieldOfOrigin()->getPiece()->getOwner();
-    if (this->brush().color() == game->getWindow()->colorChooseableCard1)
-        usedCardSlot = game->getSlotsGrid()->at(player).at(0);
+    int player = game->getMatch()->getFieldOfOrigin()->getPiece()->getOwner();
+    if (brush().color() == game->getWindow()->colorChooseableCard1)
+        usedCardSlot = game->getMatch()->getSlotsGrid()->at(player).at(0);
     else
-        if (this->brush().color() == game->getWindow()->colorChooseableCard2)
-            usedCardSlot = game->getSlotsGrid()->at(player).at(1);
+        if (brush().color() == game->getWindow()->colorChooseableCard2)
+            usedCardSlot = game->getMatch()->getSlotsGrid()->at(player).at(1);
         else {
             game->setCardChoiceActive(true);
-            game->setChosenField(this);
+            game->getMatch()->setChosenField(this);
          }
 
     // switch used card and neutral card
     if (!game->getCardChoiceActive())
-        game->switchCards(usedCardSlot);
+        game->getMatch()->switchCards(usedCardSlot);
 }
 
 int Field::identifyPiece() {
     // identify piece
-    QList<Piece*> *pieces = game->getPieces();
+    QList<Piece*> *pieces = game->getMatch()->getPieces();
     for (int i = 0; i < pieces->size(); i++)
         if (pieces->at(i)->getRow() == row && pieces->at(i)->getCol() == col)
             return i;
@@ -165,10 +165,10 @@ void Field::pickUpPiece(Piece *piece) {
     if ((game->getFirstPlayersTurn() && (piece->getType() == 'M' || piece->getType() == 'S')) ||
         (!game->getFirstPlayersTurn() && (piece->getType() == 'm' || piece->getType() == 's'))) {
         // save origin of piece
-        game->setFieldOfOrigin(this);
+        game->getMatch()->setFieldOfOrigin(this);
 
         // pick the piece up
-        game->setPickedUpPiece(piece);
+        game->getMatch()->setPickedUpPiece(piece);
 
         // unmark all fields
         unmarkAllFields();
@@ -181,7 +181,7 @@ void Field::pickUpPiece(Piece *piece) {
         QList<QList<Field*>> fields;
 
         // setup variables
-        int player = game->getFieldOfOrigin()->getPiece()->getOwner();
+        int player = game->getMatch()->getFieldOfOrigin()->getPiece()->getOwner();
         int factor = 1;
         char master = 'M', scolar = 'S';
         if (player == 2) {
@@ -192,7 +192,7 @@ void Field::pickUpPiece(Piece *piece) {
         int fieldCol = col, fieldRow = row;
 
         // identify cards of player
-        QList<Card*> cards = game->identifyCards(player);
+        QList<Card*> cards = game->getMatch()->identifyCards(player);
 
         // helper list for every cards choices
         QList<Field*> cardFieldList;
@@ -205,9 +205,9 @@ void Field::pickUpPiece(Piece *piece) {
                     int newFieldCol = fieldCol + choiceCol * factor;
                     int newFieldRow = fieldRow + choiceRow * factor;
                     if ((newFieldCol < 5 && newFieldCol > -1) && (newFieldRow < 5 && newFieldRow > -1)) {
-                        char newFieldPieceType = game->getBoard()->at(newFieldRow).at(newFieldCol)->getPieceType();
+                        char newFieldPieceType = game->getMatch()->getBoard()->at(newFieldRow).at(newFieldCol)->getPieceType();
                         if (newFieldPieceType != master && newFieldPieceType != scolar)
-                            cardFieldList.append(game->getBoard()->at(newFieldRow).at(newFieldCol));
+                            cardFieldList.append(game->getMatch()->getBoard()->at(newFieldRow).at(newFieldCol));
                     }
                 }
             }
@@ -241,10 +241,10 @@ void Field::pickUpPiece(Piece *piece) {
 
 void Field::unmarkAllFields() {
     QBrush brush(Qt::NoBrush);
-    for (int k = 0; k < game->getBoard()->size(); k++) {
-        for (int l = 0; l < game->getBoard()->at(k).size(); l++) {
-            game->getBoard()->at(k).at(l)->setBrush(brush);
-            game->getBoard()->at(k).at(l)->setCursor(Qt::ArrowCursor);
+    for (int k = 0; k < game->getMatch()->getBoard()->size(); k++) {
+        for (int l = 0; l < game->getMatch()->getBoard()->at(k).size(); l++) {
+            game->getMatch()->getBoard()->at(k).at(l)->setBrush(brush);
+            game->getMatch()->getBoard()->at(k).at(l)->setCursor(Qt::ArrowCursor);
         }
     }
 }
@@ -253,7 +253,7 @@ void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (!game->getCardChoiceActive() && game->getMatch()->getResult() == 0) {
         if ((game->getFirstPlayersTurn() && (pieceType == 'M' || pieceType == 'S')) ||
             (!game->getFirstPlayersTurn() && (pieceType == 'm' || pieceType == 's'))) {
-            if (piece != game->getPickedUpPiece()) {
+            if (piece != game->getMatch()->getPickedUpPiece()) {
                 QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
                 setBrush(brush);
             }
@@ -278,14 +278,14 @@ void Field::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (brush().style() != Qt::NoBrush && !game->getCardChoiceActive() && game->getMatch()->getResult() == 0) {
         int pieceNumber = identifyPiece();
         if (pieceNumber == -1) {    // no piece on that field
-            if (game->getPickedUpPiece() != nullptr)
+            if (game->getMatch()->getPickedUpPiece() != nullptr)
                 dropPiece();
         }
         else {                      // existing piece on that field
-            if (game->getPickedUpPiece() != nullptr)
-                captureOrChangePiece(game->getPieces()->at(pieceNumber));
+            if (game->getMatch()->getPickedUpPiece() != nullptr)
+                captureOrChangePiece(game->getMatch()->getPieces()->at(pieceNumber));
             else
-                pickUpPiece(game->getPieces()->at(pieceNumber));
+                pickUpPiece(game->getMatch()->getPieces()->at(pieceNumber));
         }
     }
     event->ignore();
