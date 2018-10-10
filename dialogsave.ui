@@ -84,6 +84,9 @@
        <height>20</height>
       </rect>
      </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
      <property name="text">
       <string>Red</string>
      </property>

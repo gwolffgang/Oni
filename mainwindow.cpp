@@ -112,7 +112,7 @@ bool MainWindow::analyseSetupString(QString string) {
         victim->setCol(-1);
         victim->setType('S');
         game->getMatch()->getCapturedRed()->append(victim);
-        victim->drawPiece();
+        victim->draw();
     }
     game->getMatch()->getCapturedBlue()->clear();
     for (int i = count_s+1; i < 5; i++) {
@@ -121,7 +121,7 @@ bool MainWindow::analyseSetupString(QString string) {
         victim->setCol(-1);
         victim->setType('s');
         game->getMatch()->getCapturedBlue()->append(victim);
-        victim->drawPiece();
+        victim->draw();
     }
 
     // get cards
@@ -204,45 +204,42 @@ void MainWindow::drawBackGroundPicture() {
     }
 
 void MainWindow::drawBoard() {
-    // drawing the board
     if (game->getMatch()->getBoard()->size() == 0) {
         QList<Field*> fieldsRow;
         for (int row = 0; row < 5; row++) {
             fieldsRow.clear();
             for (int col = 0; col < 5; col++) {
-                // create field
                 Field *field = new Field;
                 field->setCol(col);
                 field->setRow(row);
-                if (!game->getFlippedBoard()) field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
-                else field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
-                // add piece to field
-                int pieceNumber = field->identifyPiece();
-                if (pieceNumber != -1) {
-                    field->linkPiece(game->getMatch()->getPieces()->at(pieceNumber));
-                    field->getPiece()->drawPiece();
+                if (!game->getFlippedBoard())
+                    field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
+                else
+                    field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
+                Piece *piece = field->identifyPiece();
+                if (piece) {
+                    field->linkPiece(piece);
+                    field->getPiece()->draw();
                 }
-                // add field to row
                 fieldsRow.append(field);
                 scene->addItem(field);
             }
-            // add row to board
             game->getMatch()->getBoard()->append(fieldsRow);
         }
     } else {
         for (int row = 0; row < 5; row++) {
             for (int col = 0; col < 5; col++) {
                 Field *field = game->getMatch()->getBoard()->at(row).at(col);
-                if (!game->getFlippedBoard()) field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
-                else field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
+                if (!game->getFlippedBoard())
+                    field->setPos(borderX + axisLabelSize + fieldSize * col, borderY + fieldSize * (4-row));
+                else
+                    field->setPos(borderX + axisLabelSize + fieldSize * (4-col), borderY + fieldSize * row);
                 double size = game->getWindow()->getFieldSize();
                 field->setRect(0, 0, size, size);
-
-                // add piece to field
-                int pieceNumber = field->identifyPiece();
-                if (pieceNumber != -1) {
-                    field->linkPiece(game->getMatch()->getPieces()->at(pieceNumber));
-                    field->getPiece()->drawPiece();
+                Piece *piece = field->identifyPiece();
+                if (piece) {
+                    field->linkPiece(piece);
+                    field->getPiece()->draw();
                 }
                 scene->addItem(field);
             }
@@ -251,15 +248,12 @@ void MainWindow::drawBoard() {
 }
 
 void MainWindow::drawCardSlots() {
-    // drawing the slotsGrid
     QList<CardSlot*> slotsRow;
     CardSlot *slot;
     for (int player = 0; player < 3; player++) {
         slotsRow.clear();
-        // determite number of needed cardslots
         int maxSlots = 2;
         if (player == 0) maxSlots = 1;
-        // draw cardslots
         for (int number = 0; number < maxSlots; number++) {
             if (game->getMatch()->getSlotsGrid()->size() < 3) {
                 slot = new CardSlot;
@@ -287,7 +281,7 @@ void MainWindow::drawCardSlots() {
 
             slot->setPos(posX, posY);
             slot->getCard()->setParentItem(slot);
-            slot->getCard()->drawCard(player);
+            slot->getCard()->draw(player);
             scene->addItem(slot);
             slot->colorizePlayersSlots(player, number);
             if (game->getMatch()->getSlotsGrid()->size() < 3) slotsRow.append(slot);
@@ -301,13 +295,12 @@ void MainWindow::drawCardSlots() {
 
 void MainWindow::drawSideBar() {
     double posXright = 0, posYbuttom = 0, posY = 0;
-    // drawing in-game sidebar "right"
     posXright = this->height() - MSWindowsCorrection - sideBarSize - borderX;
     posYbuttom = this->height() - MSWindowsCorrection - sideBarSize - axisLabelSize - borderY;
 
     // FlipButton
     flipButton = new Button;
-    flipButton->drawButton("flipButton", "right");
+    flipButton->draw("flipButton", "right");
     flipButton->setPos(posXright, (this->height() - MSWindowsCorrection - sideBarSize - axisLabelSize - flipButton->pixmap().height() ) /2);
     if (game->getFlippedBoard()) {
         flipButton->setTransformOriginPoint(flipButton->pixmap().width() / 2, flipButton->pixmap().height() / 2);
@@ -317,13 +310,13 @@ void MainWindow::drawSideBar() {
 
     // TurnMarker
     turnRed = new Button;
-    turnRed->drawButton("turnRed", "right");
+    turnRed->draw("turnRed", "right");
     if (game->getFlippedBoard()) posY = borderY;
     else posY = (this->height() - MSWindowsCorrection - sideBarSize - axisLabelSize - borderY - turnRed->pixmap().height() );
     turnRed->setPos(posXright, posY);
 
     turnBlue = new Button;
-    turnBlue->drawButton("turnBlue", "right");
+    turnBlue->draw("turnBlue", "right");
     if (game->getFlippedBoard()) posY = (this->height() - MSWindowsCorrection - sideBarSize - axisLabelSize - borderY - turnBlue->pixmap().height() );
     else posY = borderY;
     turnBlue->setPos(posXright, posY);
@@ -335,7 +328,7 @@ void MainWindow::drawSideBar() {
     bool delItem = false;
     for (int i = 0; i < game->getMatch()->getCapturedBlue()->count(); i++) {
         Piece *victim = game->getMatch()->getCapturedBlue()->at(i);
-        victim->drawPiece();
+        victim->draw();
         double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
         double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
         if (victim->getType() == 's') {
@@ -350,7 +343,7 @@ void MainWindow::drawSideBar() {
     }
     for (int i = 0; i < game->getMatch()->getCapturedRed()->count(); i++) {
         Piece *victim = game->getMatch()->getCapturedRed()->at(i);
-        victim->drawPiece();
+        victim->draw();
         double victimHeight = (windowHeight -MSWindowsCorrection -7*borderY -sideBarSize -turnRed->boundingRect().height() -turnBlue->boundingRect().height() -flipButton->boundingRect().height()) / 8;
         double victimWidth = victimHeight / victim->pixmap().height() * victim->pixmap().width();
         if (victim->getType() == 'S') {

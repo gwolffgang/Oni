@@ -11,16 +11,16 @@ public:
     Button(QGraphicsItem *parent = nullptr);
 
     // methods
-    void drawButton(QString buttonType = "", QString buttonPos = "right");
+    void draw(QString buttonType = "", QString buttonPos = "right");
 
 protected:
     // variables
     QString type, pos;
 
     // events
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *) override;
 };
 
 #endif // BUTTON_H

@@ -63,25 +63,22 @@ void CardSlot::colorizePlayersSlots(int player, int number) {
     setBrush(brush);
 }
 
-void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void CardSlot::mousePressEvent(QGraphicsSceneMouseEvent *) {
     if (game->getCardChoiceActive()) {
         if ((game->getFirstPlayersTurn() && owner == 1) || (!game->getFirstPlayersTurn() && owner == 2)) {
             game->getMatch()->switchCards(this);
-            game->getMatch()->getChosenField()->dropPiece();
+            game->getMatch()->makeMove();
         }
     }
-    event->ignore();
 }
 
-void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+void CardSlot::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
     if (game->getCardChoiceActive()) {
         if ((game->getFirstPlayersTurn() && owner == 1) || (!game->getFirstPlayersTurn() && owner == 2))
             setCursor(Qt::PointingHandCursor);
-    event->ignore();
     }
 }
 
-void CardSlot::hoverLeaveEvent(QGraphicsSceneHoverEvent *event) {
+void CardSlot::hoverLeaveEvent(QGraphicsSceneHoverEvent *) {
     setCursor(Qt::ArrowCursor);
-    event->ignore();
 }

@@ -27,7 +27,7 @@ public:
 
     // methods
     void setCardValues(int cardID);
-    void drawCard(int player);
+    void draw(int player);
     void drawYinYang(QPainter *painter, int x, int y);
 
 private:

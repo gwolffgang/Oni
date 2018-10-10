@@ -264,7 +264,7 @@ void Card::setCardValues(int cardID) {
     }
 }
 
-void Card::drawCard(int player) {
+void Card::draw(int player) {
     double borderX = game->getWindow()->getBorderX();
     double borderY = game->getWindow()->getBorderY();
     double slotHeight = game->getWindow()->getSlotHeight();
@@ -272,10 +272,10 @@ void Card::drawCard(int player) {
     bool firstPlayersTurn = game->getFirstPlayersTurn();
     bool flippedBoard = game->getFlippedBoard();
 
-    // drawing the card
     double width = slotWidth - 2*borderX -1;
     double height = (slotHeight - 2*borderY)*5/6 - 5/6;
     card = QPixmap(static_cast<int>(width+1), static_cast<int>(height*6/5 +1));
+    card.fill(Qt::transparent);
     setPos(borderX, borderY);
     QBrush lightGrayBrush = QBrush(Qt::lightGray, Qt::SolidPattern);
     QBrush grayBrush = QBrush(Qt::white, Qt::SolidPattern);
@@ -303,7 +303,6 @@ void Card::drawCard(int player) {
     painter.end();
     setPixmap(card);
 
-    // check if card has to be flipped
     setTransformOriginPoint(boundingRect().width() / 2, boundingRect().height() / 2); // middle of card
     if (!flippedBoard) {
         if ((firstPlayersTurn && player == 2) || (!firstPlayersTurn && (player == 0 || player == 2)))

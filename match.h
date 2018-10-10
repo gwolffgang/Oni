@@ -50,8 +50,13 @@ public:
     inline void setRound(double newRound) { round = newRound; }
 
     // methods
+    void captureOrChangePiece();
+    void exchangeCards(QColor slotColor);
     QList<Card*> identifyCards(int owner);
+    void makeMove();
+    void movePiece();
     void switchCards(CardSlot *usedCardSlot);
+    void unmarkAllFields();
 
 private:
     QString playerNameBlue, playerNameRed, event, city;

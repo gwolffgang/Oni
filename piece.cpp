@@ -6,7 +6,7 @@ extern Oni *game;
 Piece::Piece(QGraphicsItem *parent) : QGraphicsPixmapItem(parent), row(-1), col(-1) {
 }
 
-void Piece::drawPiece() {
+void Piece::draw() {
     // draw piece
     int pieceSize = static_cast<int>(game->getWindow()->getFieldSize());
     piece = QPixmap(pieceSize, pieceSize);

@@ -22,7 +22,7 @@ public:
     inline void setType(char newType) { type = newType; }
 
     // methods
-    void drawPiece();
+    void draw();
 
 private:
     // variables

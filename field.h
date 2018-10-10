@@ -28,19 +28,15 @@ public:
     inline void setRow(int newRow) { if (newRow > -1) row = newRow; }
 
     // methods
-    void captureOrChangePiece(Piece *target);
-    void dropPiece();
-    void exchangeCards();
-    int identifyPiece();
+    Piece *identifyPiece();
     void linkPiece(Piece *linkedPiece);
     void pickUpPiece(Piece *piece);
-    void unmarkAllFields();
 
 protected:
     // events
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *) override;
 
 private:
     // variables
