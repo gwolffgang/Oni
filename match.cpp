@@ -22,37 +22,14 @@ void Match::setResult(QString newResult) {
     }
 }
 
-void Match::captureOrChangePiece() {
+void Match::capturePiece() {
     Piece *target = chosenField->identifyPiece();
-    int targetOwner = 0;
-    switch (target->getType()) {
-    case 'S': case 'M':
-        targetOwner = 1;
-        break;
-    case 's': case 'm':
-        targetOwner = 2;
-    }
-    if ((!game->getFirstPlayersTurn() && targetOwner == 1) || (game->getFirstPlayersTurn() && (targetOwner == 2))) {
-        game->getWindow()->getScene()->removeItem(target);
-        if (targetOwner == 1)
-            capturedRed->append(target);
-        else
-            capturedBlue->append(target);
-        pieces->removeAll(target);
-        makeMove();
-    }
-    else {
-        unmarkAllFields();
-        QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
-        chosenField->setBrush(brush);
-
-        if (target != pickedUpPiece)
-            chosenField->pickUpPiece(target);
-        else {
-            pickedUpPiece = nullptr;
-            fieldOfOrigin = nullptr;
-        }
-    }
+    if (target->getOwner() == 1)
+        capturedRed->append(target);
+    else
+        capturedBlue->append(target);
+    pieces->removeAll(target);
+    game->getWindow()->getScene()->removeItem(target);
 }
 
 void Match::exchangeCards(QColor slotColor) {
@@ -82,11 +59,9 @@ QList<Card *> Match::identifyCards(int owner) {
 }
 
 void Match::makeMove() {
-    Piece *piece = chosenField->identifyPiece();
-    if (piece)
-        captureOrChangePiece();
-    else
-        movePiece();
+    if (chosenField->identifyPiece())
+        capturePiece();
+    movePiece();
 }
 
 void Match::movePiece() {
@@ -96,7 +71,6 @@ void Match::movePiece() {
     else {
         exchangeCards(chosenField->brush().color());
     }
-
     if (!game->getCardChoiceActive()) {
         if (turns->size() > (game->getCurrentDisplayedMove()+1)) {
             QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "Change Move", "Do you really want to enter this new move?<br>The old move and all following ones will be deleted.");

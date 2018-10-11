@@ -16,6 +16,14 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent), col(-1), row(-1
     setAcceptHoverEvents(true);
 }
 
+void Field::dropPiece() {
+    game->getMatch()->unmarkAllFields();
+    QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
+    setBrush(brush);
+    game->getMatch()->setPickedUpPiece(nullptr);
+    game->getMatch()->setFieldOfOrigin(nullptr);
+}
+
 Piece *Field::identifyPiece() {
     QList<Piece*> *pieces = game->getMatch()->getPieces();
     for (int i = 0; i < pieces->size(); i++)
@@ -32,7 +40,7 @@ void Field::linkPiece(Piece *linkedPiece) {
     piece->setRow(row);
 }
 
-void Field::pickUpPiece(Piece *piece) {
+void Field::pickUpPiece() {
     Match *match = game->getMatch();
     if ((game->getFirstPlayersTurn() && (piece->getType() == 'M' || piece->getType() == 'S')) ||
         (!game->getFirstPlayersTurn() && (piece->getType() == 'm' || piece->getType() == 's'))) {
@@ -122,9 +130,23 @@ void Field::mousePressEvent(QGraphicsSceneMouseEvent *) {
     match->setChosenField(this);
     if (brush().style() != Qt::NoBrush && !game->getCardChoiceActive() && match->getResult() == 0) {
         Piece *piece = identifyPiece();
-        if (match->getPickedUpPiece())
-            match->makeMove();
+        if (piece) {
+            if (match->getPickedUpPiece()) {
+                if (piece->getOwner() == match->getPickedUpPiece()->getOwner()) {
+                    if (piece != match->getPickedUpPiece()) {
+                        dropPiece();
+                        pickUpPiece();
+                    }
+                    else
+                        dropPiece();
+                }
+                else
+                    match->makeMove();
+            }
+            else
+                pickUpPiece();
+        }
         else
-            pickUpPiece(piece);
+            match->makeMove();
     }
 }
