@@ -6,7 +6,6 @@ extern Oni *game;
 
 DialogSave::DialogSave(QWidget *parent) : QDialog(parent), ui(new Ui::DialogSave), turns({}) {
     ui->setupUi(this);
-
     ui->lineEditNameRed->setText(game->getMatch()->getPlayerNameRed());
     ui->lineEditNameBlue->setText(game->getMatch()->getPlayerNameBlue());
     if (static_cast<int>(game->getMatch()->getRound()) != 0) ui->lineEditRound->setText(QString::number(game->getMatch()->getRound()));

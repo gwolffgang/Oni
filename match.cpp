@@ -11,6 +11,37 @@ Match::Match() :
 
 }
 
+QList<QList<Field*>> Match::getDestinationFields() {
+    QList<QList<Field*>> list;
+    QList<Card*> cardsList = identifyCards(pickedUpPiece->getOwner());
+    QList<Field*> cardFieldsList;
+    int factor = 1;
+    char master = 'M', scolar = 'S';
+    if (pickedUpPiece->getOwner() == 2) {
+        factor = -1;
+        master = 'm';
+        scolar = 's';
+    }
+    for (int i = 0; i < cardsList.size(); i++) {
+        cardFieldsList.clear();
+        for (int choice = 0; choice < 4; choice++) {
+            int choiceCol = cardsList.at(i)->getColFromChoice(choice);
+            int choiceRow = cardsList.at(i)->getRowFromChoice(choice);
+            if (choiceCol != 0 || choiceRow != 0) {
+                int newFieldCol = fieldOfOrigin->getCol() + choiceCol * factor;
+                int newFieldRow = fieldOfOrigin->getRow() + choiceRow * factor;
+                if ((newFieldCol < 5 && newFieldCol > -1) && (newFieldRow < 5 && newFieldRow > -1)) {
+                    char newFieldPieceType = board->at(newFieldRow).at(newFieldCol)->getPieceType();
+                    if (newFieldPieceType != master && newFieldPieceType != scolar)
+                        cardFieldsList.append(board->at(newFieldRow).at(newFieldCol));
+                }
+            }
+        }
+        list.append(cardFieldsList);
+    }
+    return list;
+}
+
 void Match::setResult(QString newResult) {
     if (newResult == "1-0")
         result = 1;
@@ -22,6 +53,16 @@ void Match::setResult(QString newResult) {
     }
 }
 
+void Match::setWinner(int winner) {
+    result = winner;
+    QString victor = playerNameBlue;
+    if (result == 1)
+        victor = playerNameRed;
+    QMessageBox::StandardButton reply = QMessageBox::information(nullptr, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
+    if (reply == QMessageBox::Save)
+        QTimer::singleShot(1, game->getWindow(), SLOT(on_actionSave_triggered()) );
+}
+
 void Match::capturePiece() {
     Piece *target = chosenField->identifyPiece();
     if (target->getOwner() == 1)
@@ -30,6 +71,14 @@ void Match::capturePiece() {
         capturedBlue->append(target);
     pieces->removeAll(target);
     game->getWindow()->getScene()->removeItem(target);
+}
+
+void Match::dropPiece() {
+    unmarkAllFields();
+    QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
+    chosenField->setBrush(brush);
+    pickedUpPiece = nullptr;
+    fieldOfOrigin = nullptr;
 }
 
 void Match::exchangeCards(QColor slotColor) {
@@ -43,8 +92,6 @@ void Match::exchangeCards(QColor slotColor) {
         else {
             game->setCardChoiceActive(true);
          }
-
-    // switch used card and neutral card
     if (!game->getCardChoiceActive())
         switchCards(usedCardSlot);
 }
@@ -64,13 +111,27 @@ void Match::makeMove() {
     movePiece();
 }
 
+void Match::markDestinationFields(QList<QList<Field*>> fields) {
+    MainWindow *window = game->getWindow();
+    foreach (Field *fieldCard1, fields.at(0)) {
+        fieldCard1->setBrush(QBrush(window->colorChooseableCard1, Qt::Dense4Pattern));
+    }
+    foreach (Field *fieldCard2, fields.at(1)) {
+        foreach (Field *fieldCard1, fields.at(0)) {
+            if (fieldCard1 != fieldCard2)
+                fieldCard2->setBrush(QBrush(window->colorChooseableCard2, Qt::Dense4Pattern));
+            else
+                fieldCard2->setBrush(QBrush(window->colorChooseableBoth, Qt::Dense4Pattern));
+        }
+    }
+}
+
 void Match::movePiece() {
     MainWindow *window = game->getWindow();
     if (game->getCardChoiceActive())
         game->setCardChoiceActive(false);
-    else {
+    else
         exchangeCards(chosenField->brush().color());
-    }
     if (!game->getCardChoiceActive()) {
         if (turns->size() > (game->getCurrentDisplayedMove()+1)) {
             QMessageBox::StandardButton reply = QMessageBox::question(nullptr, "Change Move", "Do you really want to enter this new move?<br>The old move and all following ones will be deleted.");
@@ -101,13 +162,13 @@ void Match::movePiece() {
         if (result == 0) {
             if ((capturedRed->size() > 0 && capturedRed->last()->getType() == 'M') ||
                 (board->at(0).at(2)->getPieceType() == 'm')) {
-                game->winGame(-1);
+                setWinner(-1);
                 window->notateVictory("0-1");
             }
             else {
                 if ((capturedBlue->size() > 0 && capturedBlue->last()->getType() == 'm') ||
                     (board->at(4).at(2)->getPieceType() == 'M')) {
-                    game->winGame(1);
+                    setWinner(1);
                     window->notateVictory("1-0");
                 }
             }
@@ -118,6 +179,12 @@ void Match::movePiece() {
     QTimer::singleShot( 1, window, SLOT(refreshWindow()) );
 }
 
+void Match::pickUpPiece() {
+    pickedUpPiece = fieldOfOrigin->getPiece();
+    fieldOfOrigin->setBrush(QBrush(game->getWindow()->colorSelected, Qt::Dense4Pattern));
+    markDestinationFields(getDestinationFields());
+}
+
 void Match::switchCards(CardSlot *usedCardSlot) {
     Card *temporary = usedCardSlot->getCard();
     usedCardSlot->setCard(slotsGrid->at(0).at(0)->getCard());
@@ -125,11 +192,10 @@ void Match::switchCards(CardSlot *usedCardSlot) {
 }
 
 void Match::unmarkAllFields() {
-    QBrush brush(Qt::NoBrush);
-    for (int k = 0; k < board->size(); k++) {
-        for (int l = 0; l < board->at(k).size(); l++) {
-            board->at(k).at(l)->setBrush(brush);
-            board->at(k).at(l)->setCursor(Qt::ArrowCursor);
+    for (int column = 0; column < board->size(); column++) {
+        for (int row = 0; row < board->at(column).size(); row++) {
+            board->at(column).at(row)->setBrush(QBrush(Qt::NoBrush));
+            board->at(column).at(row)->setCursor(Qt::ArrowCursor);
         }
     }
 }

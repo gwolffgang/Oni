@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     dialogabout.cpp \
     dialogsave.cpp \
     windowdatabase.cpp \
-    match.cpp
+    match.cpp \
+    sensei.cpp
 
 HEADERS  += mainwindow.h \
     oni.h \
@@ -47,7 +48,8 @@ HEADERS  += mainwindow.h \
     dialogabout.h \
     dialogsave.h \
     windowdatabase.h \
-    match.h
+    match.h \
+    sensei.h
 
 FORMS    += mainwindow.ui \
     dialogabout.ui \

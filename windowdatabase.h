@@ -51,6 +51,7 @@ private slots:
     void on_GamesTable_doubleClicked(const QModelIndex &index);
     void on_openGame_clicked();
     inline void on_pasteGame_clicked() { pasteGames(); }
+    inline void on_saveGame_clicked() { saveGame(true); }
     void on_undoChanges_clicked();
 
 private:

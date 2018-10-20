@@ -67,8 +67,10 @@ bool Oni::readConfig() {
                 match->setCity(gameData["city"].toString());
             if (gameData.contains("date") && gameData["date"].isString()) {
                 QString readDateString = gameData["date"].toString();
-                QDate datum;
-                match->setDate(datum.fromString(readDateString,"YY.MM.dd"));
+                if (readDateString != "") {
+                    QDate datum;
+                    match->setDate(datum.fromString(readDateString, "dd.MM.yyyy"));
+                }
             }
             if (gameData.contains("round") && gameData["round"].isDouble())
                 match->setRound(gameData["round"].toDouble());
@@ -101,18 +103,6 @@ void Oni::setupFoldersAndFiles() {
         backupFile.remove();
     }
     databaseFile.copy(backupFileName);
-}
-
-void Oni::winGame(int winner) {
-    match->setResult(winner);
-    QString victor;
-    if (winner == 1)
-        victor = match->getPlayerNameRed();
-    else
-        victor = match->getPlayerNameBlue();
-    QMessageBox::StandardButton reply = QMessageBox::information(nullptr, "VICTORY!", victor + " has won the game. Congratulations!", QMessageBox::Ok, QMessageBox::Save);
-    if (reply == QMessageBox::Save)
-        QTimer::singleShot(1, window, SLOT(on_actionSave_triggered()) );
 }
 
 bool Oni::writeConfig() {

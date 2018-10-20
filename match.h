@@ -22,6 +22,7 @@ public:
     inline Field *getChosenField() { return chosenField; }
     inline QString getCity() { return city; }
     inline QDate getDate() { return date; }
+    QList<QList<Field*>> getDestinationFields();
     inline QString getEvent() { return event; }
     inline Field *getFieldOfOrigin() { return fieldOfOrigin; }
     inline Piece *getPickedUpPiece() { return pickedUpPiece; }
@@ -48,13 +49,17 @@ public:
     inline void setPlayerNameBlue(QString nameBlue = "Blue") { if (nameBlue != "") playerNameBlue = nameBlue; }
     inline void setPlayerNameRed(QString nameRed = "Red") { if (nameRed != "") playerNameRed = nameRed; }
     inline void setRound(double newRound) { round = newRound; }
+    void setWinner(int winner);
 
     // methods
     void capturePiece();
+    void dropPiece();
     void exchangeCards(QColor slotColor);
     QList<Card*> identifyCards(int owner);
     void makeMove();
+    void markDestinationFields(QList<QList<Field*>> fields);
     void movePiece();
+    void pickUpPiece();
     void switchCards(CardSlot *usedCardSlot);
     void unmarkAllFields();
 

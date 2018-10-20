@@ -7,6 +7,7 @@
 
 #include "mainwindow.h"
 #include "match.h"
+#include "sensei.h"
 #include "windowdatabase.h"
 
 class Oni : public QObject {
@@ -38,7 +39,6 @@ public:
     inline bool getFirstPlayersTurn() { if (currentDisplayedMove%2 == 0) return true; else return false; }
     bool readConfig();
     void setupFoldersAndFiles();
-    void winGame(int winner);
     bool writeConfig();
 
 private:

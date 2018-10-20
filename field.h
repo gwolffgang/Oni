@@ -28,10 +28,8 @@ public:
     inline void setRow(int newRow) { if (newRow > -1) row = newRow; }
 
     // methods
-    void dropPiece();
     Piece *identifyPiece();
     void linkPiece(Piece *linkedPiece);
-    void pickUpPiece();
 
 protected:
     // events

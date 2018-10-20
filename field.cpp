@@ -16,14 +16,6 @@ Field::Field(QGraphicsItem *parent) : QGraphicsRectItem(parent), col(-1), row(-1
     setAcceptHoverEvents(true);
 }
 
-void Field::dropPiece() {
-    game->getMatch()->unmarkAllFields();
-    QBrush brush(game->getWindow()->colorHovered, Qt::Dense4Pattern);
-    setBrush(brush);
-    game->getMatch()->setPickedUpPiece(nullptr);
-    game->getMatch()->setFieldOfOrigin(nullptr);
-}
-
 Piece *Field::identifyPiece() {
     QList<Piece*> *pieces = game->getMatch()->getPieces();
     for (int i = 0; i < pieces->size(); i++)
@@ -38,69 +30,6 @@ void Field::linkPiece(Piece *linkedPiece) {
     piece->setParentItem(this);
     piece->setCol(col);
     piece->setRow(row);
-}
-
-void Field::pickUpPiece() {
-    Match *match = game->getMatch();
-    if ((game->getFirstPlayersTurn() && (piece->getType() == 'M' || piece->getType() == 'S')) ||
-        (!game->getFirstPlayersTurn() && (piece->getType() == 'm' || piece->getType() == 's'))) {
-        match->setFieldOfOrigin(this);
-        match->setPickedUpPiece(piece);
-        game->getMatch()->unmarkAllFields();
-        QBrush brush(game->getWindow()->colorSelected, Qt::Dense4Pattern);
-        setBrush(brush);
-        QList<QList<Field*>> fields;
-        int player = match->getFieldOfOrigin()->getPiece()->getOwner();
-        int factor = 1;
-        char master = 'M', scolar = 'S';
-        if (player == 2) {
-            factor = -1;
-            master = 'm';
-            scolar = 's';
-        }
-        int fieldCol = col, fieldRow = row;
-        QList<Card*> cards = match->identifyCards(player);
-        QList<Field*> cardFieldList;
-        for (int i = 0; i < cards.size(); i++) {
-            cardFieldList.clear();
-            for (int choice = 0; choice < 4; choice++) {
-                int choiceCol = cards.at(i)->getColFromChoice(choice);
-                int choiceRow = cards.at(i)->getRowFromChoice(choice);
-                if (choiceCol != 0 || choiceRow != 0) {
-                    int newFieldCol = fieldCol + choiceCol * factor;
-                    int newFieldRow = fieldRow + choiceRow * factor;
-                    if ((newFieldCol < 5 && newFieldCol > -1) && (newFieldRow < 5 && newFieldRow > -1)) {
-                        char newFieldPieceType = match->getBoard()->at(newFieldRow).at(newFieldCol)->getPieceType();
-                        if (newFieldPieceType != master && newFieldPieceType != scolar)
-                            cardFieldList.append(match->getBoard()->at(newFieldRow).at(newFieldCol));
-                    }
-                }
-            }
-            fields.append(cardFieldList);
-        }
-
-        QList<Field*> doubleAccessFields;
-        foreach (Field *fieldCard2, fields.at(1)) {
-            brush = QBrush(game->getWindow()->colorChooseableCard2, Qt::Dense4Pattern);
-            fieldCard2->setBrush(brush);
-        }
-        foreach (Field *fieldCard1, fields.at(0)) {
-            brush = QBrush(game->getWindow()->colorChooseableCard1, Qt::Dense4Pattern);
-            fieldCard1->setBrush(brush);
-            foreach (Field *fieldCard2, fields.at(1)) {
-                if (fieldCard1 == fieldCard2)
-                    doubleAccessFields.append(fieldCard1);
-                else {
-                    brush = QBrush(game->getWindow()->colorChooseableCard2, Qt::Dense4Pattern);
-                    fieldCard2->setBrush(brush);
-                }
-            }
-        }
-        foreach (Field *fieldDouble, doubleAccessFields) {
-            brush = QBrush(game->getWindow()->colorChooseableBoth, Qt::Dense4Pattern);
-            fieldDouble->setBrush(brush);
-        }
-    }
 }
 
 void Field::hoverEnterEvent(QGraphicsSceneHoverEvent *) {
@@ -134,17 +63,20 @@ void Field::mousePressEvent(QGraphicsSceneMouseEvent *) {
             if (match->getPickedUpPiece()) {
                 if (piece->getOwner() == match->getPickedUpPiece()->getOwner()) {
                     if (piece != match->getPickedUpPiece()) {
-                        dropPiece();
-                        pickUpPiece();
+                        match->dropPiece();
+                        match->setFieldOfOrigin(this);
+                        match->pickUpPiece();
                     }
                     else
-                        dropPiece();
+                        match->dropPiece();
                 }
                 else
                     match->makeMove();
             }
-            else
-                pickUpPiece();
+            else {
+                match->setFieldOfOrigin(this);
+                match->pickUpPiece();
+            }
         }
         else
             match->makeMove();
